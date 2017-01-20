@@ -8,9 +8,9 @@ LDLIBS =
 LDFLAGS = $(LDLIBS)
 
 DEPS = Assembler.h \
-       ICodeGenerator.h \
-       ILexicalAnalyzer.h \
-       ISyntaxAnalyzer.h
+       CodeGenerator.h \
+       LexicalAnalyzer.h \
+       SyntaxAnalyzer.h
 
 _OBJ = Assembler.cpp.o \
        main.cpp.o

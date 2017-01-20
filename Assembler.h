@@ -1,6 +1,6 @@
-#include "ICodeGenerator.h"
-#include "ILexicalAnalyzer.h"
-#include "ISyntaxAnalyzer.h"
+#include "CodeGenerator.h"
+#include "LexicalAnalyzer.h"
+#include "SyntaxAnalyzer.h"
 
 class Assembler
 {
@@ -8,7 +8,7 @@ public:
     Assembler();
 
 private:
-    ILexicalAnalyzer* lexicalAnalyzer;
-    ISyntaxAnalyzer* syntaxAnalyzer;
-    ICodeGenerator* codeGenerator;
+    LexicalAnalyzer* lexicalAnalyzer;
+    SyntaxAnalyzer* syntaxAnalyzer;
+    CodeGenerator* codeGenerator;
 };
