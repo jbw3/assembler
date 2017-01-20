@@ -7,9 +7,13 @@ CXXFLAGS = $(INCLUDES) -std=c++1z
 LDLIBS =
 LDFLAGS = $(LDLIBS)
 
-DEPS =
+DEPS = Assembler.h \
+       ICodeGenerator.h \
+       ILexicalAnalyzer.h \
+       ISyntaxAnalyzer.h
 
-_OBJ = main.cpp.o
+_OBJ = Assembler.cpp.o \
+       main.cpp.o
 OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
 
 TARGET = asm
