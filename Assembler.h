@@ -1,14 +1,22 @@
+#include <string>
+
 #include "CodeGenerator.h"
 #include "LexicalAnalyzer.h"
+#include "Preprocessor.h"
 #include "SyntaxAnalyzer.h"
 
 class Assembler
 {
 public:
-    Assembler();
+    Assembler(const std::string& filename);
+
+    void assemble();
 
 private:
-    LexicalAnalyzer* lexicalAnalyzer;
-    SyntaxAnalyzer* syntaxAnalyzer;
-    CodeGenerator* codeGenerator;
+    std::string inFilename;
+
+    Preprocessor preprocessor;
+    LexicalAnalyzer lexicalAnalyzer;
+    SyntaxAnalyzer syntaxAnalyzer;
+    CodeGenerator codeGenerator;
 };
