@@ -14,6 +14,7 @@ DEPS = Assembler.h \
        SyntaxAnalyzer.h
 
 _OBJ = Assembler.cpp.o \
+       LexicalAnalyzer.cpp.o \
        Preprocessor.cpp.o \
        main.cpp.o
 OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
