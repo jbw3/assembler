@@ -1,3 +1,6 @@
+#ifndef ASSEMBLER_H_
+#define ASSEMBLER_H_
+
 #include <string>
 
 #include "CodeGenerator.h"
@@ -20,3 +23,5 @@ private:
     SyntaxAnalyzer syntaxAnalyzer;
     CodeGenerator codeGenerator;
 };
+
+#endif // ASSEMBLER_H_

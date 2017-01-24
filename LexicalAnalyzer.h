@@ -1,3 +1,6 @@
+#ifndef LEXICAL_ANALYZER_H_
+#define LEXICAL_ANALYZER_H_
+
 #include <istream>
 #include <string>
 #include <vector>
@@ -14,3 +17,5 @@ public:
 private:
     void parseLine(const std::string& line, std::vector<std::string>& tokens);
 };
+
+#endif // LEXICAL_ANALYZER_H_
