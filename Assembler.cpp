@@ -3,8 +3,11 @@
 
 #include "Assembler.h"
 
+#include "InstructionSet8Bit.h"
+
 Assembler::Assembler(const std::string& filename) :
-    inFilename(filename)
+    inFilename(filename),
+    syntaxAnalyzer(IS_8_BIT)
 {
 }
 
