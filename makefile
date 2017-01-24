@@ -10,6 +10,7 @@ LDFLAGS = $(LDLIBS)
 DEPS = Assembler.h \
        CodeGenerator.h \
        InstructionSet.h \
+       InstructionSet8Bit.h \
        LexicalAnalyzer.h \
        Preprocessor.h \
        SyntaxAnalyzer.h
@@ -18,6 +19,7 @@ _OBJ = Assembler.cpp.o \
        InstructionSet.cpp.o \
        LexicalAnalyzer.cpp.o \
        Preprocessor.cpp.o \
+       SyntaxAnalyzer.cpp.o \
        main.cpp.o
 OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
 

@@ -40,4 +40,10 @@ void Assembler::assemble()
         std::cout << token << "|";
     }
     std::cout << "\n\n";
+
+    /////////////////////////////////
+    // Syntax Analyzer
+    /////////////////////////////////
+
+    syntaxAnalyzer.process(tokens);
 }

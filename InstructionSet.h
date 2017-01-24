@@ -2,6 +2,8 @@
 #define INSTRUCTION_SET_H_
 
 #include <cstdint>
+#include <initializer_list>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -25,7 +27,9 @@ private:
 class Instruction
 {
 public:
-    Instruction(const std::string& mnemonic, std::uint64_t opCode, const std::vector<Argument>& arguments);
+    Instruction(const std::string& mnemonic, std::uint64_t opCode, std::initializer_list<Argument> arguments = {});
+
+    std::string getMnemonic() const;
 
 private:
     std::string mnemonic;
@@ -43,31 +47,31 @@ private:
     std::uint64_t byteCode;
 };
 
-class RegisterRange
+class RegisterInfo
 {
 public:
-    RegisterRange(const Register& reg);
+    RegisterInfo(const std::string& name, std::uint64_t byteCode);
 
-    RegisterRange(const std::string& prefix, unsigned int startNum, unsigned int endNum, std::uint64_t startByteCode);
+    RegisterInfo(const std::string& prefix, unsigned int startNum, unsigned int endNum, std::uint64_t startByteCode);
 
-    std::vector<Register> getRegisters() const;
+    std::map<std::string, Register> getRegisters() const;
 
 private:
-    std::vector<Register> registers;
+    std::map<std::string, Register> registers;
 };
 
 class InstructionSet
 {
 public:
-    InstructionSet(unsigned int bitSize, const std::vector<Instruction>& instructions);
+    InstructionSet(unsigned int wordSize, std::initializer_list<Instruction> instructionList);
 
-    unsigned int getBitSize() const;
+    unsigned int getWordSize() const;
 
-    std::vector<Instruction> getInstructions() const;
+    std::map<std::string, Instruction> getInstructions() const;
 
 private:
-    unsigned int bitSize;
-    std::vector<Instruction> instructions;
+    unsigned int wordSize;
+    std::map<std::string, Instruction> instructions;
 };
 
 #endif // INSTRUCTION_SET_H_

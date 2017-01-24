@@ -9,28 +9,37 @@ Argument::EType Argument::getType() const
     return type;
 }
 
-Instruction::Instruction(const std::string& mnemonic, std::uint64_t opCode, const std::vector<Argument>& arguments) :
+Instruction::Instruction(const std::string& mnemonic, std::uint64_t opCode, std::initializer_list<Argument> arguments) :
     mnemonic(mnemonic),
     opCode(opCode),
     arguments(arguments)
 {}
+
+std::string Instruction::getMnemonic() const
+{
+    return mnemonic;
+}
 
 Register::Register(const std::string& name, std::uint64_t byteCode) :
     name(name),
     byteCode(byteCode)
 {}
 
-InstructionSet::InstructionSet(unsigned int bitSize, const std::vector<Instruction>& instructions) :
-    bitSize(bitSize),
-    instructions(instructions)
-{}
-
-unsigned int InstructionSet::getBitSize() const
+InstructionSet::InstructionSet(unsigned int wordSize, std::initializer_list<Instruction> instructionList) :
+    wordSize(wordSize)
 {
-    return bitSize;
+    for (const Instruction& inst : instructionList)
+    {
+        instructions.insert({inst.getMnemonic(), inst});
+    }
 }
 
-std::vector<Instruction> InstructionSet::getInstructions() const
+unsigned int InstructionSet::getWordSize() const
+{
+    return wordSize;
+}
+
+std::map<std::string, Instruction> InstructionSet::getInstructions() const
 {
     return instructions;
 }
