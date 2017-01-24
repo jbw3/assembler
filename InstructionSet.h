@@ -47,12 +47,12 @@ private:
     std::uint64_t byteCode;
 };
 
-class RegisterInfo
+class RegisterSet
 {
 public:
-    RegisterInfo(const std::string& name, std::uint64_t byteCode);
+    RegisterSet(const std::string& name, std::uint64_t byteCode);
 
-    RegisterInfo(const std::string& prefix, unsigned int startNum, unsigned int endNum, std::uint64_t startByteCode);
+    RegisterSet(const std::string& prefix, unsigned int startNum, unsigned int endNum, std::uint64_t startByteCode);
 
     std::map<std::string, Register> getRegisters() const;
 
@@ -63,14 +63,17 @@ private:
 class InstructionSet
 {
 public:
-    InstructionSet(unsigned int wordSize, std::initializer_list<Instruction> instructionList);
+    InstructionSet(unsigned int wordSize, std::initializer_list<RegisterSet> registerList, std::initializer_list<Instruction> instructionList);
 
     unsigned int getWordSize() const;
+
+    std::map<std::string, Register> getRegisters() const;
 
     std::map<std::string, Instruction> getInstructions() const;
 
 private:
     unsigned int wordSize;
+    std::map<std::string, Register> registers;
     std::map<std::string, Instruction> instructions;
 };
 

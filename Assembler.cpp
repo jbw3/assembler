@@ -7,7 +7,7 @@
 
 Assembler::Assembler(const std::string& filename) :
     inFilename(filename),
-    syntaxAnalyzer(IS_8_BIT)
+    syntaxAnalyzer(ISET_8_BIT)
 {
 }
 

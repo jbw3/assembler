@@ -9,6 +9,13 @@ SyntaxAnalyzer::SyntaxAnalyzer(const InstructionSet& instructionSet) :
 
 void SyntaxAnalyzer::process(const std::vector<std::string>& tokens)
 {
+    std::cout << "Registers:\n";
+    for (auto x : instSet.getRegisters())
+    {
+        std::cout << x.first << '\n';
+    }
+
+    std::cout << "Instructions:\n";
     for (auto x : instSet.getInstructions())
     {
         std::cout << x.first << '\n';

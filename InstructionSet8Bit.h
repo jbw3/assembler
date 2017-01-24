@@ -3,9 +3,14 @@
 
 #include "InstructionSet.h"
 
-InstructionSet IS_8_BIT(
+const InstructionSet ISET_8_BIT(
     // word size
     8,
+
+    // registers
+    {
+        { "R", 0, 7, 0b000 }
+    },
 
     // instructions
     {

@@ -25,9 +25,37 @@ Register::Register(const std::string& name, std::uint64_t byteCode) :
     byteCode(byteCode)
 {}
 
-InstructionSet::InstructionSet(unsigned int wordSize, std::initializer_list<Instruction> instructionList) :
+RegisterSet::RegisterSet(const std::string& name, std::uint64_t byteCode)
+{
+    registers.insert({name, Register(name, byteCode)});
+}
+
+RegisterSet::RegisterSet(const std::string& prefix, unsigned int startNum, unsigned int endNum, std::uint64_t startByteCode)
+{
+    std::string name;
+    std::uint64_t byteCode = startByteCode;
+    for (unsigned int i = startNum; i <= endNum; ++i)
+    {
+        name = prefix + std::to_string(i);
+        registers.insert({name, Register(name, byteCode)});
+        ++byteCode;
+    }
+}
+
+std::map<std::string, Register> RegisterSet::getRegisters() const
+{
+    return registers;
+}
+
+InstructionSet::InstructionSet(unsigned int wordSize, std::initializer_list<RegisterSet> registerList, std::initializer_list<Instruction> instructionList) :
     wordSize(wordSize)
 {
+    for (const RegisterSet& regSet : registerList)
+    {
+        const std::map<std::string, Register>& regs = regSet.getRegisters();
+        registers.insert(regs.cbegin(), regs.cend());
+    }
+
     for (const Instruction& inst : instructionList)
     {
         instructions.insert({inst.getMnemonic(), inst});
@@ -37,6 +65,11 @@ InstructionSet::InstructionSet(unsigned int wordSize, std::initializer_list<Inst
 unsigned int InstructionSet::getWordSize() const
 {
     return wordSize;
+}
+
+std::map<std::string, Register> InstructionSet::getRegisters() const
+{
+    return registers;
 }
 
 std::map<std::string, Instruction> InstructionSet::getInstructions() const
