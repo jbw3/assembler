@@ -25,12 +25,35 @@ private:
 class Instruction
 {
 public:
-    Instruction(std::string mnemonic, std::uint64_t opCode, const std::vector<Argument>& arguments);
+    Instruction(const std::string& mnemonic, std::uint64_t opCode, const std::vector<Argument>& arguments);
 
 private:
     std::string mnemonic;
     std::uint64_t opCode;
     std::vector<Argument> arguments;
+};
+
+class Register
+{
+public:
+    Register(const std::string& name, std::uint64_t byteCode);
+
+private:
+    std::string name;
+    std::uint64_t byteCode;
+};
+
+class RegisterRange
+{
+public:
+    RegisterRange(const Register& reg);
+
+    RegisterRange(const std::string& prefix, unsigned int startNum, unsigned int endNum, std::uint64_t startByteCode);
+
+    std::vector<Register> getRegisters() const;
+
+private:
+    std::vector<Register> registers;
 };
 
 class InstructionSet
