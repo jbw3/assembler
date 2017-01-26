@@ -13,7 +13,8 @@ DEPS = Assembler.h \
        InstructionSet8Bit.h \
        LexicalAnalyzer.h \
        Preprocessor.h \
-       SyntaxAnalyzer.h
+       SyntaxAnalyzer.h \
+       tokens.h
 
 _OBJ = Assembler.cpp.o \
        InstructionSet.cpp.o \

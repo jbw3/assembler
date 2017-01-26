@@ -1,4 +1,5 @@
 #include "LexicalAnalyzer.h"
+#include "tokens.h"
 
 const std::string LexicalAnalyzer::WHITESPACE_CHARS = " \t";
 
@@ -51,6 +52,6 @@ void LexicalAnalyzer::parseLine(const std::string& line, std::vector<std::string
     // an EOL token
     if (foundToken)
     {
-        tokens.push_back("\n");
+        tokens.push_back(END_OF_LINE);
     }
 }

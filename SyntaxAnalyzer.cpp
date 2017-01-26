@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "SyntaxAnalyzer.h"
+#include "tokens.h"
 
 using namespace std;
 
@@ -21,7 +22,7 @@ bool SyntaxAnalyzer::process(const vector<string>& tokens, InstructionCodeList& 
     for (string token : tokens)
     {
         // if we've reached the end of an instruction, process it
-        if (token == "\n")
+        if (token == END_OF_LINE)
         {
             if (!instTokens.empty())
             {
@@ -60,7 +61,6 @@ bool SyntaxAnalyzer::encodeInstruction(const vector<string>& instTokens, Instruc
 
     /// @todo support instructions longer than 64-bit
     uint64_t code = instIter->second.getOpCode();
-    cout << "code: " << code << "\n";
 
     instCode.push_back(code);
 
