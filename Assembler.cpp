@@ -2,8 +2,10 @@
 #include <sstream>
 
 #include "Assembler.h"
-
+#include "Error.h"
 #include "InstructionSet8Bit.h"
+
+using namespace std;
 
 Assembler::Assembler(const std::string& filename) :
     inFilename(filename),
@@ -13,37 +15,46 @@ Assembler::Assembler(const std::string& filename) :
 
 void Assembler::assemble()
 {
-    bool ok = true;
-    std::fstream inFile;
+    try
+    {
+        process();
+    }
+    catch (const Error& error)
+    {
+        long long line = error.getLine();
+
+        cout << "Error";
+        if (line > 0)
+        {
+            cout << ", line " << line;
+        }
+        cout << ":\n";
+        cout << error.getMessage() << "\n";
+    }
+}
+
+void Assembler::process()
+{
+    fstream inFile;
 
     /////////////////////////////////
     // Preprocess
     /////////////////////////////////
 
-    inFile.open(inFilename, std::ios_base::in);
-    std::stringstream preProcStream;
+    inFile.open(inFilename, ios_base::in);
+    stringstream preProcStream;
 
     preprocessor.process(inFile, preProcStream);
 
     inFile.close();
 
-    std::cout << "Preprocess:\n"
-              << preProcStream.str() << "\n\n";
-
     /////////////////////////////////
     // Lexical Analyzer
     /////////////////////////////////
 
-    std::vector<std::string> tokens;
+    vector<string> tokens;
 
     lexicalAnalyzer.process(preProcStream, tokens);
-
-    std::cout << "Tokens:\n";
-    for (std::string token : tokens)
-    {
-        std::cout << token << "|";
-    }
-    std::cout << "\n\n";
 
     /////////////////////////////////
     // Syntax Analyzer
@@ -51,13 +62,10 @@ void Assembler::assemble()
 
     SyntaxAnalyzer::InstructionCodeList instCodeList;
 
-    ok = syntaxAnalyzer.process(tokens, instCodeList);
+    syntaxAnalyzer.process(tokens, instCodeList);
 
-    if (ok)
+    for (auto code : instCodeList)
     {
-        for (auto code : instCodeList)
-        {
-            std::cout << std::hex << code[0] << std::dec << "\n";
-        }
+        cout << hex << code[0] << dec << "\n";
     }
 }

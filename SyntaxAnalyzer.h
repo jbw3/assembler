@@ -15,12 +15,12 @@ public:
 
     SyntaxAnalyzer(const InstructionSet& instructionSet);
 
-    bool process(const std::vector<std::string>& tokens, InstructionCodeList& instCodeList);
+    void process(const std::vector<std::string>& tokens, InstructionCodeList& instCodeList);
 
 private:
     InstructionSet instSet;
 
-    bool encodeInstruction(const std::vector<std::string>& instTokens, InstructionCode& instCode);
+    void encodeInstruction(const std::vector<std::string>& instTokens, InstructionCode& instCode);
 };
 
 #endif // SYNTAX_ANALYZER_H_

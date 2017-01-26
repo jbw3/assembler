@@ -9,6 +9,7 @@ LDFLAGS = $(LDLIBS)
 
 DEPS = Assembler.h \
        CodeGenerator.h \
+       Error.h \
        InstructionSet.h \
        InstructionSet8Bit.h \
        LexicalAnalyzer.h \

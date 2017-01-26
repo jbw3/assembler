@@ -1,5 +1,4 @@
-#include <iostream>
-
+#include "Error.h"
 #include "SyntaxAnalyzer.h"
 #include "tokens.h"
 
@@ -10,9 +9,8 @@ SyntaxAnalyzer::SyntaxAnalyzer(const InstructionSet& instructionSet) :
 {
 }
 
-bool SyntaxAnalyzer::process(const vector<string>& tokens, InstructionCodeList& instCodeList)
+void SyntaxAnalyzer::process(const vector<string>& tokens, InstructionCodeList& instCodeList)
 {
-    bool ok = true;
     vector<string> instTokens;
     instTokens.reserve(8);
 
@@ -27,12 +25,7 @@ bool SyntaxAnalyzer::process(const vector<string>& tokens, InstructionCodeList& 
             if (!instTokens.empty())
             {
                 InstructionCode instCode;
-                ok = encodeInstruction(instTokens, instCode);
-                if (!ok)
-                {
-                    break;
-                }
-
+                encodeInstruction(instTokens, instCode);
                 instCodeList.push_back(instCode);
                 instTokens.clear();
             }
@@ -42,11 +35,9 @@ bool SyntaxAnalyzer::process(const vector<string>& tokens, InstructionCodeList& 
             instTokens.push_back(token);
         }
     }
-
-    return ok;
 }
 
-bool SyntaxAnalyzer::encodeInstruction(const vector<string>& instTokens, InstructionCode& instCode)
+void SyntaxAnalyzer::encodeInstruction(const vector<string>& instTokens, InstructionCode& instCode)
 {
     map<string, Instruction> instructions = instSet.getInstructions();
 
@@ -55,14 +46,11 @@ bool SyntaxAnalyzer::encodeInstruction(const vector<string>& instTokens, Instruc
     auto instIter = instructions.find(name);
     if (instIter == instructions.end())
     {
-        cout << "Error: Unknown instruction \"" << name << "\"\n";
-        return false;
+        throw Error("Unknown instruction \"" + name + "\"");
     }
 
     /// @todo support instructions longer than 64-bit
     uint64_t code = instIter->second.getOpCode();
 
     instCode.push_back(code);
-
-    return true;
 }

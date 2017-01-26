@@ -22,6 +22,8 @@ private:
     LexicalAnalyzer lexicalAnalyzer;
     SyntaxAnalyzer syntaxAnalyzer;
     CodeGenerator codeGenerator;
+
+    void process();
 };
 
 #endif // ASSEMBLER_H_
