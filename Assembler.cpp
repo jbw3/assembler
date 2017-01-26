@@ -13,6 +13,7 @@ Assembler::Assembler(const std::string& filename) :
 
 void Assembler::assemble()
 {
+    bool ok = true;
     std::fstream inFile;
 
     /////////////////////////////////
@@ -48,5 +49,15 @@ void Assembler::assemble()
     // Syntax Analyzer
     /////////////////////////////////
 
-    syntaxAnalyzer.process(tokens);
+    SyntaxAnalyzer::InstructionCodeList instCodeList;
+
+    ok = syntaxAnalyzer.process(tokens, instCodeList);
+
+    if (ok)
+    {
+        for (auto code : instCodeList)
+        {
+            std::cout << std::hex << code[0] << std::dec << "\n";
+        }
+    }
 }

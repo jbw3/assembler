@@ -31,6 +31,10 @@ public:
 
     std::string getMnemonic() const;
 
+    std::uint64_t getOpCode() const;
+
+    std::vector<Argument> getArguments() const;
+
 private:
     std::string mnemonic;
     std::uint64_t opCode;

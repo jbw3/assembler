@@ -20,6 +20,16 @@ std::string Instruction::getMnemonic() const
     return mnemonic;
 }
 
+std::uint64_t Instruction::getOpCode() const
+{
+    return opCode;
+}
+
+std::vector<Argument> Instruction::getArguments() const
+{
+    return arguments;
+}
+
 Register::Register(const std::string& name, std::uint64_t byteCode) :
     name(name),
     byteCode(byteCode)
