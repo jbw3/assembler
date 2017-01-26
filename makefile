@@ -2,19 +2,20 @@ INCLUDES =
 OBJDIR = obj
 
 CXX = clang++
-CXXFLAGS = $(INCLUDES) -std=c++1z
+CXXFLAGS = $(INCLUDES) -std=c++1z -Wall
 
 LDLIBS =
 LDFLAGS = $(LDLIBS)
 
 DEPS = Assembler.h \
-       CodeGenerator.h \
        Error.h \
+       ICodeGenerator.h \
        InstructionSet.h \
        InstructionSet8Bit.h \
        LexicalAnalyzer.h \
        Preprocessor.h \
        SyntaxAnalyzer.h \
+       TextCodeGenerator.h \
        tokens.h
 
 _OBJ = Assembler.cpp.o \
@@ -22,6 +23,7 @@ _OBJ = Assembler.cpp.o \
        LexicalAnalyzer.cpp.o \
        Preprocessor.cpp.o \
        SyntaxAnalyzer.cpp.o \
+       TextCodeGenerator.cpp.o \
        main.cpp.o
 OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
 

@@ -3,13 +3,13 @@
 
 #include "Assembler.h"
 #include "Error.h"
-#include "InstructionSet8Bit.h"
 
 using namespace std;
 
-Assembler::Assembler(const std::string& filename) :
-    inFilename(filename),
-    syntaxAnalyzer(ISET_8_BIT)
+Assembler::Assembler(const InstructionSet& instructionSet, ICodeGenerator* codeGenerator, const std::string& filename) :
+    syntaxAnalyzer(instructionSet),
+    codeGenerator(codeGenerator),
+    inFilename(filename)
 {
 }
 
@@ -64,8 +64,9 @@ void Assembler::process()
 
     syntaxAnalyzer.process(tokens, instCodeList);
 
-    for (auto code : instCodeList)
-    {
-        cout << hex << code[0] << dec << "\n";
-    }
+    /////////////////////////////////
+    // Code Generator
+    /////////////////////////////////
+
+    codeGenerator->generate(instCodeList);
 }
