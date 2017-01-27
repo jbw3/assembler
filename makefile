@@ -7,7 +7,8 @@ CXXFLAGS = $(INCLUDES) -std=c++1z -Wall
 LDLIBS =
 LDFLAGS = $(LDLIBS)
 
-DEPS = Assembler.h \
+DEPS = Arguments.h \
+       Assembler.h \
        Error.h \
        ICodeGenerator.h \
        InstructionSet.h \
@@ -18,7 +19,8 @@ DEPS = Assembler.h \
        TextCodeGenerator.h \
        tokens.h
 
-_OBJ = Assembler.cpp.o \
+_OBJ = Arguments.cpp.o \
+       Assembler.cpp.o \
        InstructionSet.cpp.o \
        LexicalAnalyzer.cpp.o \
        Preprocessor.cpp.o \

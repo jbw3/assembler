@@ -6,6 +6,8 @@
 class ICodeGenerator
 {
 public:
+    virtual ~ICodeGenerator() = default;
+
     virtual void generate(const SyntaxAnalyzer::InstructionCodeList&) = 0;
 };
 

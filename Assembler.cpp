@@ -1,15 +1,16 @@
 #include <fstream>
 #include <sstream>
 
+#include "Arguments.h"
 #include "Assembler.h"
 #include "Error.h"
 
 using namespace std;
 
-Assembler::Assembler(const InstructionSet& instructionSet, ICodeGenerator* codeGenerator, std::istream& is) :
-    syntaxAnalyzer(instructionSet),
-    codeGenerator(codeGenerator),
-    is(is)
+Assembler::Assembler(const Arguments& args) :
+    syntaxAnalyzer(args.instructionSet),
+    codeGenerator(args.codeGenerator),
+    is(*args.is)
 {
 }
 

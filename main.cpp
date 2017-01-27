@@ -1,15 +1,16 @@
-#include <iostream>
-
+#include "Arguments.h"
 #include "Assembler.h"
-#include "InstructionSet8Bit.h"
-#include "TextCodeGenerator.h"
 
 int main(int argc, const char* argv[])
 {
-    TextCodeGenerator codeGenerator(std::cout);
+    Arguments args;
+    bool ok = args.parseArgs(argc, argv);
 
-    Assembler assembler(ISET_8_BIT, &codeGenerator, std::cin);
-    assembler.assemble();
+    if (ok)
+    {
+        Assembler assembler(args);
+        assembler.assemble();
+    }
 
-    return 0;
+    return ok ? 0 : 1;
 }

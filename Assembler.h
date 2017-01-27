@@ -8,10 +8,12 @@
 #include "Preprocessor.h"
 #include "SyntaxAnalyzer.h"
 
+class Arguments;
+
 class Assembler
 {
 public:
-    Assembler(const InstructionSet& instructionSet, ICodeGenerator* codeGenerator, std::istream& is);
+    Assembler(const Arguments& args);
 
     void assemble();
 
