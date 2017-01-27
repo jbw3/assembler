@@ -1,7 +1,7 @@
 #ifndef ASSEMBLER_H_
 #define ASSEMBLER_H_
 
-#include <string>
+#include <istream>
 
 #include "ICodeGenerator.h"
 #include "LexicalAnalyzer.h"
@@ -11,7 +11,7 @@
 class Assembler
 {
 public:
-    Assembler(const InstructionSet& instructionSet, ICodeGenerator* codeGenerator, const std::string& filename);
+    Assembler(const InstructionSet& instructionSet, ICodeGenerator* codeGenerator, std::istream& is);
 
     void assemble();
 
@@ -21,7 +21,7 @@ private:
     SyntaxAnalyzer syntaxAnalyzer;
     ICodeGenerator* codeGenerator;
 
-    std::string inFilename;
+    std::istream& is;
 
     void process();
 };

@@ -6,10 +6,10 @@
 
 using namespace std;
 
-Assembler::Assembler(const InstructionSet& instructionSet, ICodeGenerator* codeGenerator, const std::string& filename) :
+Assembler::Assembler(const InstructionSet& instructionSet, ICodeGenerator* codeGenerator, std::istream& is) :
     syntaxAnalyzer(instructionSet),
     codeGenerator(codeGenerator),
-    inFilename(filename)
+    is(is)
 {
 }
 
@@ -35,18 +35,13 @@ void Assembler::assemble()
 
 void Assembler::process()
 {
-    fstream inFile;
-
     /////////////////////////////////
     // Preprocess
     /////////////////////////////////
 
-    inFile.open(inFilename, ios_base::in);
     stringstream preProcStream;
 
-    preprocessor.process(inFile, preProcStream);
-
-    inFile.close();
+    preprocessor.process(is, preProcStream);
 
     /////////////////////////////////
     // Lexical Analyzer
