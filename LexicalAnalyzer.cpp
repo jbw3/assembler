@@ -1,10 +1,25 @@
 #include <cctype>
+#include <iostream>
 
 #include "Error.h"
 #include "LexicalAnalyzer.h"
 #include "tokens.h"
 
+#define PRINT_TOKENS 1
+
 using namespace std;
+
+constexpr bool isIdentifierChar(char ch, bool first)
+{
+    if (first)
+    {
+        return isalpha(ch) || ch == '_';
+    }
+    else
+    {
+        return isalnum(ch) || ch == '_';
+    }
+}
 
 LexicalAnalyzer::LexicalAnalyzer() :
     token(""),
@@ -17,13 +32,13 @@ void LexicalAnalyzer::process(istream& is, vector<string>& tokens)
     tokens.clear();
     tokens.reserve(128);
 
-    char buff[1];
-    is.read(buff, 1);
+    char ch;
+    is.read(&ch, 1);
     while (!is.eof())
     {
-        parseChar(buff[0], tokens);
+        parseChar(ch, tokens);
 
-        is.read(buff, 1);
+        is.read(&ch, 1);
     }
 
     // check for leftover token
@@ -38,6 +53,15 @@ void LexicalAnalyzer::process(istream& is, vector<string>& tokens)
             throw Error("Invalid token \"" + token + "\".");
         }
     }
+
+#if PRINT_TOKENS
+    cout << "Tokens:\n----------\n|";
+    for (string t : tokens)
+    {
+        cout << t << "|";
+    }
+    cout << "\n----------\n";
+#endif
 }
 
 void LexicalAnalyzer::parseChar(char ch, vector<string>& tokens)
@@ -96,12 +120,12 @@ bool LexicalAnalyzer::isValidToken(const string& token)
     }
 
     // identifier (instruction, register, etc.)
-    if (isalpha(token[0]))
+    if (isIdentifierChar(token[0], true))
     {
         size_t idx = 1;
         for (; idx < token.size(); ++idx)
         {
-            if (!isalnum(token[idx]))
+            if (!isIdentifierChar(token[idx], false))
             {
                 break;
             }
