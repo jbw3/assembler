@@ -4,7 +4,7 @@
 int main(int argc, const char* argv[])
 {
     Arguments args;
-    bool ok = args.parseArgs(argc, argv);
+    bool ok = args.parse(argc, argv);
 
     if (ok)
     {
