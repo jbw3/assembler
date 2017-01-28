@@ -24,13 +24,13 @@ void Assembler::assemble()
     {
         long long line = error.getLine();
 
-        cout << "Error";
+        cerr << "Error";
         if (line > 0)
         {
-            cout << ", line " << line;
+            cerr << ", line " << line;
         }
-        cout << ":\n";
-        cout << error.getMessage() << "\n";
+        cerr << ":\n";
+        cerr << error.getMessage() << "\n";
     }
 }
 

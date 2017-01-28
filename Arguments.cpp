@@ -83,12 +83,12 @@ void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
     {
         if (idx + 1 >= argc)
         {
-            cout << "Error: Expected an argument after " << arg << ".\n";
+            cerr << "Error: Expected an argument after " << arg << ".\n";
             error = true;
         }
         else if (!outFilename.empty())
         {
-            cout << "Error: Argument " << arg << " was given more than once.\n";
+            cerr << "Error: Argument " << arg << " was given more than once.\n";
             error = true;
         }
         else
@@ -108,7 +108,7 @@ void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
     {
         if (!inFilename.empty())
         {
-            cout << "Error: Cannot process more than one input file.\n";
+            cerr << "Error: Cannot process more than one input file.\n";
             error = true;
         }
         else
@@ -134,7 +134,7 @@ void Arguments::configIO()
         is = inFile;
         if (is->fail())
         {
-            cout << "Error: Could not open file \"" << inFilename << "\".\n";
+            cerr << "Error: Could not open file \"" << inFilename << "\".\n";
             error = true;
         }
     }
@@ -153,7 +153,7 @@ void Arguments::configIO()
         os = outFile;
         if (os->fail())
         {
-            cout << "Error: Could not open file \"" << outFilename << "\".\n";
+            cerr << "Error: Could not open file \"" << outFilename << "\".\n";
             error = true;
         }
     }

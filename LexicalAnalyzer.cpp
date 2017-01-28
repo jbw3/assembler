@@ -5,7 +5,7 @@
 #include "LexicalAnalyzer.h"
 #include "tokens.h"
 
-#define PRINT_TOKENS 1
+#define PRINT_TOKENS 0
 
 using namespace std;
 
