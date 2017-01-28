@@ -8,14 +8,17 @@
 class LexicalAnalyzer
 {
 public:
-    static const std::string WHITESPACE_CHARS;
-
     LexicalAnalyzer();
 
     void process(std::istream& is, std::vector<std::string>& tokens);
 
 private:
-    void parseLine(const std::string& line, std::vector<std::string>& tokens);
+    std::string token;
+    bool isValid;
+
+    void parseChar(char ch, std::vector<std::string>& tokens);
+
+    bool isValidToken(const std::string& token);
 };
 
 #endif // LEXICAL_ANALYZER_H_

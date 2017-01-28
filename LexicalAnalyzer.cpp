@@ -1,57 +1,134 @@
+#include <cctype>
+
+#include "Error.h"
 #include "LexicalAnalyzer.h"
 #include "tokens.h"
 
-const std::string LexicalAnalyzer::WHITESPACE_CHARS = " \t";
+using namespace std;
 
-LexicalAnalyzer::LexicalAnalyzer()
+LexicalAnalyzer::LexicalAnalyzer() :
+    token(""),
+    isValid(false)
 {
 }
 
-void LexicalAnalyzer::process(std::istream& is, std::vector<std::string>& tokens)
+void LexicalAnalyzer::process(istream& is, vector<string>& tokens)
 {
     tokens.clear();
     tokens.reserve(128);
 
-    std::string line;
+    char buff[1];
+    is.read(buff, 1);
     while (!is.eof())
     {
-        getline(is, line, '\n');
-        parseLine(line, tokens);
+        parseChar(buff[0], tokens);
+
+        is.read(buff, 1);
     }
-}
 
-void LexicalAnalyzer::parseLine(const std::string& line, std::vector<std::string>& tokens)
-{
-    bool foundToken = false;
-
-    std::size_t tokenStart = line.find_first_not_of(WHITESPACE_CHARS);
-    while (tokenStart != std::string::npos)
+    // check for leftover token
+    if (!token.empty())
     {
-        foundToken = true;
-
-        // find end of token
-        std::size_t tokenEnd = line.find_first_of(WHITESPACE_CHARS, tokenStart);
-        std::size_t tokenLen;
-        if (tokenEnd == std::string::npos)
+        if (isValid)
         {
-            tokenLen = line.size() - tokenStart;
+            tokens.push_back(token);
         }
         else
         {
-            tokenLen = tokenEnd - tokenStart;
+            throw Error("Invalid token \"" + token + "\".");
+        }
+    }
+}
+
+void LexicalAnalyzer::parseChar(char ch, vector<string>& tokens)
+{
+    if (isblank(ch))
+    {
+        if (!token.empty())
+        {
+            if (isValid)
+            {
+                tokens.push_back(token);
+                token = "";
+                isValid = false;
+            }
+            else
+            {
+                throw Error("Invalid token \"" + token + "\".");
+            }
+        }
+    }
+    else // ch is not blank
+    {
+        if (isValid)
+        {
+            if (isValidToken(token + ch))
+            {
+                token += ch;
+            }
+            else
+            {
+                tokens.push_back(token);
+                token = ch;
+                isValid = isValidToken(token);
+            }
+        }
+        else
+        {
+            token += ch;
+            isValid = isValidToken(token);
+        }
+    }
+}
+
+bool LexicalAnalyzer::isValidToken(const string& token)
+{
+    // argument separator
+    if (token == ARGUMENT_SEPARATOR)
+    {
+        return true;
+    }
+
+    // end of line
+    if (token == END_OF_LINE)
+    {
+        return true;
+    }
+
+    // identifier (instruction, register, etc.)
+    if (isalpha(token[0]))
+    {
+        size_t idx = 1;
+        for (; idx < token.size(); ++idx)
+        {
+            if (!isalnum(token[idx]))
+            {
+                break;
+            }
         }
 
-        // add token to list
-        tokens.push_back(line.substr(tokenStart, tokenLen));
-
-        // find next token
-        tokenStart = line.find_first_not_of(WHITESPACE_CHARS, tokenEnd);
+        // if we made it through all the chars, this is an identifier
+        if (idx == token.size())
+        {
+            return true;
+        }
     }
 
-    // if at least one token was found on the line, add
-    // an EOL token
-    if (foundToken)
+    // decimal integer
+    size_t idx = 0;
+    for (; idx < token.size(); ++idx)
     {
-        tokens.push_back(END_OF_LINE);
+        if (!isdigit(token[idx]))
+        {
+            break;
+        }
     }
+
+    // if we made it through all the chars, this is an integer
+    if (idx == token.size())
+    {
+        return true;
+    }
+
+    return false;
 }
