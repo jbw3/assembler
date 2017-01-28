@@ -1,7 +1,9 @@
 #include "InstructionSet.h"
 
-Argument::Argument(EType type) :
-    type(type)
+Argument::Argument(EType type, unsigned int size, unsigned int offset) :
+    type(type),
+    size(size),
+    offset(offset)
 {}
 
 Argument::EType Argument::getType() const
@@ -9,10 +11,31 @@ Argument::EType Argument::getType() const
     return type;
 }
 
-Instruction::Instruction(const std::string& mnemonic, std::uint64_t opCode, std::initializer_list<Argument> arguments) :
+InstructionType::InstructionType(unsigned int opCodeSize, unsigned int opCodeOffset, std::initializer_list<Argument> arguments) :
+    opCodeSize(opCodeSize),
+    opCodeOffset(opCodeOffset),
+    arguments(arguments)
+{}
+
+unsigned int InstructionType::getOpCodeSize() const
+{
+    return opCodeSize;
+}
+
+unsigned int InstructionType::getOpCodeOffset() const
+{
+    return opCodeOffset;
+}
+
+std::vector<Argument> InstructionType::getArguments() const
+{
+    return arguments;
+}
+
+Instruction::Instruction(const std::string& mnemonic, std::uint64_t opCode, const InstructionType& type) :
     mnemonic(mnemonic),
     opCode(opCode),
-    arguments(arguments)
+    type(type)
 {}
 
 std::string Instruction::getMnemonic() const
@@ -27,7 +50,7 @@ std::uint64_t Instruction::getOpCode() const
 
 std::vector<Argument> Instruction::getArguments() const
 {
-    return arguments;
+    return type.getArguments();
 }
 
 Register::Register(const std::string& name, std::uint64_t byteCode) :

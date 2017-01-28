@@ -16,18 +16,39 @@ public:
         eImmediate
     };
 
-    Argument(EType type);
+    Argument(EType type, unsigned int size, unsigned int offset);
 
     EType getType() const;
 
 private:
     EType type;
+    unsigned int size;
+    unsigned int offset;
+};
+
+class InstructionType
+{
+public:
+    friend class Instruction;
+
+    InstructionType(unsigned int opCodeSize, unsigned int opCodeOffset, std::initializer_list<Argument> arguments = {});
+
+    unsigned int getOpCodeSize() const;
+
+    unsigned int getOpCodeOffset() const;
+
+    std::vector<Argument> getArguments() const;
+
+private:
+    unsigned int opCodeSize;
+    unsigned int opCodeOffset;
+    std::vector<Argument> arguments;
 };
 
 class Instruction
 {
 public:
-    Instruction(const std::string& mnemonic, std::uint64_t opCode, std::initializer_list<Argument> arguments = {});
+    Instruction(const std::string& mnemonic, std::uint64_t opCode, const InstructionType& type);
 
     std::string getMnemonic() const;
 
@@ -38,7 +59,7 @@ public:
 private:
     std::string mnemonic;
     std::uint64_t opCode;
-    std::vector<Argument> arguments;
+    const InstructionType& type;
 };
 
 class Register

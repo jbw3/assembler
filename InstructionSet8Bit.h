@@ -3,6 +3,15 @@
 
 #include "InstructionSet.h"
 
+// immediate type
+InstructionType IType{5, 3, {{Argument::eImmediate, 3, 0}}};
+
+// no-arg type
+InstructionType NType{5, 3};
+
+// register type
+InstructionType RType{5, 3, {{Argument::eRegister, 3, 0}}};
+
 const InstructionSet ISET_8_BIT(
     // word size
     8,
@@ -14,24 +23,24 @@ const InstructionSet ISET_8_BIT(
 
     // instructions
     {
-        { "NOP",  0b00000 },                         // no operation
-        { "MOV",  0b00001, {Argument::eRegister} },  // move register to R0
-        { "MOVI", 0b00010, {Argument::eImmediate} }, // move constant to R0
-        { "MVR0", 0b00011, {Argument::eRegister} },  // move R0 to register
-        { "NOT",  0b00100, {Argument::eRegister} },  // not
-        { "AND",  0b00101, {Argument::eRegister} },  // and
-        { "OR",   0b00110, {Argument::eRegister} },  // or
-        { "XOR",  0b00111, {Argument::eRegister} },  // xor
-        { "ADD",  0b01000, {Argument::eRegister} },  // add
-        { "SUB",  0b01001, {Argument::eRegister} },  // sub
-        { "SHLL", 0b01010, {Argument::eRegister} },  // shift left logical
-        { "SHRL", 0b01011, {Argument::eRegister} },  // shift right logical
-        { "SHRA", 0b01100, {Argument::eRegister} },  // shift right arithmetic
-        { "JMP",  0b01101, {Argument::eRegister} },  // jump
-        { "BEZ",  0b01110, {Argument::eRegister} },  // branch equal zero
-        { "BNEZ", 0b01111, {Argument::eRegister} },  // branch not equal zero
-        { "BGTZ", 0b10000, {Argument::eRegister} },  // branch greater than zero
-        { "BLTZ", 0b10001, {Argument::eRegister} },  // branch less than zero
+        { "NOP",  0b00000, NType },  // no operation
+        { "MOV",  0b00001, RType },  // move register to R0
+        { "MOVI", 0b00010, IType },  // move constant to R0
+        { "MVR0", 0b00011, RType },  // move R0 to register
+        { "NOT",  0b00100, RType },  // not
+        { "AND",  0b00101, RType },  // and
+        { "OR",   0b00110, RType },  // or
+        { "XOR",  0b00111, RType },  // xor
+        { "ADD",  0b01000, RType },  // add
+        { "SUB",  0b01001, RType },  // sub
+        { "SHLL", 0b01010, RType },  // shift left logical
+        { "SHRL", 0b01011, RType },  // shift right logical
+        { "SHRA", 0b01100, RType },  // shift right arithmetic
+        { "JMP",  0b01101, RType },  // jump
+        { "BEZ",  0b01110, RType },  // branch equal zero
+        { "BNEZ", 0b01111, RType },  // branch not equal zero
+        { "BGTZ", 0b10000, RType },  // branch greater than zero
+        { "BLTZ", 0b10001, RType },  // branch less than zero
     }
 );
 
