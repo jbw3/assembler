@@ -20,15 +20,19 @@ public:
     InstructionSet instructionSet;
     ICodeGenerator* codeGenerator;
     std::istream* is;
+    std::ostream* os;
 
 private:
     static const char* HELP_MESSAGE;
 
-    std::ostream* os;
     bool done;
     bool error;
+    std::string inFilename;
+    std::string outFilename;
 
     void parseNextArgs(int& idx, int argc, const char* argv[]);
+
+    void configIO();
 };
 
 #endif // ARGUMENTS_H_

@@ -65,14 +65,10 @@ void Arguments::parse(int argc, const char* argv[])
         }
     }
 
-    // choose default values if not specified by user
-    if (is == nullptr)
+    configIO();
+    if (error)
     {
-        is = &cin;
-    }
-    if (os == nullptr)
-    {
-        os = &cout;
+        return;
     }
 
     /// @todo Add an argument to let the user specify the code generator.
@@ -90,24 +86,14 @@ void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
             cout << "Error: Expected an argument after " << arg << ".\n";
             error = true;
         }
-        else if (os != nullptr)
+        else if (!outFilename.empty())
         {
             cout << "Error: Argument " << arg << " was given more than once.\n";
             error = true;
         }
         else
         {
-            const char* filename = argv[idx + 1];
-
-            fstream* outFile = new fstream;
-            outFile->open(filename, ios_base::out);
-
-            os = outFile;
-            if (os->fail())
-            {
-                cout << "Error: Could not open file \"" << filename << "\".\n";
-                error = true;
-            }
+            outFilename = argv[idx + 1];
 
             // increment index
             ++idx;
@@ -118,24 +104,57 @@ void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
         cout << HELP_MESSAGE;
         done = true;
     }
-    else
+    else // arg is the input file
     {
-        if (is != nullptr)
+        if (!inFilename.empty())
         {
-            cout << "Error: More than one input file cannot be given.\n";
+            cout << "Error: Cannot process more than one input file.\n";
             error = true;
         }
         else
         {
-            fstream* inFile = new fstream;
-            inFile->open(arg, ios_base::in);
+            inFilename = arg;
+        }
+    }
+}
 
-            is = inFile;
-            if (is->fail())
-            {
-                cout << "Error: Could not open file \"" << arg << "\".\n";
-                error = true;
-            }
+void Arguments::configIO()
+{
+    // --- Input ---
+
+    if (inFilename.empty())
+    {
+        is = &cin;
+    }
+    else
+    {
+        fstream* inFile = new fstream;
+        inFile->open(inFilename, ios_base::in);
+
+        is = inFile;
+        if (is->fail())
+        {
+            cout << "Error: Could not open file \"" << inFilename << "\".\n";
+            error = true;
+        }
+    }
+
+    // --- Output ---
+
+    if (outFilename.empty())
+    {
+        os = &cout;
+    }
+    else
+    {
+        fstream* outFile = new fstream;
+        outFile->open(outFilename, ios_base::out);
+
+        os = outFile;
+        if (os->fail())
+        {
+            cout << "Error: Could not open file \"" << outFilename << "\".\n";
+            error = true;
         }
     }
 }
