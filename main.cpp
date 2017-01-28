@@ -4,13 +4,13 @@
 int main(int argc, const char* argv[])
 {
     Arguments args;
-    bool ok = args.parse(argc, argv);
+    args.parse(argc, argv);
 
-    if (ok)
+    if (!args.isDone() && !args.isError())
     {
         Assembler assembler(args);
         assembler.assemble();
     }
 
-    return ok ? 0 : 1;
+    return args.isError() ? 1 : 0;
 }

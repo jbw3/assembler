@@ -11,16 +11,24 @@ public:
 
     ~Arguments();
 
-    bool parse(int argc, const char* argv[]);
+    bool isDone() const;
+
+    bool isError() const;
+
+    void parse(int argc, const char* argv[]);
 
     InstructionSet instructionSet;
     ICodeGenerator* codeGenerator;
     std::istream* is;
 
 private:
-    std::ostream* os;
+    static const char* HELP_MESSAGE;
 
-    bool parseNextArgs(int& idx, int argc, const char* argv[]);
+    std::ostream* os;
+    bool done;
+    bool error;
+
+    void parseNextArgs(int& idx, int argc, const char* argv[]);
 };
 
 #endif // ARGUMENTS_H_

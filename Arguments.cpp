@@ -8,11 +8,24 @@
 
 using namespace std;
 
+const char* Arguments::HELP_MESSAGE =
+R"(asm [input] [-h] [-o output]
+
+Assemble the input file and output the result to the output file. If no input
+file is specified, stdin is used. If no output file is specified, stdout is
+used.
+
+  --help, -h        display help message
+  --output, -o      output file
+)";
+
 Arguments::Arguments() :
     instructionSet(ISET_8_BIT),
     codeGenerator(nullptr),
     is(nullptr),
-    os(nullptr)
+    os(nullptr),
+    done(false),
+    error(false)
 {
 }
 
@@ -31,14 +44,24 @@ Arguments::~Arguments()
     }
 }
 
-bool Arguments::parse(int argc, const char* argv[])
+bool Arguments::isDone() const
+{
+    return done;
+}
+
+bool Arguments::isError() const
+{
+    return error;
+}
+
+void Arguments::parse(int argc, const char* argv[])
 {
     for (int idx = 1; idx < argc; ++idx)
     {
-        bool ok = parseNextArgs(idx, argc, argv);
-        if (!ok)
+        parseNextArgs(idx, argc, argv);
+        if (done || error)
         {
-            return false;
+            return;
         }
     }
 
@@ -52,12 +75,11 @@ bool Arguments::parse(int argc, const char* argv[])
         os = &cout;
     }
 
+    /// @todo Add an argument to let the user specify the code generator.
     codeGenerator = new TextCodeGenerator(*os);
-
-    return true;
 }
 
-bool Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
+void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
 {
     const char* arg = argv[idx];
 
@@ -66,12 +88,12 @@ bool Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
         if (idx + 1 >= argc)
         {
             cout << "Error: Expected an argument after " << arg << ".\n";
-            return false;
+            error = true;
         }
         else if (os != nullptr)
         {
             cout << "Error: Argument " << arg << " was given more than once.\n";
-            return false;
+            error = true;
         }
         else
         {
@@ -84,19 +106,24 @@ bool Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
             if (os->fail())
             {
                 cout << "Error: Could not open file \"" << filename << "\".\n";
-                return false;
+                error = true;
             }
 
             // increment index
             ++idx;
         }
     }
+    else if (std::strcmp(arg, "-h") == 0 || std::strcmp(arg, "--help") == 0)
+    {
+        cout << HELP_MESSAGE;
+        done = true;
+    }
     else
     {
         if (is != nullptr)
         {
             cout << "Error: More than one input file cannot be given.\n";
-            return false;
+            error = true;
         }
         else
         {
@@ -107,10 +134,8 @@ bool Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
             if (is->fail())
             {
                 cout << "Error: Could not open file \"" << arg << "\".\n";
-                return false;
+                error = true;
             }
         }
     }
-
-    return true;
 }
