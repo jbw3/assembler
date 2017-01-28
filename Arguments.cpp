@@ -76,7 +76,7 @@ void Arguments::parse(int argc, const char* argv[])
     }
 
     /// @todo Add an argument to let the user specify the code generator.
-    codeGenerator = new TextCodeGenerator(*os);
+    codeGenerator = new TextCodeGenerator(*os, instructionSet.getWordSize());
 }
 
 void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
