@@ -48,9 +48,9 @@ std::uint64_t Instruction::getOpCode() const
     return opCode;
 }
 
-std::vector<Argument> Instruction::getArguments() const
+const InstructionType& Instruction::getType() const
 {
-    return type.getArguments();
+    return type;
 }
 
 Register::Register(const std::string& name, std::uint64_t byteCode) :

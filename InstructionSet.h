@@ -54,7 +54,7 @@ public:
 
     std::uint64_t getOpCode() const;
 
-    std::vector<Argument> getArguments() const;
+    const InstructionType& getType() const;
 
 private:
     std::string mnemonic;

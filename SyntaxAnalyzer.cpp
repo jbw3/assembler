@@ -4,6 +4,21 @@
 
 using namespace std;
 
+/**
+ * @brief Create a bitmask of the given size.
+ * @details For example, a bitmask of size 3 is 0b111.
+ *
+ * @param size the size in bits
+ * @return the bitmask
+ */
+constexpr uint64_t bitMask(unsigned int size)
+{
+    uint64_t mask = 1;
+    mask <<= size;
+    mask -= 1;
+    return mask;
+}
+
 SyntaxAnalyzer::SyntaxAnalyzer(const InstructionSet& instructionSet) :
     instSet(instructionSet)
 {
@@ -37,6 +52,7 @@ void SyntaxAnalyzer::process(const vector<string>& tokens, InstructionCodeList& 
     }
 }
 
+/// @todo support instructions longer than 64-bit
 void SyntaxAnalyzer::encodeInstruction(const vector<string>& instTokens, InstructionCode& instCode)
 {
     map<string, Instruction> instructions = instSet.getInstructions();
@@ -49,8 +65,13 @@ void SyntaxAnalyzer::encodeInstruction(const vector<string>& instTokens, Instruc
         throw Error("Unknown instruction \"" + name + "\"");
     }
 
-    /// @todo support instructions longer than 64-bit
-    uint64_t code = instIter->second.getOpCode();
+    const Instruction& inst = instIter->second;
+    const InstructionType& instType = inst.getType();
+
+    // op code
+    uint64_t code = inst.getOpCode();
+    code &= bitMask(instType.getOpCodeSize());
+    code <<= instType.getOpCodeOffset();
 
     instCode.push_back(code);
 }

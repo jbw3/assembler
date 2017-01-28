@@ -4,13 +4,13 @@
 #include "InstructionSet.h"
 
 // immediate type
-InstructionType IType{5, 3, {{Argument::eImmediate, 3, 0}}};
+const InstructionType IType{5, 3, {{Argument::eImmediate, 3, 0}}};
 
 // no-arg type
-InstructionType NType{5, 3};
+const InstructionType NType{5, 3};
 
 // register type
-InstructionType RType{5, 3, {{Argument::eRegister, 3, 0}}};
+const InstructionType RType{5, 3, {{Argument::eRegister, 3, 0}}};
 
 const InstructionSet ISET_8_BIT(
     // word size
