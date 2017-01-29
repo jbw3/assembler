@@ -34,20 +34,19 @@ void SyntaxAnalyzer::process(const vector<string>& tokens, InstructionCodeList& 
 
     for (string token : tokens)
     {
+        instTokens.push_back(token);
+
         // if we've reached the end of an instruction, process it
         if (token == END_OF_LINE)
         {
-            if (!instTokens.empty())
+            if (instTokens.size() > 1)
             {
                 InstructionCode instCode;
                 encodeInstruction(instTokens, instCode);
                 instCodeList.push_back(instCode);
-                instTokens.clear();
             }
-        }
-        else
-        {
-            instTokens.push_back(token);
+
+            instTokens.clear();
         }
     }
 }
@@ -73,5 +72,64 @@ void SyntaxAnalyzer::encodeInstruction(const vector<string>& instTokens, Instruc
     code &= bitMask(instType.getOpCodeSize());
     code <<= instType.getOpCodeOffset();
 
+    // arguments
+    vector<string> argTokens;
+    parseArgs(instTokens, argTokens);
+    encodeArgs(inst, argTokens, code);
+
     instCode.push_back(code);
+}
+
+void SyntaxAnalyzer::parseArgs(const vector<string>& instTokens, vector<string>& argTokens)
+{
+    argTokens.clear();
+
+    // if there are no arguments, we can return
+    if (instTokens[1] == END_OF_LINE)
+    {
+        return;
+    }
+
+    bool expectSep = false;
+    for (size_t i = 1; i < instTokens.size(); ++i)
+    {
+        const string& token = instTokens[i];
+
+        if (expectSep)
+        {
+            if (token != ARGUMENT_SEPARATOR && token != END_OF_LINE)
+            {
+                throw Error("Did not expect argument.");
+            }
+        }
+        else
+        {
+            if (token == ARGUMENT_SEPARATOR || token == END_OF_LINE)
+            {
+                throw Error("Expected argument.");
+            }
+            else
+            {
+                argTokens.push_back(token);
+            }
+        }
+
+        expectSep = !expectSep;
+    }
+}
+
+void SyntaxAnalyzer::encodeArgs(const Instruction& inst, const std::vector<std::string>& argTokens, uint64_t& code)
+{
+    const vector<Argument>& args = inst.getType().getArguments();
+
+    size_t expectedNumArgs = args.size();
+    size_t numArgs = argTokens.size();
+    if (numArgs != expectedNumArgs)
+    {
+        string errorMsg = "Expected " + to_string(expectedNumArgs);
+        errorMsg += expectedNumArgs == 1 ? " argument. " : " arguments. ";
+        errorMsg += "Got " + to_string(numArgs);
+        errorMsg += numArgs == 1 ? " argument." : " arguments.";
+        throw Error(errorMsg);
+    }
 }
