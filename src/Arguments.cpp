@@ -7,18 +7,19 @@
 using namespace std;
 
 const char* Arguments::HELP_MESSAGE =
-R"(asm [input] [-h] [-o output]
+R"(asm <-i iSet> [input] [-h] [-o output]
 
 Assemble the input file and output the result to the output file. If no input
 file is specified, stdin is used. If no output file is specified, stdout is
 used.
 
-  --help, -h        display help message
-  --output, -o      output file
+  --help, -h               display help message
+  --instruction-set, -i    instruction set name
+  --output, -o             output file
 )";
 
 Arguments::Arguments() :
-    instructionSetName("W8"),
+    instructionSetName(""),
     is(nullptr),
     os(nullptr),
     done(false),
@@ -60,6 +61,13 @@ void Arguments::parse(int argc, const char* argv[])
         }
     }
 
+    if (instructionSetName.empty())
+    {
+        cerr << "Error: No instruction set was given.\n";
+        error = true;
+        return;
+    }
+
     configIO();
     if (error)
     {
@@ -95,6 +103,35 @@ void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
     {
         cout << HELP_MESSAGE;
         done = true;
+    }
+    else if (std::strcmp(arg, "-i") == 0 || std::strcmp(arg, "--instruction-set") == 0)
+    {
+        if (idx + 1 >= argc)
+        {
+            cerr << "Error: Expected an argument after " << arg << ".\n";
+            error = true;
+        }
+        else if (!instructionSetName.empty())
+        {
+            cerr << "Error: Argument " << arg << " was given more than once.\n";
+            error = true;
+        }
+        else
+        {
+            const char* name = argv[idx + 1];
+            if (InstructionSet::getInstructionSet(name) == nullptr)
+            {
+                cerr << "Error: " << name << " is not a valid instruction set.\n";
+                error = true;
+            }
+            else
+            {
+                instructionSetName = name;
+
+                // increment index
+                ++idx;
+            }
+        }
     }
     else // arg is the input file
     {
