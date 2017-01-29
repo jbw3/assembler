@@ -18,6 +18,7 @@ DEPS = Arguments.h \
        SyntaxAnalyzer.h \
        TextCodeGenerator.h \
        W8.h \
+       W16.h \
        tokens.h
 
 _OBJ = Arguments.cpp.o \

@@ -4,6 +4,7 @@
 
 #include "Arguments.h"
 #include "W8.h"
+#include "W16.h"
 #include "TextCodeGenerator.h"
 
 using namespace std;
@@ -20,7 +21,8 @@ used.
 )";
 
 Arguments::Arguments() :
-    instructionSet(ISET_W8),
+    instructionSet(W8::ISET_W8),
+    // instructionSet(W16::ISET_W16),
     codeGenerator(nullptr),
     is(nullptr),
     os(nullptr),
