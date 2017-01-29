@@ -20,6 +20,10 @@ public:
 
     EType getType() const;
 
+    unsigned int getSize() const;
+
+    unsigned int getOffset() const;
+
 private:
     EType type;
     unsigned int size;
@@ -65,19 +69,23 @@ private:
 class Register
 {
 public:
-    Register(const std::string& name, std::uint64_t byteCode);
+    Register(const std::string& name, std::uint64_t code);
+
+    std::string getName() const;
+
+    std::uint64_t getCode() const;
 
 private:
     std::string name;
-    std::uint64_t byteCode;
+    std::uint64_t code;
 };
 
 class RegisterSet
 {
 public:
-    RegisterSet(const std::string& name, std::uint64_t byteCode);
+    RegisterSet(const std::string& name, std::uint64_t code);
 
-    RegisterSet(const std::string& prefix, unsigned int startNum, unsigned int endNum, std::uint64_t startByteCode);
+    RegisterSet(const std::string& prefix, unsigned int startNum, unsigned int endNum, std::uint64_t startCode);
 
     std::map<std::string, Register> getRegisters() const;
 

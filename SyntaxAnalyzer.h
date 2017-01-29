@@ -25,6 +25,8 @@ private:
     void parseArgs(const std::vector<std::string>& instTokens, std::vector<std::string>& argTokens);
 
     void encodeArgs(const Instruction& inst, const std::vector<std::string>& argTokens, uint64_t& code);
+
+    uint64_t encodeRegister(const std::string& token);
 };
 
 #endif // SYNTAX_ANALYZER_H_

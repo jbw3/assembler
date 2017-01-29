@@ -132,4 +132,46 @@ void SyntaxAnalyzer::encodeArgs(const Instruction& inst, const std::vector<std::
         errorMsg += numArgs == 1 ? " argument." : " arguments.";
         throw Error(errorMsg);
     }
+
+    // encode arguments
+    for (size_t i = 0; i < numArgs; ++i)
+    {
+        const Argument& arg = args[i];
+        uint64_t argCode = 0;
+        switch (arg.getType())
+        {
+        case Argument::eRegister:
+            argCode = encodeRegister(argTokens[i]);
+            break;
+
+        case Argument::eImmediate:
+            throw Error("Not implemented");
+            break;
+
+        default:
+            throw Error("Internal error! Unknown argument type: " + to_string(arg.getType()));
+            break;
+        }
+
+        // add arg code to instruction code
+        argCode &= bitMask(arg.getSize());
+        argCode <<= arg.getOffset();
+
+        code |= argCode;
+    }
+}
+
+uint64_t SyntaxAnalyzer::encodeRegister(const string& token)
+{
+    map<string, Register> registers = instSet.getRegisters();
+
+    // look up the register by name
+    auto regIter = registers.find(token);
+    if (regIter == registers.cend())
+    {
+        throw Error(token + " is not a valid register name.");
+    }
+
+    uint64_t regCode = regIter->second.getCode();
+    return regCode;
 }

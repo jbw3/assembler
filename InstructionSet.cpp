@@ -11,6 +11,16 @@ Argument::EType Argument::getType() const
     return type;
 }
 
+unsigned int Argument::getSize() const
+{
+    return size;
+}
+
+unsigned int Argument::getOffset() const
+{
+    return offset;
+}
+
 InstructionType::InstructionType(unsigned int opCodeSize, unsigned int opCodeOffset, std::initializer_list<Argument> arguments) :
     opCodeSize(opCodeSize),
     opCodeOffset(opCodeOffset),
@@ -53,25 +63,35 @@ const InstructionType& Instruction::getType() const
     return type;
 }
 
-Register::Register(const std::string& name, std::uint64_t byteCode) :
+Register::Register(const std::string& name, std::uint64_t code) :
     name(name),
-    byteCode(byteCode)
+    code(code)
 {}
 
-RegisterSet::RegisterSet(const std::string& name, std::uint64_t byteCode)
+std::string Register::getName() const
 {
-    registers.insert({name, Register(name, byteCode)});
+    return name;
 }
 
-RegisterSet::RegisterSet(const std::string& prefix, unsigned int startNum, unsigned int endNum, std::uint64_t startByteCode)
+std::uint64_t Register::getCode() const
+{
+    return code;
+}
+
+RegisterSet::RegisterSet(const std::string& name, std::uint64_t code)
+{
+    registers.insert({name, Register(name, code)});
+}
+
+RegisterSet::RegisterSet(const std::string& prefix, unsigned int startNum, unsigned int endNum, std::uint64_t startCode)
 {
     std::string name;
-    std::uint64_t byteCode = startByteCode;
+    std::uint64_t code = startCode;
     for (unsigned int i = startNum; i <= endNum; ++i)
     {
         name = prefix + std::to_string(i);
-        registers.insert({name, Register(name, byteCode)});
-        ++byteCode;
+        registers.insert({name, Register(name, code)});
+        ++code;
     }
 }
 
