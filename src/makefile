@@ -1,5 +1,6 @@
 INCLUDES =
-OBJDIR = obj
+OBJDIR = ../obj
+BINDIR = ../bin
 
 CXX = clang++
 CXXFLAGS = $(INCLUDES) -std=c++1z -Wall
@@ -29,7 +30,7 @@ _OBJ = Arguments.cpp.o \
        main.cpp.o
 OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
 
-TARGET = asm
+TARGET = $(BINDIR)/asm
 
 .PHONY: all
 all: init $(TARGET)
@@ -37,6 +38,7 @@ all: init $(TARGET)
 .PHONY: init
 init:
 	mkdir -p $(OBJDIR)
+	mkdir -p $(BINDIR)
 
 $(TARGET): $(OBJ)
 	$(CXX) $(OBJ) -o $(TARGET) $(LDFLAGS)
