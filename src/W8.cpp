@@ -1,10 +1,4 @@
-#ifndef W8_H_
-#define W8_H_
-
 #include "InstructionSet.h"
-
-namespace W8
-{
 
 // immediate type
 const InstructionType IType{5, 3, {{Argument::eImmediate, 3, 0}}};
@@ -49,7 +43,3 @@ const InstructionSet ISET_W8(
         { "BLTZ", 0b10001, RType },  // branch less than zero
     }
 );
-
-} // namespace W8
-
-#endif // W8_H_

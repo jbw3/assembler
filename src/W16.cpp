@@ -1,10 +1,4 @@
-#ifndef W16_H_
-#define W16_H_
-
 #include "InstructionSet.h"
-
-namespace W16
-{
 
 // no-arg type
 const InstructionType NType{5, 11};
@@ -41,7 +35,3 @@ const InstructionSet ISET_W16(
         { "ADDI", 0x0b, RIType  },  // add immediate
     }
 );
-
-} // namespace W16
-
-#endif // W16_H_
