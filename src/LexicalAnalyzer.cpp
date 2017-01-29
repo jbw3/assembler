@@ -21,6 +21,48 @@ constexpr bool isIdentifierChar(char ch, bool first)
     }
 }
 
+bool isNumber(const string& token)
+{
+    size_t idx = 0;
+
+    // determine base
+    int base = 10;
+    if (token.size() >= 2)
+    {
+        if ( token[0] == '0' && (token[1] == 'x' || token[1] == 'X') )
+        {
+            base = 16;
+            idx += 2;
+        }
+    }
+
+    if (base == 16)
+    {
+        for (; idx < token.size(); ++idx)
+        {
+            if (!isxdigit(token[idx]))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    else if (base == 10)
+    {
+        for (; idx < token.size(); ++idx)
+        {
+            if (!isdigit(token[idx]))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // should not get here
+    return false;
+}
+
 LexicalAnalyzer::LexicalAnalyzer() :
     token(""),
     isValid(false)
@@ -138,18 +180,8 @@ bool LexicalAnalyzer::isValidToken(const string& token)
         }
     }
 
-    // decimal integer
-    size_t idx = 0;
-    for (; idx < token.size(); ++idx)
-    {
-        if (!isdigit(token[idx]))
-        {
-            break;
-        }
-    }
-
-    // if we made it through all the chars, this is an integer
-    if (idx == token.size())
+    // number
+    if (isNumber(token))
     {
         return true;
     }

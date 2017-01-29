@@ -184,10 +184,17 @@ uint64_t SyntaxAnalyzer::encodeImmediate(const std::string& token)
     uint64_t immCode = 0;
     size_t pos = 0;
 
+    // determine base
+    int base = 10;
+    if (token.size() >= 2 && token[0] == '0' && (token[1] == 'x' || token[1] == 'X'))
+    {
+        base = 16;
+    }
+
     // try to convert the string to an integer
     try
     {
-        immCode = stoull(token, &pos, 10);
+        immCode = stoull(token, &pos, base);
     }
     catch (invalid_argument)
     {
