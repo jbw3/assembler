@@ -13,11 +13,11 @@ DEPS = Arguments.h \
        Error.h \
        ICodeGenerator.h \
        InstructionSet.h \
-       InstructionSet8Bit.h \
        LexicalAnalyzer.h \
        Preprocessor.h \
        SyntaxAnalyzer.h \
        TextCodeGenerator.h \
+       W8.h \
        tokens.h
 
 _OBJ = Arguments.cpp.o \

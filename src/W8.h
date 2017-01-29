@@ -12,7 +12,7 @@ const InstructionType NType{5, 3};
 // register type
 const InstructionType RType{5, 3, {{Argument::eRegister, 3, 0}}};
 
-const InstructionSet ISET_8_BIT(
+const InstructionSet ISET_W8(
     // word size
     8,
 

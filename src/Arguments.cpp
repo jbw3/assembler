@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include "Arguments.h"
-#include "InstructionSet8Bit.h"
+#include "W8.h"
 #include "TextCodeGenerator.h"
 
 using namespace std;
@@ -20,7 +20,7 @@ used.
 )";
 
 Arguments::Arguments() :
-    instructionSet(ISET_8_BIT),
+    instructionSet(ISET_W8),
     codeGenerator(nullptr),
     is(nullptr),
     os(nullptr),
