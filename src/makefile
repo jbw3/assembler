@@ -3,7 +3,7 @@ OBJDIR = ../obj
 BINDIR = ../bin
 
 CXX = clang++
-CXXFLAGS = $(INCLUDES) -std=c++1z -Wall -Wextra
+CXXFLAGS = $(INCLUDES) -std=c++1z -Wall -Wextra -O2
 
 LDLIBS =
 LDFLAGS = $(LDLIBS)
