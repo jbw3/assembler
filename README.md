@@ -16,3 +16,6 @@ ADD R0
 MOV R0, 7
 SUB R0, R1, R2
 ```
+
+Arguments may be either register names or immediate values.
+Immediate values may only be integers greater than or equal to zero.
