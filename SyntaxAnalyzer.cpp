@@ -1,3 +1,5 @@
+#include <cstring>
+
 #include "Error.h"
 #include "SyntaxAnalyzer.h"
 #include "tokens.h"
@@ -145,7 +147,7 @@ void SyntaxAnalyzer::encodeArgs(const Instruction& inst, const std::vector<std::
             break;
 
         case Argument::eImmediate:
-            throw Error("Not implemented");
+            argCode = encodeImmediate(argTokens[i]);
             break;
 
         default:
@@ -174,4 +176,40 @@ uint64_t SyntaxAnalyzer::encodeRegister(const string& token)
 
     uint64_t regCode = regIter->second.getCode();
     return regCode;
+}
+
+uint64_t SyntaxAnalyzer::encodeImmediate(const std::string& token)
+{
+    bool error = false;
+    uint64_t immCode = 0;
+    size_t pos = 0;
+
+    // try to convert the string to an integer
+    try
+    {
+        immCode = stoull(token, &pos, 10);
+    }
+    catch (invalid_argument)
+    {
+        error = true;
+    }
+    catch (out_of_range)
+    {
+        error = true;
+    }
+
+    // make sure the entire string was used
+    if (pos != token.size())
+    {
+        error = true;
+    }
+
+    if (error)
+    {
+        throw Error(token + " is not a valid integer.");
+    }
+
+    /// @todo warn if number will be truncated in instruction
+
+    return immCode;
 }
