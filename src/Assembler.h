@@ -15,12 +15,14 @@ class Assembler
 public:
     Assembler(const Arguments& args);
 
+    ~Assembler();
+
     void assemble();
 
 private:
     Preprocessor preprocessor;
     LexicalAnalyzer lexicalAnalyzer;
-    SyntaxAnalyzer syntaxAnalyzer;
+    SyntaxAnalyzer* syntaxAnalyzer;
     ICodeGenerator* codeGenerator;
 
     std::istream& is;

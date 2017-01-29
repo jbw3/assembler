@@ -96,7 +96,11 @@ private:
 class InstructionSet
 {
 public:
-    InstructionSet(unsigned int wordSize, std::initializer_list<RegisterSet> registerList, std::initializer_list<Instruction> instructionList);
+    static const InstructionSet* getInstructionSet(const std::string& name);
+
+    InstructionSet(const std::string& name, unsigned int wordSize, std::initializer_list<RegisterSet> registerList, std::initializer_list<Instruction> instructionList);
+
+    std::string getName() const;
 
     unsigned int getWordSize() const;
 
@@ -105,6 +109,9 @@ public:
     std::map<std::string, Instruction> getInstructions() const;
 
 private:
+    static std::map<std::string, const InstructionSet*> allInstructionSets;
+
+    std::string name;
     unsigned int wordSize;
     std::map<std::string, Register> registers;
     std::map<std::string, Instruction> instructions;

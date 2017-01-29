@@ -16,6 +16,9 @@ const InstructionType NType{5, 3};
 const InstructionType RType{5, 3, {{Argument::eRegister, 3, 0}}};
 
 const InstructionSet ISET_W8(
+    // name
+    "W8",
+
     // word size
     8,
 

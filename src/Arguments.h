@@ -1,7 +1,6 @@
 #ifndef ARGUMENTS_H_
 #define ARGUMENTS_H_
 
-#include "ICodeGenerator.h"
 #include "InstructionSet.h"
 
 class Arguments
@@ -17,8 +16,7 @@ public:
 
     void parse(int argc, const char* argv[]);
 
-    InstructionSet instructionSet;
-    ICodeGenerator* codeGenerator;
+    std::string instructionSetName;
     std::istream* is;
     std::ostream* os;
 

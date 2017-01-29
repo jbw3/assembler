@@ -22,6 +22,9 @@ const InstructionType RRIType{4, 12, {{Argument::eRegister, 4, 8}, {Argument::eR
 const InstructionType JType{4, 12, {{Argument::eImmediate, 12, 0}}};
 
 const InstructionSet ISET_W16(
+    // name
+    "W16",
+
     // word size
     16,
 

@@ -4,14 +4,25 @@
 #include "Arguments.h"
 #include "Assembler.h"
 #include "Error.h"
+#include "TextCodeGenerator.h"
 
 using namespace std;
 
 Assembler::Assembler(const Arguments& args) :
-    syntaxAnalyzer(args.instructionSet),
-    codeGenerator(args.codeGenerator),
     is(*args.is)
 {
+    const InstructionSet* iSet = InstructionSet::getInstructionSet(args.instructionSetName);
+
+    syntaxAnalyzer = new SyntaxAnalyzer(*iSet);
+
+    /// @todo Add an argument to let the user specify the code generator.
+    codeGenerator = new TextCodeGenerator(*args.os, iSet->getWordSize());
+}
+
+Assembler::~Assembler()
+{
+    delete syntaxAnalyzer;
+    delete codeGenerator;
 }
 
 void Assembler::assemble()
@@ -58,7 +69,7 @@ void Assembler::process()
 
     SyntaxAnalyzer::InstructionCodeList instCodeList;
 
-    syntaxAnalyzer.process(tokens, instCodeList);
+    syntaxAnalyzer->process(tokens, instCodeList);
 
     /////////////////////////////////
     // Code Generator

@@ -1,5 +1,7 @@
 #include "InstructionSet.h"
 
+using namespace std;
+
 Argument::Argument(EType type, unsigned int size, unsigned int offset) :
     type(type),
     size(size),
@@ -100,12 +102,28 @@ std::map<std::string, Register> RegisterSet::getRegisters() const
     return registers;
 }
 
-InstructionSet::InstructionSet(unsigned int wordSize, std::initializer_list<RegisterSet> registerList, std::initializer_list<Instruction> instructionList) :
+map<string, const InstructionSet*> InstructionSet::allInstructionSets;
+
+const InstructionSet* InstructionSet::getInstructionSet(const string& name)
+{
+    auto iter = allInstructionSets.find(name);
+    if (iter == allInstructionSets.end())
+    {
+        return nullptr;
+    }
+    else
+    {
+        return iter->second;
+    }
+}
+
+InstructionSet::InstructionSet(const string& name, unsigned int wordSize, initializer_list<RegisterSet> registerList, initializer_list<Instruction> instructionList) :
+    name(name),
     wordSize(wordSize)
 {
     for (const RegisterSet& regSet : registerList)
     {
-        const std::map<std::string, Register>& regs = regSet.getRegisters();
+        const map<string, Register>& regs = regSet.getRegisters();
         registers.insert(regs.cbegin(), regs.cend());
     }
 
@@ -113,6 +131,14 @@ InstructionSet::InstructionSet(unsigned int wordSize, std::initializer_list<Regi
     {
         instructions.insert({inst.getMnemonic(), inst});
     }
+
+    // add self to map of instruction sets
+    allInstructionSets.insert({name, this});
+}
+
+string InstructionSet::getName() const
+{
+    return name;
 }
 
 unsigned int InstructionSet::getWordSize() const
@@ -120,12 +146,12 @@ unsigned int InstructionSet::getWordSize() const
     return wordSize;
 }
 
-std::map<std::string, Register> InstructionSet::getRegisters() const
+map<string, Register> InstructionSet::getRegisters() const
 {
     return registers;
 }
 
-std::map<std::string, Instruction> InstructionSet::getInstructions() const
+map<string, Instruction> InstructionSet::getInstructions() const
 {
     return instructions;
 }

@@ -17,8 +17,6 @@ DEPS = Arguments.h \
        Preprocessor.h \
        SyntaxAnalyzer.h \
        TextCodeGenerator.h \
-       W8.h \
-       W16.h \
        tokens.h
 
 _OBJ = Arguments.cpp.o \
@@ -28,6 +26,8 @@ _OBJ = Arguments.cpp.o \
        Preprocessor.cpp.o \
        SyntaxAnalyzer.cpp.o \
        TextCodeGenerator.cpp.o \
+       W8.cpp.o \
+       W16.cpp.o \
        main.cpp.o
 OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
 

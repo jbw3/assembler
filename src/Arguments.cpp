@@ -3,9 +3,6 @@
 #include <iostream>
 
 #include "Arguments.h"
-#include "W8.h"
-#include "W16.h"
-#include "TextCodeGenerator.h"
 
 using namespace std;
 
@@ -21,9 +18,7 @@ used.
 )";
 
 Arguments::Arguments() :
-    instructionSet(W8::ISET_W8),
-    // instructionSet(W16::ISET_W16),
-    codeGenerator(nullptr),
+    instructionSetName("W8"),
     is(nullptr),
     os(nullptr),
     done(false),
@@ -33,8 +28,6 @@ Arguments::Arguments() :
 
 Arguments::~Arguments()
 {
-    delete codeGenerator;
-
     if (is != &cin)
     {
         delete is;
@@ -72,9 +65,6 @@ void Arguments::parse(int argc, const char* argv[])
     {
         return;
     }
-
-    /// @todo Add an argument to let the user specify the code generator.
-    codeGenerator = new TextCodeGenerator(*os, instructionSet.getWordSize());
 }
 
 void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
