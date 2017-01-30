@@ -17,18 +17,20 @@ DEPS = Arguments.h \
        Preprocessor.h \
        SyntaxAnalyzer.h \
        TextCodeGenerator.h \
-       tokens.h
+       tokens.h \
+       utils.h
 
 _OBJ = Arguments.cpp.o \
        Assembler.cpp.o \
        InstructionSet.cpp.o \
        LexicalAnalyzer.cpp.o \
+       main.cpp.o \
        Preprocessor.cpp.o \
        SyntaxAnalyzer.cpp.o \
        TextCodeGenerator.cpp.o \
+       utils.cpp.o \
        W8.cpp.o \
-       W16.cpp.o \
-       main.cpp.o
+       W16.cpp.o
 OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
 
 TARGET = $(BINDIR)/asm

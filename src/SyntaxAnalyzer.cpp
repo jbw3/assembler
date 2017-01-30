@@ -3,6 +3,7 @@
 #include "Error.h"
 #include "SyntaxAnalyzer.h"
 #include "tokens.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -60,7 +61,8 @@ void SyntaxAnalyzer::encodeInstruction(const vector<string>& instTokens, Instruc
 
     // first token is instruction mnemonic
     string name = instTokens[0];
-    auto instIter = instructions.find(name);
+    string nameUpper = toUpper(name);
+    auto instIter = instructions.find(nameUpper);
     if (instIter == instructions.end())
     {
         throw Error("Unknown instruction \"" + name + "\"");
@@ -168,7 +170,8 @@ uint64_t SyntaxAnalyzer::encodeRegister(const string& token)
     map<string, Register> registers = instSet.getRegisters();
 
     // look up the register by name
-    auto regIter = registers.find(token);
+    string tokenUpper = toUpper(token);
+    auto regIter = registers.find(tokenUpper);
     if (regIter == registers.cend())
     {
         throw Error(token + " is not a valid register name.");

@@ -1,4 +1,5 @@
 #include "InstructionSet.h"
+#include "utils.h"
 
 using namespace std;
 
@@ -45,7 +46,7 @@ std::vector<Argument> InstructionType::getArguments() const
 }
 
 Instruction::Instruction(const std::string& mnemonic, std::uint64_t opCode, const InstructionType& type) :
-    mnemonic(mnemonic),
+    mnemonic(toUpper(mnemonic)),
     opCode(opCode),
     type(type)
 {}
@@ -66,7 +67,7 @@ const InstructionType& Instruction::getType() const
 }
 
 Register::Register(const std::string& name, std::uint64_t code) :
-    name(name),
+    name(toUpper(name)),
     code(code)
 {}
 
@@ -82,7 +83,8 @@ std::uint64_t Register::getCode() const
 
 RegisterSet::RegisterSet(const std::string& name, std::uint64_t code)
 {
-    registers.insert({name, Register(name, code)});
+    Register reg(name, code);
+    registers.insert({reg.getName(), reg});
 }
 
 RegisterSet::RegisterSet(const std::string& prefix, unsigned int startNum, unsigned int endNum, std::uint64_t startCode)
@@ -92,7 +94,10 @@ RegisterSet::RegisterSet(const std::string& prefix, unsigned int startNum, unsig
     for (unsigned int i = startNum; i <= endNum; ++i)
     {
         name = prefix + std::to_string(i);
-        registers.insert({name, Register(name, code)});
+
+        Register reg(name, code);
+        registers.insert({reg.getName(), reg});
+
         ++code;
     }
 }
