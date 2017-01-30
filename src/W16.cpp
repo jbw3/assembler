@@ -1,7 +1,7 @@
 #include "InstructionSet.h"
 
 // no-arg type
-const InstructionType NType{5, 11};
+const InstructionType NType{8, 8};
 
 // Register-Register type
 const InstructionType RRType{8, 8, {{Argument::eRegister, 4, 4}, {Argument::eRegister, 4, 0}}};
