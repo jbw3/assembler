@@ -7,7 +7,7 @@
 using namespace std;
 
 const char* Arguments::HELP_MESSAGE =
-R"(asm <-i iSet> [input] [-h] [-o output]
+R"(asm <-i iSet> [input] [-h] [-l] [-o output]
 
 Assemble the input file and output the result to the output file. If no input
 file is specified, stdin is used. If no output file is specified, stdout is
