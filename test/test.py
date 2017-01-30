@@ -40,8 +40,9 @@ class Tester(object):
 def main():
     tester = Tester()
 
-    tester.add('W8', 'test1.s', 'test1.out')
-    tester.add('W8', 'test2.s', 'test2.out')
+    tester.add('W8', 'W8_1.s', 'W8_1.out')
+    tester.add('W8', 'W8_2.s', 'W8_2.out')
+    tester.add('W16', 'W16_1.s', 'W16_1.out')
 
     tester.run()
 
