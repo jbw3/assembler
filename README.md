@@ -14,6 +14,7 @@ Option `-h` may be used to display a help message.
 
 ## Assembly Syntax
 
+The syntax is case insensitive.
 Comments start with an octothorpe (#) and continue to the end of the line.
 ```
 # This is a comment
