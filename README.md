@@ -36,3 +36,9 @@ Immediate values may only be integers greater than or equal to zero and can be i
 MOV R2, 0xD2
 ADDI R0, 42
 ```
+
+
+## Adding an Instruction Set
+
+An example instruction set file is in the doc directory.
+An instruction set can be added by simply adding its .cpp file to the makefile, so it is compiled into the assembler.
