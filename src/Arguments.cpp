@@ -16,6 +16,9 @@ used.
   --help, -h               display help message
   --instruction-set, -i    instruction set name
   --output, -o             output file
+
+Example:
+  asm test.s -i W8 -o test.out
 )";
 
 Arguments::Arguments() :

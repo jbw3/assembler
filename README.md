@@ -1,6 +1,18 @@
 # Assembler
 
-## Syntax
+
+## Quick Start
+
+Run `asm` as follows:
+```
+asm in.s -i W8 -o out.txt
+```
+
+Option `-i` is used to specify the instruction set, and option `-o` is the output file.
+Option `-h` may be used to display a help message.
+
+
+## Assembly Syntax
 
 Comments start with an octothorpe (#) and continue to the end of the line.
 ```
