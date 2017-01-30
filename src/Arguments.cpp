@@ -13,9 +13,10 @@ Assemble the input file and output the result to the output file. If no input
 file is specified, stdin is used. If no output file is specified, stdout is
 used.
 
-  --help, -h               display help message
-  --instruction-set, -i    instruction set name
-  --output, -o             output file
+  --help, -h          display help message
+  --i-set, -i         instruction set name
+  --list-i-set, -l    list available instruction sets
+  --output, -o        output file
 
 Example:
   asm test.s -i W8 -o test.out
@@ -107,7 +108,7 @@ void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
         cout << HELP_MESSAGE;
         done = true;
     }
-    else if (std::strcmp(arg, "-i") == 0 || std::strcmp(arg, "--instruction-set") == 0)
+    else if (std::strcmp(arg, "-i") == 0 || std::strcmp(arg, "--i-set") == 0)
     {
         if (idx + 1 >= argc)
         {
@@ -135,6 +136,14 @@ void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
                 ++idx;
             }
         }
+    }
+    else if (std::strcmp(arg, "-l") == 0 || std::strcmp(arg, "--list-i-set") == 0)
+    {
+        for (string name : InstructionSet::getInstructionSetNames())
+        {
+            cout << name << '\n';
+        }
+        done = true;
     }
     else // arg is the input file
     {

@@ -96,6 +96,8 @@ private:
 class InstructionSet
 {
 public:
+    static std::vector<std::string> getInstructionSetNames();
+
     static const InstructionSet* getInstructionSet(const std::string& name);
 
     InstructionSet(const std::string& name, unsigned int wordSize, std::initializer_list<RegisterSet> registerList, std::initializer_list<Instruction> instructionList);

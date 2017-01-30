@@ -109,6 +109,19 @@ std::map<std::string, Register> RegisterSet::getRegisters() const
 
 map<string, const InstructionSet*> InstructionSet::allInstructionSets;
 
+vector<string> InstructionSet::getInstructionSetNames()
+{
+    vector<string> names;
+    names.reserve(allInstructionSets.size());
+
+    for (auto pair : allInstructionSets)
+    {
+        names.push_back(pair.first);
+    }
+
+    return names;
+}
+
 const InstructionSet* InstructionSet::getInstructionSet(const string& name)
 {
     auto iter = allInstructionSets.find(name);
