@@ -11,12 +11,12 @@ LDFLAGS = $(LDLIBS)
 DEPS = Arguments.h \
        Assembler.h \
        Error.h \
-       ICodeGenerator.h \
        InstructionSet.h \
+       IOutputFormatter.h \
        LexicalAnalyzer.h \
        Preprocessor.h \
        SyntaxAnalyzer.h \
-       TextCodeGenerator.h \
+       TextOutputFormatter.h \
        tokens.h \
        utils.h
 
@@ -27,7 +27,7 @@ _OBJ = Arguments.cpp.o \
        main.cpp.o \
        Preprocessor.cpp.o \
        SyntaxAnalyzer.cpp.o \
-       TextCodeGenerator.cpp.o \
+       TextOutputFormatter.cpp.o \
        utils.cpp.o \
        W8.cpp.o \
        W16.cpp.o

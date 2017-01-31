@@ -3,10 +3,11 @@
 
 #include <istream>
 
-#include "ICodeGenerator.h"
 #include "LexicalAnalyzer.h"
 #include "Preprocessor.h"
 #include "SyntaxAnalyzer.h"
+
+class IOutputFormatter;
 
 class Arguments;
 
@@ -23,7 +24,7 @@ private:
     Preprocessor preprocessor;
     LexicalAnalyzer lexicalAnalyzer;
     SyntaxAnalyzer* syntaxAnalyzer;
-    ICodeGenerator* codeGenerator;
+    IOutputFormatter* outputFormatter;
 
     std::istream& is;
 

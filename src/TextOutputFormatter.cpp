@@ -1,17 +1,17 @@
 #include <iomanip>
 #include <ostream>
 
-#include "TextCodeGenerator.h"
+#include "TextOutputFormatter.h"
 
 using namespace std;
 
-TextCodeGenerator::TextCodeGenerator(ostream& os, unsigned int wordSize) :
+TextOutputFormatter::TextOutputFormatter(ostream& os, unsigned int wordSize) :
     os(os),
     wordSize(wordSize)
 {
 }
 
-void TextCodeGenerator::generate(const SyntaxAnalyzer::InstructionCodeList& instCodeList)
+void TextOutputFormatter::generate(const SyntaxAnalyzer::InstructionCodeList& instCodeList)
 {
     // save original settings
     ios_base::fmtflags origFlags = os.flags();

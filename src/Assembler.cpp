@@ -4,7 +4,8 @@
 #include "Arguments.h"
 #include "Assembler.h"
 #include "Error.h"
-#include "TextCodeGenerator.h"
+#include "IOutputFormatter.h"
+#include "TextOutputFormatter.h"
 
 using namespace std;
 
@@ -15,14 +16,14 @@ Assembler::Assembler(const Arguments& args) :
 
     syntaxAnalyzer = new SyntaxAnalyzer(*iSet);
 
-    /// @todo Add an argument to let the user specify the code generator.
-    codeGenerator = new TextCodeGenerator(*args.os, iSet->getWordSize());
+    /// @todo Add an argument to let the user specify the output formatter.
+    outputFormatter = new TextOutputFormatter(*args.os, iSet->getWordSize());
 }
 
 Assembler::~Assembler()
 {
     delete syntaxAnalyzer;
-    delete codeGenerator;
+    delete outputFormatter;
 }
 
 void Assembler::assemble()
@@ -72,8 +73,8 @@ void Assembler::process()
     syntaxAnalyzer->process(tokens, instCodeList);
 
     /////////////////////////////////
-    // Code Generator
+    // Output Formatter
     /////////////////////////////////
 
-    codeGenerator->generate(instCodeList);
+    outputFormatter->generate(instCodeList);
 }
