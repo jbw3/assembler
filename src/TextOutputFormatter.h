@@ -10,7 +10,7 @@ class TextOutputFormatter : public IOutputFormatter
 public:
     TextOutputFormatter(std::ostream& os, unsigned int wordSize);
 
-    void generate(const SyntaxAnalyzer::InstructionCodeList& instCodeList) override;
+    void generate(const CodeGenerator::InstructionCodeList& instCodeList) override;
 
 private:
     std::ostream& os;

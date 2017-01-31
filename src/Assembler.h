@@ -5,11 +5,11 @@
 
 #include "LexicalAnalyzer.h"
 #include "Preprocessor.h"
-#include "SyntaxAnalyzer.h"
-
-class IOutputFormatter;
 
 class Arguments;
+class CodeGenerator;
+class IOutputFormatter;
+class SyntaxAnalyzer;
 
 class Assembler
 {
@@ -24,6 +24,7 @@ private:
     Preprocessor preprocessor;
     LexicalAnalyzer lexicalAnalyzer;
     SyntaxAnalyzer* syntaxAnalyzer;
+    CodeGenerator* codeGenerator;
     IOutputFormatter* outputFormatter;
 
     std::istream& is;

@@ -11,7 +11,7 @@ TextOutputFormatter::TextOutputFormatter(ostream& os, unsigned int wordSize) :
 {
 }
 
-void TextOutputFormatter::generate(const SyntaxAnalyzer::InstructionCodeList& instCodeList)
+void TextOutputFormatter::generate(const CodeGenerator::InstructionCodeList& instCodeList)
 {
     // save original settings
     ios_base::fmtflags origFlags = os.flags();
@@ -20,7 +20,7 @@ void TextOutputFormatter::generate(const SyntaxAnalyzer::InstructionCodeList& in
     os << hex << setfill('0');
 
     int width = wordSize / 4;
-    for (SyntaxAnalyzer::InstructionCode code : instCodeList)
+    for (CodeGenerator::InstructionCode code : instCodeList)
     {
         /// @todo support instructions longer than 64-bit
         os << setw(width) << code[0] << "\n";

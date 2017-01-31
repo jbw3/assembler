@@ -3,8 +3,11 @@
 
 #include "Arguments.h"
 #include "Assembler.h"
+#include "CodeGenerator.h"
 #include "Error.h"
 #include "IOutputFormatter.h"
+#include "SyntaxAnalyzer.h"
+#include "SyntaxTree.h"
 #include "TextOutputFormatter.h"
 
 using namespace std;
@@ -16,6 +19,8 @@ Assembler::Assembler(const Arguments& args) :
 
     syntaxAnalyzer = new SyntaxAnalyzer(*iSet);
 
+    codeGenerator = new CodeGenerator(*iSet);
+
     /// @todo Add an argument to let the user specify the output formatter.
     outputFormatter = new TextOutputFormatter(*args.os, iSet->getWordSize());
 }
@@ -23,6 +28,7 @@ Assembler::Assembler(const Arguments& args) :
 Assembler::~Assembler()
 {
     delete syntaxAnalyzer;
+    delete codeGenerator;
     delete outputFormatter;
 }
 
@@ -68,9 +74,17 @@ void Assembler::process()
     // Syntax Analyzer
     /////////////////////////////////
 
-    SyntaxAnalyzer::InstructionCodeList instCodeList;
+    SyntaxTree syntaxTree;
 
-    syntaxAnalyzer->process(tokens, instCodeList);
+    syntaxAnalyzer->process(tokens, syntaxTree);
+
+    /////////////////////////////////
+    // Code Generator
+    /////////////////////////////////
+
+    CodeGenerator::InstructionCodeList instCodeList;
+
+    codeGenerator->process(syntaxTree, instCodeList);
 
     /////////////////////////////////
     // Output Formatter
