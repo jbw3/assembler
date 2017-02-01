@@ -29,7 +29,7 @@ private:
 
     uint64_t encodeRegister(const std::string& token);
 
-    uint64_t encodeImmediate(const std::string& token);
+    uint64_t encodeImmediate(const std::string& token, const Argument& arg);
 };
 
 #endif // CODE_GENERATOR_H_

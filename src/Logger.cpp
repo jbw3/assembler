@@ -12,10 +12,15 @@ Logger& Logger::getInstance()
 
 void Logger::logWarning(const string& message)
 {
-    cerr << "WARNING:\n" << message << "\n";
+    logMessage("WARNING", message);
 }
 
 void Logger::logError(const string& message)
 {
-    cerr << "ERROR:\n" << message << "\n";
+    logMessage("ERROR", message);
+}
+
+void Logger::logMessage(const std::string& prefix, const std::string& message)
+{
+    cerr << prefix << ":\n" << message << "\n";
 }

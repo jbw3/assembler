@@ -80,7 +80,7 @@ void CodeGenerator::encodeArgs(const Instruction& inst, const std::vector<std::s
             break;
 
         case Argument::eImmediate:
-            argCode = encodeImmediate(argTokens[i]);
+            argCode = encodeImmediate(argTokens[i], arg);
             break;
 
         default:
@@ -114,7 +114,7 @@ uint64_t CodeGenerator::encodeRegister(const string& token)
     return regCode;
 }
 
-uint64_t CodeGenerator::encodeImmediate(const string& token)
+uint64_t CodeGenerator::encodeImmediate(const string& token, const Argument& arg)
 {
     bool error = false;
     uint64_t immCode = 0;
@@ -153,7 +153,11 @@ uint64_t CodeGenerator::encodeImmediate(const string& token)
         throw Error();
     }
 
-    /// @todo warn if number will be truncated in instruction
+    // Warn if number will be truncated in instruction.
+    if ( immCode != (immCode & bitMask(arg.getSize())) )
+    {
+        Logger::getInstance().logWarning("Immediate value \"" + token + "\" was truncated.");
+    }
 
     return immCode;
 }

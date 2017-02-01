@@ -24,6 +24,8 @@ private:
     Logger& operator =(const Logger&) = default;
 
     Logger& operator =(Logger&&) = default;
+
+    void logMessage(const std::string& prefix, const std::string& message);
 };
 
 #endif // LOGGER_H_
