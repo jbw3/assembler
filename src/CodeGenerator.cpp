@@ -1,5 +1,6 @@
 #include "CodeGenerator.h"
 #include "Error.h"
+#include "Logger.h"
 #include "SyntaxTree.h"
 #include "utils.h"
 
@@ -32,7 +33,8 @@ void CodeGenerator::encodeInstruction(const InstructionTokens& tokens, Instructi
     auto instIter = instructions.find(mnemonicUpper);
     if (instIter == instructions.end())
     {
-        throw Error("Unknown instruction \"" + tokens.mnemonic + "\"");
+        Logger::getInstance().logError("Unknown instruction \"" + tokens.mnemonic + "\"");
+        throw Error();
     }
 
     const Instruction& inst = instIter->second;
@@ -62,7 +64,8 @@ void CodeGenerator::encodeArgs(const Instruction& inst, const std::vector<std::s
         errorMsg += expectedNumArgs == 1 ? " argument. " : " arguments. ";
         errorMsg += "Got " + to_string(numArgs);
         errorMsg += numArgs == 1 ? " argument." : " arguments.";
-        throw Error(errorMsg);
+        Logger::getInstance().logError(errorMsg);
+        throw Error();
     }
 
     // encode arguments
@@ -81,7 +84,8 @@ void CodeGenerator::encodeArgs(const Instruction& inst, const std::vector<std::s
             break;
 
         default:
-            throw Error("Internal error! Unknown argument type: " + to_string(arg.getType()));
+            Logger::getInstance().logError("Internal error! Unknown argument type: " + to_string(arg.getType()));
+            throw Error();
             break;
         }
 
@@ -102,7 +106,8 @@ uint64_t CodeGenerator::encodeRegister(const string& token)
     auto regIter = registers.find(tokenUpper);
     if (regIter == registers.cend())
     {
-        throw Error(token + " is not a valid register name.");
+        Logger::getInstance().logError(token + " is not a valid register name.");
+        throw Error();
     }
 
     uint64_t regCode = regIter->second.getCode();
@@ -144,7 +149,8 @@ uint64_t CodeGenerator::encodeImmediate(const string& token)
 
     if (error)
     {
-        throw Error(token + " is not a valid integer.");
+        Logger::getInstance().logError(token + " is not a valid integer.");
+        throw Error();
     }
 
     /// @todo warn if number will be truncated in instruction

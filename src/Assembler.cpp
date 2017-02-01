@@ -32,24 +32,20 @@ Assembler::~Assembler()
     delete outputFormatter;
 }
 
-void Assembler::assemble()
+bool Assembler::assemble()
 {
+    bool ok = true;
+
     try
     {
         process();
     }
-    catch (const Error& error)
+    catch (const Error&)
     {
-        long long line = error.getLine();
-
-        cerr << "Error";
-        if (line > 0)
-        {
-            cerr << ", line " << line;
-        }
-        cerr << ":\n";
-        cerr << error.getMessage() << "\n";
+        ok = false;
     }
+
+    return ok;
 }
 
 void Assembler::process()

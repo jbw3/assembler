@@ -15,6 +15,7 @@ DEPS = Arguments.h \
        InstructionSet.h \
        IOutputFormatter.h \
        LexicalAnalyzer.h \
+       Logger.h \
        Preprocessor.h \
        SyntaxAnalyzer.h \
        SyntaxTree.h \
@@ -27,6 +28,7 @@ _OBJ = Arguments.cpp.o \
        CodeGenerator.cpp.o \
        InstructionSet.cpp.o \
        LexicalAnalyzer.cpp.o \
+       Logger.cpp.o \
        main.cpp.o \
        Preprocessor.cpp.o \
        SyntaxAnalyzer.cpp.o \

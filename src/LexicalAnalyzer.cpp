@@ -3,6 +3,7 @@
 
 #include "Error.h"
 #include "LexicalAnalyzer.h"
+#include "Logger.h"
 #include "tokens.h"
 
 #define PRINT_TOKENS 0
@@ -92,7 +93,8 @@ void LexicalAnalyzer::process(istream& is, vector<string>& tokens)
         }
         else
         {
-            throw Error("Invalid token \"" + token + "\".");
+            Logger::getInstance().logError("Invalid token \"" + token + "\".");
+            throw Error();
         }
     }
 
@@ -120,7 +122,8 @@ void LexicalAnalyzer::parseChar(char ch, vector<string>& tokens)
             }
             else
             {
-                throw Error("Invalid token \"" + token + "\".");
+                Logger::getInstance().logError("Invalid token \"" + token + "\".");
+                throw Error();
             }
         }
     }

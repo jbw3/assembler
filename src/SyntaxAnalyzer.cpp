@@ -1,6 +1,7 @@
 #include <cstring>
 
 #include "Error.h"
+#include "Logger.h"
 #include "SyntaxAnalyzer.h"
 #include "SyntaxTree.h"
 #include "tokens.h"
@@ -59,14 +60,16 @@ void SyntaxAnalyzer::parseArgs(const vector<string>& instTokens, vector<string>&
         {
             if (token != ARGUMENT_SEPARATOR && token != END_OF_LINE)
             {
-                throw Error("Did not expect argument.");
+                Logger::getInstance().logError("Did not expect argument.");
+                throw Error();
             }
         }
         else
         {
             if (token == ARGUMENT_SEPARATOR || token == END_OF_LINE)
             {
-                throw Error("Expected argument.");
+                Logger::getInstance().logError("Expected argument.");
+                throw Error();
             }
             else
             {

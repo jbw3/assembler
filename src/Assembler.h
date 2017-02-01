@@ -18,7 +18,7 @@ public:
 
     ~Assembler();
 
-    void assemble();
+    bool assemble();
 
 private:
     Preprocessor preprocessor;
