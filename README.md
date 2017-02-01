@@ -31,10 +31,12 @@ SUB R0, R1, R2
 ```
 
 Arguments may be either register names or immediate values.
-Immediate values may only be integers greater than or equal to zero and may be in decimal or hexadecimal format.
+Immediate values may only be integers greater than or equal to zero and may be in binary, octal, decimal, or hexadecimal format.
 ```
-MOV R2, 0xD2
-ADDI R0, 42
+MOV R5, 0b101  # binary
+MOV R10, 0o777 # octal
+ADDI R0, 42    # decimal
+MOV R2, 0xD2   # hexadecimal
 ```
 
 

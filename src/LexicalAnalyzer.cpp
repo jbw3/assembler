@@ -28,20 +28,50 @@ bool isNumber(const string& token)
 
     // determine base
     int base = 10;
-    if (token.size() >= 2)
+    if (token.size() >= 2 && token[0] == '0')
     {
-        if ( token[0] == '0' && (token[1] == 'x' || token[1] == 'X') )
+        switch (token[1])
         {
+        case 'b':
+        case 'B':
+            base = 2;
+            idx += 2;
+            break;
+
+        case 'o':
+        case 'O':
+            base = 8;
+            idx += 2;
+            break;
+
+        case 'x':
+        case 'X':
             base = 16;
             idx += 2;
+            break;
+
+        default:
+            base = 10;
+            break;
         }
     }
 
-    if (base == 16)
+    if (base == 2)
     {
         for (; idx < token.size(); ++idx)
         {
-            if (!isxdigit(token[idx]))
+            if (token[idx] != '0' && token[idx] != '1')
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    else if (base == 8)
+    {
+        for (; idx < token.size(); ++idx)
+        {
+            if (token[idx] < '0' || token[idx] > '7')
             {
                 return false;
             }
@@ -53,6 +83,17 @@ bool isNumber(const string& token)
         for (; idx < token.size(); ++idx)
         {
             if (!isdigit(token[idx]))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    else if (base == 16)
+    {
+        for (; idx < token.size(); ++idx)
+        {
+            if (!isxdigit(token[idx]))
             {
                 return false;
             }

@@ -122,15 +122,38 @@ uint64_t CodeGenerator::encodeImmediate(const string& token, const Argument& arg
 
     // determine base
     int base = 10;
-    if (token.size() >= 2 && token[0] == '0' && (token[1] == 'x' || token[1] == 'X'))
+    if (token.size() >= 2 && token[0] == '0')
     {
-        base = 16;
+        switch (token[1])
+        {
+        case 'b':
+        case 'B':
+            base = 2;
+            break;
+
+        case 'o':
+        case 'O':
+            base = 8;
+            break;
+
+        case 'x':
+        case 'X':
+            base = 16;
+            break;
+
+        default:
+            base = 10;
+            break;
+        }
     }
+
+    // strip prefix if not a decimal number
+    string noPrefixToken = (base == 10) ? token : token.substr(2);
 
     // try to convert the string to an integer
     try
     {
-        immCode = stoull(token, &pos, base);
+        immCode = stoull(noPrefixToken, &pos, base);
     }
     catch (invalid_argument)
     {
@@ -142,7 +165,7 @@ uint64_t CodeGenerator::encodeImmediate(const string& token, const Argument& arg
     }
 
     // make sure the entire string was used
-    if (pos != token.size())
+    if (pos != noPrefixToken.size())
     {
         error = true;
     }
