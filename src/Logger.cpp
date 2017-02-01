@@ -10,17 +10,32 @@ Logger& Logger::getInstance()
     return instance;
 }
 
+Logger::Logger() :
+    useColor(true)
+{}
+
 void Logger::logWarning(const string& message)
 {
-    logMessage("WARNING", message);
+    logMessage("WARNING", eYellow, message);
 }
 
 void Logger::logError(const string& message)
 {
-    logMessage("ERROR", message);
+    logMessage("ERROR", eRed, message);
 }
 
-void Logger::logMessage(const std::string& prefix, const std::string& message)
+void Logger::logMessage(const std::string& prefix, EColor color, const std::string& message)
 {
-    cerr << prefix << ":\n" << message << "\n";
+    if (useColor)
+    {
+        cerr << "\x1B[3" << static_cast<char>(color) << "m"
+             << prefix << ":"
+             << "\x1B[m";
+    }
+    else
+    {
+        cerr << prefix << ":";
+    }
+
+    cerr << "\n" << message << "\n";
 }

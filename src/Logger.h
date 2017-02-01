@@ -13,7 +13,21 @@ public:
     void logError(const std::string& message);
 
 private:
-    Logger() = default;
+    enum EColor : char
+    {
+        eBlack   = '0',
+        eRed     = '1',
+        eGreen   = '2',
+        eYellow  = '3',
+        eBlue    = '4',
+        eMagenta = '5',
+        eCyan    = '6',
+        eWhite   = '7',
+    };
+
+    bool useColor;
+
+    Logger();
 
     Logger(const Logger&) = default;
 
@@ -25,7 +39,7 @@ private:
 
     Logger& operator =(Logger&&) = default;
 
-    void logMessage(const std::string& prefix, const std::string& message);
+    void logMessage(const std::string& prefix, EColor color, const std::string& message);
 };
 
 #endif // LOGGER_H_
