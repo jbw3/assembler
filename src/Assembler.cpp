@@ -9,6 +9,7 @@
 #include "SyntaxAnalyzer.h"
 #include "SyntaxTree.h"
 #include "TextOutputFormatter.h"
+#include "Token.h"
 
 using namespace std;
 
@@ -62,7 +63,7 @@ void Assembler::process()
     // Lexical Analyzer
     /////////////////////////////////
 
-    vector<string> tokens;
+    vector<Token> tokens;
 
     lexicalAnalyzer.process(preProcStream, tokens);
 

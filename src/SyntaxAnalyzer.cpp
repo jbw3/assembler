@@ -4,7 +4,6 @@
 #include "Logger.h"
 #include "SyntaxAnalyzer.h"
 #include "SyntaxTree.h"
-#include "tokens.h"
 
 using namespace std;
 
@@ -12,12 +11,12 @@ SyntaxAnalyzer::SyntaxAnalyzer(const InstructionSet& instructionSet) :
     instSet(instructionSet)
 {}
 
-void SyntaxAnalyzer::process(const vector<string>& tokens, SyntaxTree& syntaxTree)
+void SyntaxAnalyzer::process(const vector<Token>& tokens, SyntaxTree& syntaxTree)
 {
-    vector<string> lineTokens;
+    vector<Token> lineTokens;
     lineTokens.reserve(8);
 
-    for (string token : tokens)
+    for (const Token& token : tokens)
     {
         lineTokens.push_back(token);
 
@@ -41,7 +40,7 @@ void SyntaxAnalyzer::process(const vector<string>& tokens, SyntaxTree& syntaxTre
     }
 }
 
-void SyntaxAnalyzer::parseArgs(const vector<string>& instTokens, vector<string>& argTokens)
+void SyntaxAnalyzer::parseArgs(const vector<Token>& instTokens, vector<Token>& argTokens)
 {
     argTokens.clear();
 
@@ -54,7 +53,7 @@ void SyntaxAnalyzer::parseArgs(const vector<string>& instTokens, vector<string>&
     bool expectSep = false;
     for (size_t i = 1; i < instTokens.size(); ++i)
     {
-        const string& token = instTokens[i];
+        const Token& token = instTokens[i];
 
         if (expectSep)
         {

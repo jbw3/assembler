@@ -5,20 +5,22 @@
 #include <string>
 #include <vector>
 
+#include "Token.h"
+
 class LexicalAnalyzer
 {
 public:
     LexicalAnalyzer();
 
-    void process(std::istream& is, std::vector<std::string>& tokens);
+    void process(std::istream& is, std::vector<Token>& tokens);
 
 private:
-    std::string token;
+    std::string tokenStr;
     bool isValid;
 
-    void parseChar(char ch, std::vector<std::string>& tokens);
+    void parseChar(char ch, std::vector<Token>& tokens);
 
-    bool isValidToken(const std::string& token);
+    bool isValidToken(const std::string& str);
 };
 
 #endif // LEXICAL_ANALYZER_H_

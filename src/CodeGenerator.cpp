@@ -29,11 +29,12 @@ void CodeGenerator::encodeInstruction(const InstructionTokens& tokens, Instructi
 {
     map<string, Instruction> instructions = instSet.getInstructions();
 
-    string mnemonicUpper = toUpper(tokens.mnemonic);
+    const string& mnemonicStr = tokens.mnemonic.getValue();
+    string mnemonicUpper = toUpper(mnemonicStr);
     auto instIter = instructions.find(mnemonicUpper);
     if (instIter == instructions.end())
     {
-        Logger::getInstance().logError("Unknown instruction \"" + tokens.mnemonic + "\"");
+        Logger::getInstance().logError("Unknown instruction \"" + mnemonicStr + "\"");
         throw Error();
     }
 
@@ -46,13 +47,12 @@ void CodeGenerator::encodeInstruction(const InstructionTokens& tokens, Instructi
     code <<= instType.getOpCodeOffset();
 
     // arguments
-    vector<string> argTokens;
     encodeArgs(inst, tokens.arguments, code);
 
     instCode.push_back(code);
 }
 
-void CodeGenerator::encodeArgs(const Instruction& inst, const std::vector<std::string>& argTokens, uint64_t& code)
+void CodeGenerator::encodeArgs(const Instruction& inst, const vector<Token>& argTokens, uint64_t& code)
 {
     const vector<Argument>& args = inst.getType().getArguments();
 
@@ -97,16 +97,16 @@ void CodeGenerator::encodeArgs(const Instruction& inst, const std::vector<std::s
     }
 }
 
-uint64_t CodeGenerator::encodeRegister(const string& token)
+uint64_t CodeGenerator::encodeRegister(const Token& token)
 {
     map<string, Register> registers = instSet.getRegisters();
 
     // look up the register by name
-    string tokenUpper = toUpper(token);
+    string tokenUpper = toUpper(token.getValue());
     auto regIter = registers.find(tokenUpper);
     if (regIter == registers.cend())
     {
-        Logger::getInstance().logError(token + " is not a valid register name.");
+        Logger::getInstance().logError(token.getValue() + " is not a valid register name.");
         throw Error();
     }
 
@@ -114,17 +114,19 @@ uint64_t CodeGenerator::encodeRegister(const string& token)
     return regCode;
 }
 
-uint64_t CodeGenerator::encodeImmediate(const string& token, const Argument& arg)
+uint64_t CodeGenerator::encodeImmediate(const Token& token, const Argument& arg)
 {
     bool error = false;
     uint64_t immCode = 0;
     size_t pos = 0;
 
+    const string& tokenStr = token.getValue();
+
     // determine base
     int base = 10;
-    if (token.size() >= 2 && token[0] == '0')
+    if (tokenStr.size() >= 2 && tokenStr[0] == '0')
     {
-        switch (token[1])
+        switch (tokenStr[1])
         {
         case 'b':
         case 'B':
@@ -148,7 +150,7 @@ uint64_t CodeGenerator::encodeImmediate(const string& token, const Argument& arg
     }
 
     // strip prefix if not a decimal number
-    string noPrefixToken = (base == 10) ? token : token.substr(2);
+    string noPrefixToken = (base == 10) ? tokenStr : tokenStr.substr(2);
 
     // try to convert the string to an integer
     try
@@ -172,14 +174,14 @@ uint64_t CodeGenerator::encodeImmediate(const string& token, const Argument& arg
 
     if (error)
     {
-        Logger::getInstance().logError(token + " is not a valid integer.");
+        Logger::getInstance().logError(tokenStr + " is not a valid integer.");
         throw Error();
     }
 
     // Warn if number will be truncated in instruction.
     if ( immCode != (immCode & bitMask(arg.getSize())) )
     {
-        Logger::getInstance().logWarning("Immediate value \"" + token + "\" was truncated.");
+        Logger::getInstance().logWarning("Immediate value \"" + tokenStr + "\" was truncated.");
     }
 
     return immCode;

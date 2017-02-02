@@ -2,10 +2,10 @@
 #define CODE_GENERATOR_H_
 
 #include <list>
-#include <string>
 #include <vector>
 
 #include "InstructionSet.h"
+#include "Token.h"
 
 class SyntaxTree;
 struct InstructionTokens;
@@ -25,11 +25,11 @@ private:
 
     void encodeInstruction(const InstructionTokens& tokens, InstructionCode& instCode);
 
-    void encodeArgs(const Instruction& inst, const std::vector<std::string>& argTokens, uint64_t& code);
+    void encodeArgs(const Instruction& inst, const std::vector<Token>& argTokens, uint64_t& code);
 
-    uint64_t encodeRegister(const std::string& token);
+    uint64_t encodeRegister(const Token& token);
 
-    uint64_t encodeImmediate(const std::string& token, const Argument& arg);
+    uint64_t encodeImmediate(const Token& token, const Argument& arg);
 };
 
 #endif // CODE_GENERATOR_H_

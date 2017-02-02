@@ -20,7 +20,7 @@ DEPS = Arguments.h \
        SyntaxAnalyzer.h \
        SyntaxTree.h \
        TextOutputFormatter.h \
-       tokens.h \
+       Token.h \
        utils.h
 
 _OBJ = Arguments.cpp.o \
@@ -34,6 +34,7 @@ _OBJ = Arguments.cpp.o \
        SyntaxAnalyzer.cpp.o \
        SyntaxTree.cpp.o \
        TextOutputFormatter.cpp.o \
+       Token.cpp.o \
        utils.cpp.o \
        W8.cpp.o \
        W16.cpp.o

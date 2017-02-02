@@ -1,13 +1,14 @@
 #ifndef SYNTAX_TREE_H_
 #define SYNTAX_TREE_H_
 
-#include <string>
 #include <vector>
+
+#include "Token.h"
 
 struct InstructionTokens
 {
-    std::string mnemonic;
-    std::vector<std::string> arguments;
+    Token mnemonic;
+    std::vector<Token> arguments;
 };
 
 class SyntaxTree

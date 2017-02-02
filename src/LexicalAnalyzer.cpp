@@ -4,7 +4,6 @@
 #include "Error.h"
 #include "LexicalAnalyzer.h"
 #include "Logger.h"
-#include "tokens.h"
 
 #define PRINT_TOKENS 0
 
@@ -22,15 +21,15 @@ constexpr bool isIdentifierChar(char ch, bool first)
     }
 }
 
-bool isNumber(const string& token)
+bool isNumber(const string& tokenStr)
 {
     size_t idx = 0;
 
     // determine base
     int base = 10;
-    if (token.size() >= 2 && token[0] == '0')
+    if (tokenStr.size() >= 2 && tokenStr[0] == '0')
     {
-        switch (token[1])
+        switch (tokenStr[1])
         {
         case 'b':
         case 'B':
@@ -58,9 +57,9 @@ bool isNumber(const string& token)
 
     if (base == 2)
     {
-        for (; idx < token.size(); ++idx)
+        for (; idx < tokenStr.size(); ++idx)
         {
-            if (token[idx] != '0' && token[idx] != '1')
+            if (tokenStr[idx] != '0' && tokenStr[idx] != '1')
             {
                 return false;
             }
@@ -69,9 +68,9 @@ bool isNumber(const string& token)
     }
     else if (base == 8)
     {
-        for (; idx < token.size(); ++idx)
+        for (; idx < tokenStr.size(); ++idx)
         {
-            if (token[idx] < '0' || token[idx] > '7')
+            if (tokenStr[idx] < '0' || tokenStr[idx] > '7')
             {
                 return false;
             }
@@ -80,9 +79,9 @@ bool isNumber(const string& token)
     }
     else if (base == 10)
     {
-        for (; idx < token.size(); ++idx)
+        for (; idx < tokenStr.size(); ++idx)
         {
-            if (!isdigit(token[idx]))
+            if (!isdigit(tokenStr[idx]))
             {
                 return false;
             }
@@ -91,9 +90,9 @@ bool isNumber(const string& token)
     }
     else if (base == 16)
     {
-        for (; idx < token.size(); ++idx)
+        for (; idx < tokenStr.size(); ++idx)
         {
-            if (!isxdigit(token[idx]))
+            if (!isxdigit(tokenStr[idx]))
             {
                 return false;
             }
@@ -106,12 +105,12 @@ bool isNumber(const string& token)
 }
 
 LexicalAnalyzer::LexicalAnalyzer() :
-    token(""),
+    tokenStr(""),
     isValid(false)
 {
 }
 
-void LexicalAnalyzer::process(istream& is, vector<string>& tokens)
+void LexicalAnalyzer::process(istream& is, vector<Token>& tokens)
 {
     tokens.clear();
     tokens.reserve(128);
@@ -126,15 +125,15 @@ void LexicalAnalyzer::process(istream& is, vector<string>& tokens)
     }
 
     // check for leftover token
-    if (!token.empty())
+    if (!tokenStr.empty())
     {
         if (isValid)
         {
-            tokens.push_back(token);
+            tokens.push_back(Token(tokenStr));
         }
         else
         {
-            Logger::getInstance().logError("Invalid token \"" + token + "\".");
+            Logger::getInstance().logError("Invalid token \"" + tokenStr + "\".");
             throw Error();
         }
     }
@@ -149,21 +148,21 @@ void LexicalAnalyzer::process(istream& is, vector<string>& tokens)
 #endif
 }
 
-void LexicalAnalyzer::parseChar(char ch, vector<string>& tokens)
+void LexicalAnalyzer::parseChar(char ch, vector<Token>& tokens)
 {
     if (isblank(ch))
     {
-        if (!token.empty())
+        if (!tokenStr.empty())
         {
             if (isValid)
             {
-                tokens.push_back(token);
-                token = "";
+                tokens.push_back(Token(tokenStr));
+                tokenStr = "";
                 isValid = false;
             }
             else
             {
-                Logger::getInstance().logError("Invalid token \"" + token + "\".");
+                Logger::getInstance().logError("Invalid token \"" + tokenStr + "\".");
                 throw Error();
             }
         }
@@ -172,60 +171,60 @@ void LexicalAnalyzer::parseChar(char ch, vector<string>& tokens)
     {
         if (isValid)
         {
-            if (isValidToken(token + ch))
+            if (isValidToken(tokenStr + ch))
             {
-                token += ch;
+                tokenStr += ch;
             }
             else
             {
-                tokens.push_back(token);
-                token = ch;
-                isValid = isValidToken(token);
+                tokens.push_back(Token(tokenStr));
+                tokenStr = ch;
+                isValid = isValidToken(tokenStr);
             }
         }
         else
         {
-            token += ch;
-            isValid = isValidToken(token);
+            tokenStr += ch;
+            isValid = isValidToken(tokenStr);
         }
     }
 }
 
-bool LexicalAnalyzer::isValidToken(const string& token)
+bool LexicalAnalyzer::isValidToken(const string& str)
 {
     // argument separator
-    if (token == ARGUMENT_SEPARATOR)
+    if (str == ARGUMENT_SEPARATOR.getValue())
     {
         return true;
     }
 
     // end of line
-    if (token == END_OF_LINE)
+    if (str == END_OF_LINE.getValue())
     {
         return true;
     }
 
     // identifier (instruction, register, etc.)
-    if (isIdentifierChar(token[0], true))
+    if (isIdentifierChar(str[0], true))
     {
         size_t idx = 1;
-        for (; idx < token.size(); ++idx)
+        for (; idx < str.size(); ++idx)
         {
-            if (!isIdentifierChar(token[idx], false))
+            if (!isIdentifierChar(str[idx], false))
             {
                 break;
             }
         }
 
         // if we made it through all the chars, this is an identifier
-        if (idx == token.size())
+        if (idx == str.size())
         {
             return true;
         }
     }
 
     // number
-    if (isNumber(token))
+    if (isNumber(str))
     {
         return true;
     }
