@@ -17,6 +17,10 @@ public:
 private:
     std::string tokenStr;
     bool isValid;
+    unsigned long line;
+    unsigned long column;
+
+    void addToken(std::vector<Token>& tokens);
 
     void parseChar(char ch, std::vector<Token>& tokens);
 

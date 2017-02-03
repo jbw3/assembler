@@ -59,7 +59,7 @@ void SyntaxAnalyzer::parseArgs(const vector<Token>& instTokens, vector<Token>& a
         {
             if (token != ARGUMENT_SEPARATOR && token != END_OF_LINE)
             {
-                Logger::getInstance().logError("Did not expect argument.");
+                Logger::getInstance().logError("Did not expect argument.", token.getLine(), token.getColumn());
                 throw Error();
             }
         }
@@ -67,7 +67,7 @@ void SyntaxAnalyzer::parseArgs(const vector<Token>& instTokens, vector<Token>& a
         {
             if (token == ARGUMENT_SEPARATOR || token == END_OF_LINE)
             {
-                Logger::getInstance().logError("Expected argument.");
+                Logger::getInstance().logError("Expected argument.", token.getLine(), token.getColumn());
                 throw Error();
             }
             else

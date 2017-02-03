@@ -106,7 +106,9 @@ bool isNumber(const string& tokenStr)
 
 LexicalAnalyzer::LexicalAnalyzer() :
     tokenStr(""),
-    isValid(false)
+    isValid(false),
+    line(0),
+    column(0)
 {
 }
 
@@ -115,11 +117,24 @@ void LexicalAnalyzer::process(istream& is, vector<Token>& tokens)
     tokens.clear();
     tokens.reserve(128);
 
+    line = 1;
+    column = 1;
+
     char ch;
     is.read(&ch, 1);
     while (!is.eof())
     {
         parseChar(ch, tokens);
+
+        if (ch == '\n')
+        {
+            ++line;
+            column = 1;
+        }
+        else
+        {
+            ++column;
+        }
 
         is.read(&ch, 1);
     }
@@ -129,23 +144,28 @@ void LexicalAnalyzer::process(istream& is, vector<Token>& tokens)
     {
         if (isValid)
         {
-            tokens.push_back(Token(tokenStr));
+            addToken(tokens);
         }
         else
         {
-            Logger::getInstance().logError("Invalid token \"" + tokenStr + "\".");
+            Logger::getInstance().logError("Invalid syntax: \"" + tokenStr + "\".", line, column);
             throw Error();
         }
     }
 
 #if PRINT_TOKENS
     cout << "Tokens:\n----------\n|";
-    for (string t : tokens)
+    for (const Token& t : tokens)
     {
-        cout << t << "|";
+        cout << t.getValue() << "|";
     }
     cout << "\n----------\n";
 #endif
+}
+
+void LexicalAnalyzer::addToken(std::vector<Token>& tokens)
+{
+    tokens.push_back(Token(tokenStr, line, column - tokenStr.size()));
 }
 
 void LexicalAnalyzer::parseChar(char ch, vector<Token>& tokens)
@@ -156,13 +176,13 @@ void LexicalAnalyzer::parseChar(char ch, vector<Token>& tokens)
         {
             if (isValid)
             {
-                tokens.push_back(Token(tokenStr));
+                addToken(tokens);
                 tokenStr = "";
                 isValid = false;
             }
             else
             {
-                Logger::getInstance().logError("Invalid token \"" + tokenStr + "\".");
+                Logger::getInstance().logError("Invalid syntax: \"" + tokenStr + "\".", line, column);
                 throw Error();
             }
         }
@@ -177,7 +197,7 @@ void LexicalAnalyzer::parseChar(char ch, vector<Token>& tokens)
             }
             else
             {
-                tokens.push_back(Token(tokenStr));
+                addToken(tokens);
                 tokenStr = ch;
                 isValid = isValidToken(tokenStr);
             }

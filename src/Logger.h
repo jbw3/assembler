@@ -8,9 +8,9 @@ class Logger
 public:
     static Logger& getInstance();
 
-    void logWarning(const std::string& message);
+    void logWarning(const std::string& message, unsigned long line = 0, unsigned long column = 0);
 
-    void logError(const std::string& message);
+    void logError(const std::string& message, unsigned long line = 0, unsigned long column = 0);
 
 private:
     enum EColor : char
@@ -39,7 +39,7 @@ private:
 
     Logger& operator =(Logger&&) = default;
 
-    void logMessage(const std::string& prefix, EColor color, const std::string& message);
+    void logMessage(const std::string& prefix, EColor color, const std::string& message, unsigned long line, unsigned long column);
 };
 
 #endif // LOGGER_H_

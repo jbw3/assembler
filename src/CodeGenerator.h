@@ -25,7 +25,7 @@ private:
 
     void encodeInstruction(const InstructionTokens& tokens, InstructionCode& instCode);
 
-    void encodeArgs(const Instruction& inst, const std::vector<Token>& argTokens, uint64_t& code);
+    void encodeArgs(const Instruction& inst, const InstructionTokens& tokens, uint64_t& code);
 
     uint64_t encodeRegister(const Token& token);
 

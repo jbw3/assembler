@@ -34,7 +34,9 @@ void CodeGenerator::encodeInstruction(const InstructionTokens& tokens, Instructi
     auto instIter = instructions.find(mnemonicUpper);
     if (instIter == instructions.end())
     {
-        Logger::getInstance().logError("Unknown instruction \"" + mnemonicStr + "\"");
+        Logger::getInstance().logError("Unknown instruction \"" + mnemonicStr + "\"",
+                                       tokens.mnemonic.getLine(),
+                                       tokens.mnemonic.getColumn());
         throw Error();
     }
 
@@ -47,14 +49,15 @@ void CodeGenerator::encodeInstruction(const InstructionTokens& tokens, Instructi
     code <<= instType.getOpCodeOffset();
 
     // arguments
-    encodeArgs(inst, tokens.arguments, code);
+    encodeArgs(inst, tokens, code);
 
     instCode.push_back(code);
 }
 
-void CodeGenerator::encodeArgs(const Instruction& inst, const vector<Token>& argTokens, uint64_t& code)
+void CodeGenerator::encodeArgs(const Instruction& inst, const InstructionTokens& tokens, uint64_t& code)
 {
     const vector<Argument>& args = inst.getType().getArguments();
+    const vector<Token>& argTokens = tokens.arguments;
 
     size_t expectedNumArgs = args.size();
     size_t numArgs = argTokens.size();
@@ -64,7 +67,9 @@ void CodeGenerator::encodeArgs(const Instruction& inst, const vector<Token>& arg
         errorMsg += expectedNumArgs == 1 ? " argument. " : " arguments. ";
         errorMsg += "Got " + to_string(numArgs);
         errorMsg += numArgs == 1 ? " argument." : " arguments.";
-        Logger::getInstance().logError(errorMsg);
+        Logger::getInstance().logError(errorMsg,
+                                       tokens.mnemonic.getLine(),
+                                       tokens.mnemonic.getColumn());
         throw Error();
     }
 
@@ -106,7 +111,9 @@ uint64_t CodeGenerator::encodeRegister(const Token& token)
     auto regIter = registers.find(tokenUpper);
     if (regIter == registers.cend())
     {
-        Logger::getInstance().logError(token.getValue() + " is not a valid register name.");
+        Logger::getInstance().logError(token.getValue() + " is not a valid register name.",
+                                       token.getLine(),
+                                       token.getColumn());
         throw Error();
     }
 
@@ -174,14 +181,18 @@ uint64_t CodeGenerator::encodeImmediate(const Token& token, const Argument& arg)
 
     if (error)
     {
-        Logger::getInstance().logError(tokenStr + " is not a valid integer.");
+        Logger::getInstance().logError(tokenStr + " is not a valid integer.",
+                                       token.getLine(),
+                                       token.getColumn());
         throw Error();
     }
 
     // Warn if number will be truncated in instruction.
     if ( immCode != (immCode & bitMask(arg.getSize())) )
     {
-        Logger::getInstance().logWarning("Immediate value \"" + tokenStr + "\" was truncated.");
+        Logger::getInstance().logWarning("Immediate value \"" + tokenStr + "\" was truncated.",
+                                         token.getLine(),
+                                         token.getColumn());
     }
 
     return immCode;

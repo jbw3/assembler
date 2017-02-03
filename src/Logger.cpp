@@ -14,17 +14,17 @@ Logger::Logger() :
     useColor(true)
 {}
 
-void Logger::logWarning(const string& message)
+void Logger::logWarning(const string& message, unsigned long line, unsigned long column)
 {
-    logMessage("WARNING", eYellow, message);
+    logMessage("WARNING", eYellow, message, line, column);
 }
 
-void Logger::logError(const string& message)
+void Logger::logError(const string& message, unsigned long line, unsigned long column)
 {
-    logMessage("ERROR", eRed, message);
+    logMessage("ERROR", eRed, message, line, column);
 }
 
-void Logger::logMessage(const std::string& prefix, EColor color, const std::string& message)
+void Logger::logMessage(const std::string& prefix, EColor color, const std::string& message, unsigned long line, unsigned long column)
 {
     if (useColor)
     {
@@ -37,5 +37,18 @@ void Logger::logMessage(const std::string& prefix, EColor color, const std::stri
         cerr << prefix << ":";
     }
 
+    // print line number
+    if (line > 0)
+    {
+        cerr << " line: " << line;
+
+        // print column number
+        if (column > 0)
+        {
+            cerr << ", col: " << column;
+        }
+    }
+
+    // print message
     cerr << "\n" << message << "\n";
 }
