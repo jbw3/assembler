@@ -148,7 +148,7 @@ void LexicalAnalyzer::process(istream& is, vector<Token>& tokens)
         }
         else
         {
-            Logger::getInstance().logError("Invalid syntax: \"" + tokenStr + "\".", line, column);
+            Logger::getInstance().logError("Invalid syntax: \"" + tokenStr + "\".", line, column - tokenStr.size());
             throw Error();
         }
     }
@@ -182,7 +182,7 @@ void LexicalAnalyzer::parseChar(char ch, vector<Token>& tokens)
             }
             else
             {
-                Logger::getInstance().logError("Invalid syntax: \"" + tokenStr + "\".", line, column);
+                Logger::getInstance().logError("Invalid syntax: \"" + tokenStr + "\".", line, column - tokenStr.size());
                 throw Error();
             }
         }
