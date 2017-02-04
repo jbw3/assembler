@@ -4,7 +4,7 @@ import filecmp, os, subprocess
 
 def asm(iSet, inFilename, outFile, errFile):
     exe = '../bin/asm'
-    subprocess.run([exe, inFilename, '-i', iSet], stdout=outFile, stderr=errFile)
+    subprocess.run([exe, '--no-color-output', inFilename, '-i', iSet], stdout=outFile, stderr=errFile)
 
 class Tester(object):
     def __init__(self):

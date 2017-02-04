@@ -6,6 +6,7 @@
 #include "CodeGenerator.h"
 #include "Error.h"
 #include "IOutputFormatter.h"
+#include "Logger.h"
 #include "SyntaxAnalyzer.h"
 #include "SyntaxTree.h"
 #include "TextOutputFormatter.h"
@@ -16,6 +17,8 @@ using namespace std;
 Assembler::Assembler(const Arguments& args) :
     is(*args.is)
 {
+    Logger::getInstance().setColorOutput(args.colorOutput);
+
     const InstructionSet* iSet = InstructionSet::getInstructionSet(args.instructionSetName);
 
     syntaxAnalyzer = new SyntaxAnalyzer(*iSet);

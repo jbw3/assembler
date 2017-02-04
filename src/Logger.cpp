@@ -11,8 +11,13 @@ Logger& Logger::getInstance()
 }
 
 Logger::Logger() :
-    useColor(true)
+    colorOutput(true)
 {}
+
+void Logger::setColorOutput(bool useColor)
+{
+    colorOutput = useColor;
+}
 
 void Logger::logWarning(const string& message, unsigned long line, unsigned long column)
 {
@@ -26,7 +31,7 @@ void Logger::logError(const string& message, unsigned long line, unsigned long c
 
 void Logger::logMessage(const std::string& prefix, EColor color, const std::string& message, unsigned long line, unsigned long column)
 {
-    if (useColor)
+    if (colorOutput)
     {
         cerr << "\x1B[3" << static_cast<char>(color) << "m"
              << prefix << ":"

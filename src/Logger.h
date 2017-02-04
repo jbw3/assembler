@@ -8,6 +8,8 @@ class Logger
 public:
     static Logger& getInstance();
 
+    void setColorOutput(bool useColor);
+
     void logWarning(const std::string& message, unsigned long line = 0, unsigned long column = 0);
 
     void logError(const std::string& message, unsigned long line = 0, unsigned long column = 0);
@@ -25,7 +27,7 @@ private:
         eWhite   = '7',
     };
 
-    bool useColor;
+    bool colorOutput;
 
     Logger();
 

@@ -7,16 +7,17 @@
 using namespace std;
 
 const char* Arguments::HELP_MESSAGE =
-R"(asm <-i iSet> [input] [-h] [-l] [-o output]
+R"(asm <-i iSet> [input] [-h] [-o output]
 
 Assemble the input file and output the result to the output file. If no input
 file is specified, stdin is used. If no output file is specified, stdout is
 used.
 
-  --help, -h          display help message
-  --i-set, -i         instruction set name
-  --list-i-set, -l    list available instruction sets
-  --output, -o        output file
+  --help             -h  display help message
+  --i-set            -i  instruction set name
+  --list-i-set           list available instruction sets
+  --no-color-output      do not color output messages
+  --output           -o  output file
 
 Example:
   asm test.s -i W8 -o test.out
@@ -26,6 +27,7 @@ Arguments::Arguments() :
     instructionSetName(""),
     is(nullptr),
     os(nullptr),
+    colorOutput(true),
     done(false),
     error(false)
 {
@@ -137,13 +139,17 @@ void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
             }
         }
     }
-    else if (std::strcmp(arg, "-l") == 0 || std::strcmp(arg, "--list-i-set") == 0)
+    else if (std::strcmp(arg, "--list-i-set") == 0)
     {
         for (string name : InstructionSet::getInstructionSetNames())
         {
             cout << name << '\n';
         }
         done = true;
+    }
+    else if (std::strcmp(arg, "--no-color-output") == 0)
+    {
+        colorOutput = false;
     }
     else // arg is the input file
     {

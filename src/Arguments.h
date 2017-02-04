@@ -19,6 +19,7 @@ public:
     std::string instructionSetName;
     std::istream* is;
     std::ostream* os;
+    bool colorOutput;
 
 private:
     static const char* HELP_MESSAGE;
