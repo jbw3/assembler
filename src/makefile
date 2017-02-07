@@ -10,6 +10,8 @@ LDFLAGS = $(LDLIBS)
 
 release: CXXFLAGS += -O2
 debug: CXXFLAGS += -O0 -g
+cov: CXXFLAGS += --coverage
+cov: LDFLAGS += --coverage
 
 DEPS = Arguments.h \
        Assembler.h \
@@ -26,21 +28,21 @@ DEPS = Arguments.h \
        Token.h \
        utils.h
 
-_OBJ = Arguments.cpp.o \
-       Assembler.cpp.o \
-       CodeGenerator.cpp.o \
-       InstructionSet.cpp.o \
-       LexicalAnalyzer.cpp.o \
-       Logger.cpp.o \
-       main.cpp.o \
-       Preprocessor.cpp.o \
-       SyntaxAnalyzer.cpp.o \
-       SyntaxTree.cpp.o \
-       TextOutputFormatter.cpp.o \
-       Token.cpp.o \
-       utils.cpp.o \
-       W8.cpp.o \
-       W16.cpp.o
+_OBJ = Arguments.o \
+       Assembler.o \
+       CodeGenerator.o \
+       InstructionSet.o \
+       LexicalAnalyzer.o \
+       Logger.o \
+       main.o \
+       Preprocessor.o \
+       SyntaxAnalyzer.o \
+       SyntaxTree.o \
+       TextOutputFormatter.o \
+       Token.o \
+       utils.o \
+       W8.o \
+       W16.o
 OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
 
 TARGET = $(BINDIR)/asm
@@ -51,21 +53,24 @@ release: init $(TARGET)
 .PHONY: debug
 debug: init $(TARGET)
 
+.PHONY: cov
+cov: debug test
+
 .PHONY: init
 init:
 	mkdir -p $(OBJDIR)
 	mkdir -p $(BINDIR)
 
 .PHONY: test
-test: release
+test:
 	../test/test.py
 
 $(TARGET): $(OBJ)
 	$(CXX) $(OBJ) -o $(TARGET) $(LDFLAGS)
 
-$(OBJDIR)/%.cpp.o: %.cpp $(DEPS)
+$(OBJDIR)/%.o: %.cpp $(DEPS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 .PHONY: clean
 clean:
-	rm -f $(OBJDIR)/*.o $(TARGET)
+	rm -f $(OBJDIR)/*.o $(OBJDIR)/*.gcno $(OBJDIR)/*.gcda $(TARGET) *.gcov
