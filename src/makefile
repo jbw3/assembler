@@ -3,10 +3,13 @@ OBJDIR = ../obj
 BINDIR = ../bin
 
 CXX = clang++
-CXXFLAGS = $(INCLUDES) -std=c++1z -Wall -Wextra -O2
+CXXFLAGS = $(INCLUDES) -std=c++1z -Wall -Wextra
 
 LDLIBS =
 LDFLAGS = $(LDLIBS)
+
+release: CXXFLAGS += -O2
+debug: CXXFLAGS += -O0 -g
 
 DEPS = Arguments.h \
        Assembler.h \
@@ -42,8 +45,11 @@ OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
 
 TARGET = $(BINDIR)/asm
 
-.PHONY: all
-all: init $(TARGET)
+.PHONY: release
+release: init $(TARGET)
+
+.PHONY: debug
+debug: init $(TARGET)
 
 .PHONY: init
 init:
@@ -51,7 +57,7 @@ init:
 	mkdir -p $(BINDIR)
 
 .PHONY: test
-test: all
+test: release
 	../test/test.py
 
 $(TARGET): $(OBJ)
