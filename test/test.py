@@ -2,8 +2,11 @@
 
 import filecmp, os, subprocess
 
+TEST_DIR = os.path.dirname(__file__)
+BIN_DIR = os.path.abspath(os.path.join(TEST_DIR, '..', 'bin'))
+
 def asm(iSet, inFilename, outFile, errFile):
-    exe = '../bin/asm'
+    exe = os.path.join(BIN_DIR, 'asm')
     subprocess.run([exe, '--no-color-output', inFilename, '-i', iSet], stdout=outFile, stderr=errFile)
 
 class Tester(object):
@@ -28,11 +31,11 @@ class Tester(object):
         print('{} of {} test{} passed.'.format(self.numPassed, self.numTests, '' if self.numTests == 1 else 's'))
 
     def _runTest(self, iSet, testName):
-        inFilename = testName + '.s'
-        outFilename = 'temp.out'
-        errFilename = 'temp.err'
-        expectedOut = testName + '.out'
-        expectedErr = testName + '.err'
+        inFilename = os.path.join(TEST_DIR, testName + '.s')
+        outFilename = os.path.join(TEST_DIR, 'temp.out')
+        errFilename = os.path.join(TEST_DIR, 'temp.err')
+        expectedOut = os.path.join(TEST_DIR, testName + '.out')
+        expectedErr = os.path.join(TEST_DIR, testName + '.err')
 
         with open(outFilename, 'w') as outFile, open(errFilename, 'w') as errFile:
             asm(iSet, inFilename, outFile, errFile)

@@ -50,6 +50,10 @@ init:
 	mkdir -p $(OBJDIR)
 	mkdir -p $(BINDIR)
 
+.PHONY: test
+test: all
+	../test/test.py
+
 $(TARGET): $(OBJ)
 	$(CXX) $(OBJ) -o $(TARGET) $(LDFLAGS)
 
