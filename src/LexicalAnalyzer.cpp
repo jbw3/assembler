@@ -170,8 +170,7 @@ void LexicalAnalyzer::process(istream& is, vector<Token>& tokens)
         }
         else
         {
-            Logger::getInstance().logError("Invalid syntax: \"" + tokenStr + "\".", line, column - tokenStr.size());
-            throw Error();
+            throwError();
         }
     }
 
@@ -204,8 +203,7 @@ void LexicalAnalyzer::parseChar(char ch, vector<Token>& tokens)
             }
             else
             {
-                Logger::getInstance().logError("Invalid syntax: \"" + tokenStr + "\".", line, column - tokenStr.size());
-                throw Error();
+                throwError();
             }
         }
     }
@@ -230,8 +228,7 @@ void LexicalAnalyzer::parseChar(char ch, vector<Token>& tokens)
             // not valid, report an error
             if (!tokenStr.empty() && string(1, ch) == END_OF_LINE.getValue())
             {
-                Logger::getInstance().logError("Invalid syntax: \"" + tokenStr + "\".", line, column - tokenStr.size());
-                throw Error();
+                throwError();
             }
             else
             {
@@ -282,4 +279,10 @@ bool LexicalAnalyzer::isValidToken(const string& str)
     }
 
     return false;
+}
+
+void LexicalAnalyzer::throwError()
+{
+    Logger::getInstance().logError("Invalid syntax: \"" + tokenStr + "\".", line, column - tokenStr.size());
+    throw Error();
 }

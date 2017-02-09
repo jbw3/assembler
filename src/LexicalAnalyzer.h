@@ -25,6 +25,8 @@ private:
     void parseChar(char ch, std::vector<Token>& tokens);
 
     bool isValidToken(const std::string& str);
+
+    void throwError();
 };
 
 #endif // LEXICAL_ANALYZER_H_
