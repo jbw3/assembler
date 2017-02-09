@@ -1,10 +1,12 @@
 #include <cctype>
+#include <iomanip>
 #include <iostream>
 
 #include "Error.h"
 #include "LexicalAnalyzer.h"
 #include "Logger.h"
 
+#define PRINT_CHARS  0
 #define PRINT_TOKENS 0
 
 using namespace std;
@@ -120,11 +122,31 @@ void LexicalAnalyzer::process(istream& is, vector<Token>& tokens)
     line = 1;
     column = 1;
 
+#if PRINT_CHARS
+    cout << "line: col:ch:token\n";
+#endif
+
     char ch;
     is.read(&ch, 1);
     while (!is.eof())
     {
         parseChar(ch, tokens);
+
+#if PRINT_CHARS
+        {
+            string tempToken = tokenStr;
+            for (auto iter = tempToken.find('\n'); iter != string::npos; iter = tempToken.find('\n'))
+            {
+                tempToken.replace(iter, iter + 1, "\\n");
+            }
+
+            cout << setw(4) << line << "|"
+                 << setw(4) << column << "|"
+                 << setw(2) << (ch == '\n' ? "\\n" : string(1, ch)) << "|"
+                 << tempToken << "|"
+                 << '\n';
+        }
+#endif
 
         if (ch == '\n')
         {
@@ -204,8 +226,18 @@ void LexicalAnalyzer::parseChar(char ch, vector<Token>& tokens)
         }
         else
         {
-            tokenStr += ch;
-            isValid = isValidToken(tokenStr);
+            // if we reached the end of a line and the last token is
+            // not valid, report an error
+            if (!tokenStr.empty() && string(1, ch) == END_OF_LINE.getValue())
+            {
+                Logger::getInstance().logError("Invalid syntax: \"" + tokenStr + "\".", line, column - tokenStr.size());
+                throw Error();
+            }
+            else
+            {
+                tokenStr += ch;
+                isValid = isValidToken(tokenStr);
+            }
         }
     }
 }
