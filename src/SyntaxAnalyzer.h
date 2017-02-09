@@ -19,6 +19,8 @@ private:
     InstructionSet instSet;
 
     void parseArgs(const std::vector<Token>& instTokens, std::vector<Token>& argTokens);
+
+    void throwError(const std::string& message, const Token& token);
 };
 
 #endif // SYNTAX_ANALYZER_H_

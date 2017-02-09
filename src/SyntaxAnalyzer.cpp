@@ -59,17 +59,15 @@ void SyntaxAnalyzer::parseArgs(const vector<Token>& instTokens, vector<Token>& a
         {
             if (token != ARGUMENT_SEPARATOR && token != END_OF_LINE)
             {
-                Logger::getInstance().logError("Expected \"" + ARGUMENT_SEPARATOR.getValue() + "\" before argument \"" + token.getValue() + "\".",
-                                               token.getLine(), token.getColumn());
-                throw Error();
+                string message = "Expected \"" + ARGUMENT_SEPARATOR.getValue() + "\" before argument \"" + token.getValue() + "\".";
+                throwError(message, token);
             }
         }
         else
         {
             if (token == ARGUMENT_SEPARATOR || token == END_OF_LINE)
             {
-                Logger::getInstance().logError("Expected argument.", token.getLine(), token.getColumn());
-                throw Error();
+                throwError("Expected argument.", token);
             }
             else
             {
@@ -79,4 +77,10 @@ void SyntaxAnalyzer::parseArgs(const vector<Token>& instTokens, vector<Token>& a
 
         expectSep = !expectSep;
     }
+}
+
+void SyntaxAnalyzer::throwError(const string& message, const Token& token)
+{
+    Logger::getInstance().logError(message, token.getLine(), token.getColumn());
+    throw Error();
 }
