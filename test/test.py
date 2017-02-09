@@ -62,6 +62,7 @@ def main():
     tester.add('W16', 'W16_1')
     tester.add('W16', 'invalid_token')
     tester.add('W16', 'invalid_token_eol')
+    tester.add('W16', 'no_arg_sep')
 
     tester.run()
 
