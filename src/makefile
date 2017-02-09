@@ -28,22 +28,22 @@ DEPS = Arguments.h \
        Token.h \
        utils.h
 
-_OBJ = Arguments.o \
-       Assembler.o \
-       CodeGenerator.o \
-       InstructionSet.o \
-       LexicalAnalyzer.o \
-       Logger.o \
-       main.o \
-       Preprocessor.o \
-       SyntaxAnalyzer.o \
-       SyntaxTree.o \
-       TextOutputFormatter.o \
-       Token.o \
-       utils.o \
-       W8.o \
-       W16.o
-OBJ = $(patsubst %,$(OBJDIR)/%,$(_OBJ))
+SRC = Arguments.cpp \
+      Assembler.cpp \
+      CodeGenerator.cpp \
+      InstructionSet.cpp \
+      LexicalAnalyzer.cpp \
+      Logger.cpp \
+      main.cpp \
+      Preprocessor.cpp \
+      SyntaxAnalyzer.cpp \
+      SyntaxTree.cpp \
+      TextOutputFormatter.cpp \
+      Token.cpp \
+      utils.cpp \
+      W8.cpp \
+      W16.cpp
+OBJ = $(patsubst %.cpp,$(OBJDIR)/%.o,$(SRC))
 
 TARGET = $(BINDIR)/asm
 
@@ -55,6 +55,7 @@ debug: init $(TARGET)
 
 .PHONY: cov
 cov: debug test
+	llvm-cov gcov -o ../obj/ $(SRC)
 
 .PHONY: init
 init:
