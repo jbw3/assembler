@@ -67,7 +67,16 @@ void SyntaxAnalyzer::parseArgs(const vector<Token>& instTokens, vector<Token>& a
         {
             if (token == ARGUMENT_SEPARATOR || token == END_OF_LINE)
             {
-                throwError("Expected argument.", token);
+                string message = "Expected an argument before ";
+                if (token == ARGUMENT_SEPARATOR)
+                {
+                    message += "\"" + ARGUMENT_SEPARATOR.getValue() + "\".";
+                }
+                else // token == END_OF_LINE
+                {
+                    message += "the end of the line.";
+                }
+                throwError(message, token);
             }
             else
             {
