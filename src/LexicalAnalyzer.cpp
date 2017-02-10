@@ -236,6 +236,16 @@ void LexicalAnalyzer::parseChar(char ch, vector<Token>& tokens)
                 isValid = isValidToken(tokenStr);
             }
         }
+
+        // if the token string is the end of the line, go ahead
+        // and add it before line is incremented
+        if (tokenStr == END_OF_LINE.getValue())
+        {
+            ++column;
+            addToken(tokens);
+            tokenStr = "";
+            isValid = false;
+        }
     }
 }
 
