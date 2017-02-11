@@ -1,0 +1,10 @@
+label_0: movi label_0
+label_1: movi label_1
+label_2: movi label_2
+label_3: movi label_3
+label_4: movi label_4
+label_5: movi label_5
+label_6: movi label_6
+label_7: movi label_7
+label_8: movi label_8
+label_9: movi label_9

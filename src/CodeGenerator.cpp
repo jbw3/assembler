@@ -1,8 +1,13 @@
+#include <iomanip>
+#include <iostream>
+
 #include "CodeGenerator.h"
 #include "Error.h"
 #include "Logger.h"
 #include "SyntaxTree.h"
 #include "utils.h"
+
+#define PRINT_SYMBOLS 0
 
 using namespace std;
 
@@ -12,15 +17,59 @@ CodeGenerator::CodeGenerator(const InstructionSet& instructionSet) :
 
 void CodeGenerator::process(const SyntaxTree& syntaxTree, InstructionCodeList& instCodeList)
 {
+    processLabels(syntaxTree);
+    processInstructions(syntaxTree, instCodeList);
+
+#if PRINT_SYMBOLS
+    cout << left;
+    for (auto pair : symbols)
+    {
+        cout << setw(12) << pair.first << " = " << pair.second << "\n";
+    }
+    cout << right;
+#endif
+}
+
+void CodeGenerator::processLabels(const SyntaxTree& syntaxTree)
+{
+    uint64_t byteWordSize = instSet.getWordSize() / 8;
+    uint64_t address = 0;
+
+    for (const InstructionTokens& tokens : syntaxTree.instructions)
+    {
+        // register labels (if any)
+        string label = tokens.label.getValue();
+        if (!label.empty())
+        {
+            auto pair = symbols.insert({label, address});
+            if (!pair.second)
+            {
+                throwError("\"" + label + "\" has already been defined.", tokens.label);
+            }
+        }
+
+        // increment address if there is an instruction
+        if (!tokens.mnemonic.getValue().empty())
+        {
+            address += byteWordSize;
+        }
+    }
+}
+
+void CodeGenerator::processInstructions(const SyntaxTree& syntaxTree, InstructionCodeList& instCodeList)
+{
     // make sure list is empty
     instCodeList.clear();
 
-    // encode each instruction
     for (const InstructionTokens& tokens : syntaxTree.instructions)
     {
-        InstructionCode instCode;
-        encodeInstruction(tokens, instCode);
-        instCodeList.push_back(instCode);
+        // encode instruction (if there is one)
+        if (!tokens.mnemonic.getValue().empty())
+        {
+            InstructionCode instCode;
+            encodeInstruction(tokens, instCode);
+            instCodeList.push_back(instCode);
+        }
     }
 }
 
@@ -123,6 +172,32 @@ uint64_t CodeGenerator::encodeRegister(const Token& token)
 
 uint64_t CodeGenerator::encodeImmediate(const Token& token, const Argument& arg)
 {
+    uint64_t immCode = 0;
+
+    const string& tokenStr = token.getValue();
+
+    if (isdigit(tokenStr[0]))
+    {
+        immCode = encodeImmediateNum(token);
+    }
+    else
+    {
+        immCode = encodeImmediateLabel(token);
+    }
+
+    // Warn if number will be truncated in instruction.
+    if ( immCode != (immCode & bitMask(arg.getSize())) )
+    {
+        Logger::getInstance().logWarning("Immediate value \"" + tokenStr + "\" was truncated.",
+                                         token.getLine(),
+                                         token.getColumn());
+    }
+
+    return immCode;
+}
+
+uint64_t CodeGenerator::encodeImmediateNum(const Token& token)
+{
     bool error = false;
     uint64_t immCode = 0;
     size_t pos = 0;
@@ -187,13 +262,29 @@ uint64_t CodeGenerator::encodeImmediate(const Token& token, const Argument& arg)
         throw Error();
     }
 
-    // Warn if number will be truncated in instruction.
-    if ( immCode != (immCode & bitMask(arg.getSize())) )
+    return immCode;
+}
+
+uint64_t CodeGenerator::encodeImmediateLabel(const Token& token)
+{
+    uint64_t immCode = 0;
+    string label = token.getValue();
+
+    auto iter = symbols.find(label);
+    if (iter == symbols.end())
     {
-        Logger::getInstance().logWarning("Immediate value \"" + tokenStr + "\" was truncated.",
-                                         token.getLine(),
-                                         token.getColumn());
+        throwError("\"" + label + "\" is not a valid symbol.", token);
+    }
+    else
+    {
+        immCode = iter->second;
     }
 
     return immCode;
+}
+
+void CodeGenerator::throwError(const std::string& message, const Token& token)
+{
+    Logger::getInstance().logError(message, token.getLine(), token.getColumn());
+    throw Error();
 }

@@ -5,23 +5,12 @@
 #include "Error.h"
 #include "LexicalAnalyzer.h"
 #include "Logger.h"
+#include "utils.h"
 
 #define PRINT_CHARS  0
 #define PRINT_TOKENS 0
 
 using namespace std;
-
-constexpr bool isIdentifierChar(char ch, bool first)
-{
-    if (first)
-    {
-        return isalpha(ch) || ch == '_';
-    }
-    else
-    {
-        return isalnum(ch) || ch == '_';
-    }
-}
 
 bool isNumber(const string& tokenStr)
 {
@@ -253,6 +242,12 @@ bool LexicalAnalyzer::isValidToken(const string& str)
 {
     // argument separator
     if (str == ARGUMENT_SEPARATOR.getValue())
+    {
+        return true;
+    }
+
+    // label separator
+    if (str == LABEL_SEPARATOR.getValue())
     {
         return true;
     }

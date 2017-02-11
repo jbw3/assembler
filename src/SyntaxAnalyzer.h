@@ -6,6 +6,7 @@
 #include "InstructionSet.h"
 #include "Token.h"
 
+struct InstructionTokens;
 class SyntaxTree;
 
 class SyntaxAnalyzer
@@ -18,7 +19,9 @@ public:
 private:
     InstructionSet instSet;
 
-    void parseArgs(const std::vector<Token>& instTokens, std::vector<Token>& argTokens);
+    void addLabel(InstructionTokens& instTokens, const Token& token);
+
+    void parseArgs(const std::vector<Token>& instTokens, std::size_t tokenIdx, std::vector<Token>& argTokens);
 
     void throwError(const std::string& message, const Token& token);
 };

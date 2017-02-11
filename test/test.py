@@ -66,6 +66,8 @@ def main():
     tester.add('W16', 'no_arg')
     tester.add('W16', 'no_arg_eol')
     tester.add('W16', 'warn_large_imm')
+    tester.add('W16', 'labels')
+    tester.add('W8', 'warn_large_labels')
 
     tester.run()
 

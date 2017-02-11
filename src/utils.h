@@ -3,8 +3,6 @@
 
 #include <string>
 
-std::string toUpper(const std::string& str);
-
 /**
  * @brief Create a bitmask of the given size.
  * @details For example, a bitmask of size 3 is 0b111.
@@ -19,5 +17,21 @@ constexpr uint64_t bitMask(unsigned int size)
     mask -= 1;
     return mask;
 }
+
+std::string toUpper(const std::string& str);
+
+constexpr bool isIdentifierChar(char ch, bool first)
+{
+    if (first)
+    {
+        return isalpha(ch) || ch == '_';
+    }
+    else
+    {
+        return isalnum(ch) || ch == '_';
+    }
+}
+
+bool isIdentifierString(const std::string& str);
 
 #endif // UTILS_H_

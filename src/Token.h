@@ -32,4 +32,7 @@ const Token END_OF_LINE("\n", 0, 0);
 /// Argument separator
 const Token ARGUMENT_SEPARATOR(",", 0, 0);
 
+/// Label separator
+const Token LABEL_SEPARATOR(":", 0, 0);
+
 #endif // TOKEN_H_

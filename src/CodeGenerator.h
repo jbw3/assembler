@@ -22,6 +22,11 @@ public:
 
 private:
     InstructionSet instSet;
+    std::map<std::string, std::uint64_t> symbols;
+
+    void processLabels(const SyntaxTree& syntaxTree);
+
+    void processInstructions(const SyntaxTree& syntaxTree, InstructionCodeList& instCodeList);
 
     void encodeInstruction(const InstructionTokens& tokens, InstructionCode& instCode);
 
@@ -30,6 +35,12 @@ private:
     uint64_t encodeRegister(const Token& token);
 
     uint64_t encodeImmediate(const Token& token, const Argument& arg);
+
+    uint64_t encodeImmediateNum(const Token& token);
+
+    uint64_t encodeImmediateLabel(const Token& token);
+
+    void throwError(const std::string& message, const Token& token);
 };
 
 #endif // CODE_GENERATOR_H_
