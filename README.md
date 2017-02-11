@@ -39,6 +39,14 @@ ADDI R0, 42    # decimal
 MOV R2, 0xD2   # hexadecimal
 ```
 
+A label may be placed at the beginning of a line followed by `:`.
+No more than one label may be placed on a line.
+```
+label1: MOV R1, R2
+label2:
+    ADD R1, R3
+```
+
 
 ## Adding an Instruction Set
 
