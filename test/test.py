@@ -69,6 +69,7 @@ def main():
     tester.add('W16', 'warn_large_imm')
     tester.add('W16', 'labels')
     tester.add('W8', 'warn_large_labels')
+    tester.add('W16', 'redefined_label')
 
     tester.run()
 
