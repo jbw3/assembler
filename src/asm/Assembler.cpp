@@ -5,6 +5,7 @@
 #include "Assembler.h"
 #include "CodeGenerator.h"
 #include "Error.h"
+#include "InstructionSetRegister.h"
 #include "IOutputFormatter.h"
 #include "Logger.h"
 #include "SyntaxAnalyzer.h"
@@ -19,7 +20,7 @@ Assembler::Assembler(const Arguments& args) :
 {
     Logger::getInstance().setColorOutput(args.colorOutput);
 
-    const InstructionSet* iSet = InstructionSet::getInstructionSet(args.instructionSetName);
+    const InstructionSet* iSet = InstructionSetRegister::getInstance().getInstructionSet(args.instructionSetName);
 
     syntaxAnalyzer = new SyntaxAnalyzer(*iSet);
 

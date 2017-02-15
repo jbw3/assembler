@@ -50,5 +50,11 @@ label2:
 
 ## Adding an Instruction Set
 
-An example instruction set file is in the doc directory.
-An instruction set may be added by simply adding its .cpp file to the makefile to compile it into the assembler.
+Perform the following steps to add an instruction set:
+
+1. Create an `InstructionSet` instance defining the instruction set.
+An example file is in the doc directory
+
+2. Add the instruction set's .hpp file to the `libiset` library's makefile
+
+3. Add the instruction set to the map in `InstructionSetRegister`'s constructor

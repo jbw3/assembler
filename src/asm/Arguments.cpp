@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "Arguments.h"
+#include "InstructionSetRegister.h"
 
 using namespace std;
 
@@ -125,7 +126,7 @@ void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
         else
         {
             const char* name = argv[idx + 1];
-            if (InstructionSet::getInstructionSet(name) == nullptr)
+            if (InstructionSetRegister::getInstance().getInstructionSet(name) == nullptr)
             {
                 cerr << "Error: " << name << " is not a valid instruction set.\n";
                 error = true;
@@ -141,7 +142,7 @@ void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
     }
     else if (std::strcmp(arg, "--list-i-set") == 0)
     {
-        for (string name : InstructionSet::getInstructionSetNames())
+        for (string name : InstructionSetRegister::getInstance().getInstructionSetNames())
         {
             cout << name << '\n';
         }

@@ -1,7 +1,8 @@
 #ifndef ARGUMENTS_H_
 #define ARGUMENTS_H_
 
-#include "InstructionSet.h"
+#include <iostream>
+#include <string>
 
 class Arguments
 {
