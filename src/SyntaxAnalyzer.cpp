@@ -57,12 +57,12 @@ void SyntaxAnalyzer::process(const vector<Token>& tokens, SyntaxTree& syntaxTree
 
 void SyntaxAnalyzer::addLabel(InstructionTokens& instTokens, const Token& token)
 {
+    // verify label is valid
     if (!isIdentifierString(token.getValue()))
     {
         throwError("\"" + token.getValue() + "\" is not a valid label name.", token);
     }
 
-    // verify label is valid
     instTokens.label = token;
 }
 

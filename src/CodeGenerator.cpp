@@ -83,10 +83,7 @@ void CodeGenerator::encodeInstruction(const InstructionTokens& tokens, Instructi
     auto instIter = instructions.find(mnemonicUpper);
     if (instIter == instructions.end())
     {
-        Logger::getInstance().logError("Unknown instruction \"" + mnemonicStr + "\"",
-                                       tokens.mnemonic.getLine(),
-                                       tokens.mnemonic.getColumn());
-        throw Error();
+        throwError("\"" + mnemonicStr + "\" is not a valid instruction.", tokens.mnemonic);
     }
 
     const Instruction& inst = instIter->second;
@@ -116,10 +113,8 @@ void CodeGenerator::encodeArgs(const Instruction& inst, const InstructionTokens&
         errorMsg += expectedNumArgs == 1 ? " argument. " : " arguments. ";
         errorMsg += "Got " + to_string(numArgs);
         errorMsg += numArgs == 1 ? " argument." : " arguments.";
-        Logger::getInstance().logError(errorMsg,
-                                       tokens.mnemonic.getLine(),
-                                       tokens.mnemonic.getColumn());
-        throw Error();
+
+        throwError(errorMsg, tokens.mnemonic);
     }
 
     // encode arguments
@@ -160,10 +155,7 @@ uint64_t CodeGenerator::encodeRegister(const Token& token)
     auto regIter = registers.find(tokenUpper);
     if (regIter == registers.cend())
     {
-        Logger::getInstance().logError(token.getValue() + " is not a valid register name.",
-                                       token.getLine(),
-                                       token.getColumn());
-        throw Error();
+        throwError(token.getValue() + " is not a valid register name.", token);
     }
 
     uint64_t regCode = regIter->second.getCode();
@@ -256,10 +248,7 @@ uint64_t CodeGenerator::encodeImmediateNum(const Token& token)
 
     if (error)
     {
-        Logger::getInstance().logError(tokenStr + " is not a valid integer.",
-                                       token.getLine(),
-                                       token.getColumn());
-        throw Error();
+        throwError(tokenStr + " is not a valid integer.", token);
     }
 
     return immCode;
