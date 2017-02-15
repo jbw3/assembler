@@ -1,14 +1,15 @@
 NAME = asm
 
-INCLUDES =
+INCLUDES = -I../libiset
 OBJDIR = ../../obj/$(NAME)
+LIBDIR = ../../lib
 BINDIR = ../../bin
 TESTDIR = ../../test
 
 CXX = clang++
 CXXFLAGS = $(INCLUDES) -std=c++1z -Wall -Wextra
 
-LDLIBS =
+LDLIBS = -L$(LIBDIR) -liset
 LDFLAGS = $(LDLIBS)
 
 release: CXXFLAGS += -O2
@@ -20,7 +21,6 @@ DEPS = Arguments.h \
        Assembler.h \
        CodeGenerator.h \
        Error.h \
-       InstructionSet.h \
        IOutputFormatter.h \
        LexicalAnalyzer.h \
        Logger.h \
@@ -28,13 +28,11 @@ DEPS = Arguments.h \
        SyntaxAnalyzer.h \
        SyntaxTree.h \
        TextOutputFormatter.h \
-       Token.h \
-       utils.h
+       Token.h
 
 SRC = Arguments.cpp \
       Assembler.cpp \
       CodeGenerator.cpp \
-      InstructionSet.cpp \
       LexicalAnalyzer.cpp \
       Logger.cpp \
       main.cpp \
@@ -42,19 +40,24 @@ SRC = Arguments.cpp \
       SyntaxAnalyzer.cpp \
       SyntaxTree.cpp \
       TextOutputFormatter.cpp \
-      Token.cpp \
-      utils.cpp \
-      W8.cpp \
-      W16.cpp
+      Token.cpp
 OBJ = $(patsubst %.cpp,$(OBJDIR)/%.o,$(SRC))
 
 TARGET = $(BINDIR)/$(NAME)
 
 .PHONY: release
-release: init $(TARGET)
+release: init libs_r $(TARGET)
 
 .PHONY: debug
-debug: init $(TARGET)
+debug: init libs_d $(TARGET)
+
+.PHONY: libs_r
+libs_r:
+	cd ../libiset; make release
+
+.PHONY: libs_d
+libs_d:
+	cd ../libiset; make debug
 
 .PHONY: cov
 cov: debug test
