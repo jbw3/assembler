@@ -1,6 +1,7 @@
 INCLUDES =
-OBJDIR = ../obj
-BINDIR = ../bin
+OBJDIR = ../../obj
+BINDIR = ../../bin
+TESTDIR = ../../test
 
 CXX = clang++
 CXXFLAGS = $(INCLUDES) -std=c++1z -Wall -Wextra
@@ -55,7 +56,7 @@ debug: init $(TARGET)
 
 .PHONY: cov
 cov: debug test
-	llvm-cov gcov -o ../obj/ $(SRC)
+	llvm-cov gcov -o $(OBJDIR) $(SRC)
 
 .PHONY: init
 init:
@@ -64,7 +65,7 @@ init:
 
 .PHONY: test
 test:
-	../test/test.py
+	$(TESTDIR)/test.py
 
 $(TARGET): $(OBJ)
 	$(CXX) $(OBJ) -o $(TARGET) $(LDFLAGS)
