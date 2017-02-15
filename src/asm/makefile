@@ -1,5 +1,7 @@
+NAME = asm
+
 INCLUDES =
-OBJDIR = ../../obj
+OBJDIR = ../../obj/$(NAME)
 BINDIR = ../../bin
 TESTDIR = ../../test
 
@@ -46,7 +48,7 @@ SRC = Arguments.cpp \
       W16.cpp
 OBJ = $(patsubst %.cpp,$(OBJDIR)/%.o,$(SRC))
 
-TARGET = $(BINDIR)/asm
+TARGET = $(BINDIR)/$(NAME)
 
 .PHONY: release
 release: init $(TARGET)
