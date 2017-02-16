@@ -17,9 +17,15 @@ void TextMateSyntaxWriter::write(ostream& os, const SyntaxInfo& info)
 {
     os << HEADER;
 
+    writeName(os, info.name);
     writeFileTypes(os, info.fileTypes);
 
     os << FOOTER;
+}
+
+void TextMateSyntaxWriter::writeName(ostream& os, const string& name)
+{
+    os << "    <key>name</key>\n    <string>" << name << "</string>\n";
 }
 
 void TextMateSyntaxWriter::writeFileTypes(ostream& os, const vector<string>& fileTypes)

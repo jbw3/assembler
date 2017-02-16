@@ -19,6 +19,8 @@ private:
 
     static const char FOOTER[];
 
+    void writeName(std::ostream& os, const std::string& name);
+
     void writeFileTypes(std::ostream& os, const std::vector<std::string>& fileTypes);
 };
 
