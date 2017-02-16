@@ -4,6 +4,9 @@
 
 #include "InstructionSet.h"
 
+namespace Example
+{
+
 ////////////////////////////////////////////////////////////
 // Define instruction types here.
 // An instruction type take 3 parameters. The first 2 are
@@ -29,7 +32,7 @@ const InstructionType RRIType{4, 12, {{Argument::eRegister, 4, 8}, {Argument::eR
 // Define instruction set here.
 ////////////////////////////////////////////////////////////
 
-const InstructionSet ISET_EXAMPLE(
+const InstructionSet ISET(
     // Instruction set name.
     // This is used with the assembler's -i command line option
     // to specify the instruction set to use.
@@ -65,3 +68,5 @@ const InstructionSet ISET_EXAMPLE(
         { "SUB",  0b01001, RRType },  // subtract
     }
 );
+
+}
