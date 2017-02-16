@@ -1,5 +1,8 @@
 #include "InstructionSet.h"
 
+namespace W16
+{
+
 // no-arg type
 const InstructionType NType{8, 8};
 
@@ -15,7 +18,7 @@ const InstructionType RRIType{4, 12, {{Argument::eRegister, 4, 8}, {Argument::eR
 // Jump type
 const InstructionType JType{4, 12, {{Argument::eImmediate, 12, 0}}};
 
-const InstructionSet ISET_W16(
+const InstructionSet ISET(
     // name
     "W16",
 
@@ -35,3 +38,5 @@ const InstructionSet ISET_W16(
         { "ADDI", 0x0b, RIType  },  // add immediate
     }
 );
+
+} // namespace W16

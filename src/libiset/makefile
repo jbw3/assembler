@@ -15,12 +15,14 @@ release: CXXFLAGS += -O2
 debug: CXXFLAGS += -O0 -g
 
 DEPS = InstructionSet.h \
-       utils.h
+       InstructionSetRegister.h \
+       utils.h \
+       W8.hpp \
+       W16.hpp
 
 SRC = InstructionSet.cpp \
-      utils.cpp \
-      W8.cpp \
-      W16.cpp
+      InstructionSetRegister.cpp \
+      utils.cpp
 OBJ = $(patsubst %.cpp,$(OBJDIR)/%.o,$(SRC))
 
 TARGET = $(LIBDIR)/$(NAME).a

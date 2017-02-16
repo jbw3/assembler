@@ -1,5 +1,8 @@
 #include "InstructionSet.h"
 
+namespace W8
+{
+
 // immediate type
 const InstructionType IType{5, 3, {{Argument::eImmediate, 3, 0}}};
 
@@ -9,7 +12,7 @@ const InstructionType NType{5, 3};
 // register type
 const InstructionType RType{5, 3, {{Argument::eRegister, 3, 0}}};
 
-const InstructionSet ISET_W8(
+const InstructionSet ISET(
     // name
     "W8",
 
@@ -43,3 +46,5 @@ const InstructionSet ISET_W8(
         { "BLTZ", 0b10001, RType },  // branch less than zero
     }
 );
+
+} // namespace W8

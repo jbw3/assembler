@@ -107,34 +107,6 @@ std::map<std::string, Register> RegisterSet::getRegisters() const
     return registers;
 }
 
-map<string, const InstructionSet*> InstructionSet::allInstructionSets;
-
-vector<string> InstructionSet::getInstructionSetNames()
-{
-    vector<string> names;
-    names.reserve(allInstructionSets.size());
-
-    for (auto pair : allInstructionSets)
-    {
-        names.push_back(pair.first);
-    }
-
-    return names;
-}
-
-const InstructionSet* InstructionSet::getInstructionSet(const string& name)
-{
-    auto iter = allInstructionSets.find(name);
-    if (iter == allInstructionSets.end())
-    {
-        return nullptr;
-    }
-    else
-    {
-        return iter->second;
-    }
-}
-
 InstructionSet::InstructionSet(const string& name, unsigned int wordSize, initializer_list<RegisterSet> registerList, initializer_list<Instruction> instructionList) :
     name(name),
     wordSize(wordSize)
@@ -149,9 +121,6 @@ InstructionSet::InstructionSet(const string& name, unsigned int wordSize, initia
     {
         instructions.insert({inst.getMnemonic(), inst});
     }
-
-    // add self to map of instruction sets
-    allInstructionSets.insert({name, this});
 }
 
 string InstructionSet::getName() const
