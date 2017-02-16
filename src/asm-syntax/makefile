@@ -13,9 +13,12 @@ LDFLAGS = $(LDLIBS)
 release: CXXFLAGS += -O2
 debug: CXXFLAGS += -O0 -g
 
-DEPS =
+DEPS = SyntaxFileWriter.h \
+       SyntaxInfo.h \
+       TextMateSyntaxWriter.h
 
-SRC = main.cpp
+SRC = main.cpp \
+      TextMateSyntaxWriter.cpp
 OBJ = $(patsubst %.cpp,$(OBJDIR)/%.o,$(SRC))
 
 TARGET = $(BINDIR)/$(NAME)
