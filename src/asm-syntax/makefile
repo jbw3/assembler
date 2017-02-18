@@ -1,13 +1,14 @@
 NAME = asm-syntax
 
-INCLUDES =
+INCLUDES = -I../libiset
 OBJDIR = ../../obj/$(NAME)
+LIBDIR = ../../lib
 BINDIR = ../../bin
 
 CXX = clang++
 CXXFLAGS = $(INCLUDES) -std=c++1z -Wall -Wextra
 
-LDLIBS =
+LDLIBS = -L$(LIBDIR) -liset
 LDFLAGS = $(LDLIBS)
 
 release: CXXFLAGS += -O2
@@ -24,10 +25,18 @@ OBJ = $(patsubst %.cpp,$(OBJDIR)/%.o,$(SRC))
 TARGET = $(BINDIR)/$(NAME)
 
 .PHONY: release
-release: init $(TARGET)
+release: init libs_r $(TARGET)
 
 .PHONY: debug
-debug: init $(TARGET)
+debug: init libs_d $(TARGET)
+
+.PHONY: libs_r
+libs_r:
+	cd ../libiset; make release
+
+.PHONY: libs_d
+libs_d:
+	cd ../libiset; make debug
 
 .PHONY: init
 init:

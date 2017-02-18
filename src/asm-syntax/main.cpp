@@ -1,14 +1,18 @@
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <string>
 #include <vector>
 
+#include "InstructionSet.h"
+#include "InstructionSetRegister.h"
 #include "SyntaxInfo.h"
 #include "TextMateSyntaxWriter.h"
+#include "utils.h"
 
 using namespace std;
 
-SyntaxInfo createSyntaxInfo();
+SyntaxInfo createSyntaxInfo(const InstructionSet* iSet);
 
 int main(int argc, const char* argv[])
 {
@@ -23,7 +27,16 @@ int main(int argc, const char* argv[])
         return 1;
     }
 
-    string iSet = argv[1];
+    // get instruction set
+    string iSetName = argv[1];
+    const InstructionSet* iSet = InstructionSetRegister::getInstance().getInstructionSet(iSetName);
+    if (iSet == nullptr)
+    {
+        cout << "\"" << iSetName << "\" is not a known instruction set.\n";
+        return 1;
+    }
+
+    // get output stream
     ostream* os = nullptr;
     fstream file;
     if (argc == 3)
@@ -37,7 +50,7 @@ int main(int argc, const char* argv[])
         os = &cout;
     }
 
-    SyntaxInfo info = createSyntaxInfo();
+    SyntaxInfo info = createSyntaxInfo(iSet);
 
     SyntaxFileWriter* writer = new TextMateSyntaxWriter;
     writer->write(*os, info);
@@ -51,9 +64,23 @@ int main(int argc, const char* argv[])
     return 0;
 }
 
-SyntaxInfo createSyntaxInfo()
+SyntaxInfo createSyntaxInfo(const InstructionSet* iSet)
 {
-    string name = "W8";
+    const string& name = iSet->getName();
+
+    string instRegex = "\\b(?i)(?:";
+    const map<string, Instruction>& instructions = iSet->getInstructions();
+    auto iter = instructions.cbegin();
+    if (iter != instructions.cend())
+    {
+        instRegex += toUpper(iter->first);
+        ++iter;
+        for (; iter != instructions.cend(); ++iter)
+        {
+            instRegex += "|" + toUpper(iter->first);
+        }
+    }
+    instRegex += ")\\b";
 
     SyntaxInfo info;
 
@@ -62,7 +89,8 @@ SyntaxInfo createSyntaxInfo()
 
     info.rules = {
         {"#.*$", "comment.line"},
-        {R"(\b(?:0[Bb][01]+|0[Oo][0-7]+|[0-9]+|0[Xx][0-9A-Fa-f]+)\b)", "constant.numeric.integer"}
+        {R"(\b(?:0[Bb][01]+|0[Oo][0-7]+|[0-9]+|0[Xx][0-9A-Fa-f]+)\b)", "constant.numeric.integer"},
+        {instRegex, "keyword.control"}
     };
 
     for (MatchRule& rule : info.rules)
