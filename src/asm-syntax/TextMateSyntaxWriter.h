@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "SyntaxFileWriter.h"
+#include "SyntaxInfo.h"
 
 class TextMateSyntaxWriter : public SyntaxFileWriter
 {
@@ -22,6 +23,8 @@ private:
     void writeName(std::ostream& os, const std::string& name);
 
     void writeFileTypes(std::ostream& os, const std::vector<std::string>& fileTypes);
+
+    void writePatterns(std::ostream& os, const std::vector<MatchRule>& rules);
 };
 
 #endif // TEXT_MATE_SYNTAX_WRITER_H_

@@ -1,4 +1,3 @@
-#include "SyntaxInfo.h"
 #include "TextMateSyntaxWriter.h"
 
 using namespace std;
@@ -19,6 +18,7 @@ void TextMateSyntaxWriter::write(ostream& os, const SyntaxInfo& info)
 
     writeName(os, info.name);
     writeFileTypes(os, info.fileTypes);
+    writePatterns(os, info.rules);
 
     os << FOOTER;
 }
@@ -35,6 +35,23 @@ void TextMateSyntaxWriter::writeFileTypes(ostream& os, const vector<string>& fil
     for (string fileType : fileTypes)
     {
         os << "        <string>" << fileType << "</string>\n";
+    }
+
+    os << "    </array>\n";
+}
+
+void TextMateSyntaxWriter::writePatterns(ostream& os, const vector<MatchRule>& rules)
+{
+    os << "    <key>patterns</key>\n    <array>\n";
+
+    for (const MatchRule& rule : rules)
+    {
+        os << "        <dict>\n"
+           << "            <key>match</key>\n"
+           << "            <string>" << rule.match << "</string>\n"
+           << "            <key>name</key>\n"
+           << "            <string>" << rule.scope << "</string>\n"
+           << "        </dict>\n";
     }
 
     os << "    </array>\n";
