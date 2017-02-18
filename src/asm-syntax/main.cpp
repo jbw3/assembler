@@ -8,7 +8,49 @@
 
 using namespace std;
 
-/// @todo move this somewhere else?
+SyntaxInfo createSyntaxInfo();
+
+int main(int argc, const char* argv[])
+{
+    if (argc < 2)
+    {
+        cout << "No instruction set was given.\n";
+        return 1;
+    }
+    else if (argc > 3)
+    {
+        cout << "Too many arguments were given.\n";
+        return 1;
+    }
+
+    string iSet = argv[1];
+    ostream* os = nullptr;
+    fstream file;
+    if (argc == 3)
+    {
+        string filename = argv[2];
+        file.open(filename, ios::out);
+        os = &file;
+    }
+    else
+    {
+        os = &cout;
+    }
+
+    SyntaxInfo info = createSyntaxInfo();
+
+    SyntaxFileWriter* writer = new TextMateSyntaxWriter;
+    writer->write(*os, info);
+    delete writer;
+
+    if (argc == 3)
+    {
+        file.close();
+    }
+
+    return 0;
+}
+
 SyntaxInfo createSyntaxInfo()
 {
     string name = "W8";
@@ -29,24 +71,4 @@ SyntaxInfo createSyntaxInfo()
     }
 
     return info;
-}
-
-/// @todo options:
-/// -i instruction set
-/// -f format
-/// -o output file
-int main()
-{
-    SyntaxInfo info = createSyntaxInfo();
-
-    fstream file;
-    file.open("out.tmLanguage", ios::out);
-
-    SyntaxFileWriter* writer = new TextMateSyntaxWriter;
-    writer->write(file, info);
-    delete writer;
-
-    file.close();
-
-    return 0;
 }
