@@ -23,12 +23,12 @@ int main(int argc, const char* argv[])
 {
     if (argc < 2)
     {
-        cout << "No instruction set was given.\n";
+        cerr << "Error: No instruction set was given.\n";
         return 1;
     }
     else if (argc > 3)
     {
-        cout << "Too many arguments were given.\n";
+        cerr << "Error: Too many arguments were given.\n";
         return 1;
     }
     else if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
@@ -42,7 +42,7 @@ int main(int argc, const char* argv[])
     const InstructionSet* iSet = InstructionSetRegister::getInstance().getInstructionSet(iSetName);
     if (iSet == nullptr)
     {
-        cout << "\"" << iSetName << "\" is not a known instruction set.\n";
+        cerr << "Error: \"" << iSetName << "\" is not a known instruction set.\n";
         return 1;
     }
 
@@ -53,6 +53,12 @@ int main(int argc, const char* argv[])
     {
         string filename = argv[2];
         file.open(filename, ios::out);
+        if (file.fail())
+        {
+            cerr << "Error: Could not open file \"" << filename << "\".\n";
+            return 1;
+        }
+
         os = &file;
     }
     else
