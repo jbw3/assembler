@@ -15,10 +15,12 @@ release: CXXFLAGS += -O2
 debug: CXXFLAGS += -O0 -g
 
 DEPS = SyntaxFileWriter.h \
+	   SyntaxGenerator.h \
        SyntaxInfo.h \
        TextMateSyntaxWriter.h
 
 SRC = main.cpp \
+	  SyntaxGenerator.cpp \
       TextMateSyntaxWriter.cpp
 OBJ = $(patsubst %.cpp,$(OBJDIR)/%.o,$(SRC))
 

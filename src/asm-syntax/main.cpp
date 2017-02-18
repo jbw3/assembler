@@ -1,18 +1,13 @@
 #include <fstream>
 #include <iostream>
-#include <map>
 #include <string>
 #include <vector>
 
 #include "InstructionSet.h"
 #include "InstructionSetRegister.h"
-#include "SyntaxInfo.h"
-#include "TextMateSyntaxWriter.h"
-#include "utils.h"
+#include "SyntaxGenerator.h"
 
 using namespace std;
-
-SyntaxInfo createSyntaxInfo(const InstructionSet* iSet);
 
 int main(int argc, const char* argv[])
 {
@@ -50,11 +45,8 @@ int main(int argc, const char* argv[])
         os = &cout;
     }
 
-    SyntaxInfo info = createSyntaxInfo(iSet);
-
-    SyntaxFileWriter* writer = new TextMateSyntaxWriter;
-    writer->write(*os, info);
-    delete writer;
+    SyntaxGenerator generator;
+    generator.generate(*os, iSet);
 
     if (argc == 3)
     {
@@ -62,41 +54,4 @@ int main(int argc, const char* argv[])
     }
 
     return 0;
-}
-
-SyntaxInfo createSyntaxInfo(const InstructionSet* iSet)
-{
-    const string& name = iSet->getName();
-
-    string instRegex = "\\b(?i)(?:";
-    const map<string, Instruction>& instructions = iSet->getInstructions();
-    auto iter = instructions.cbegin();
-    if (iter != instructions.cend())
-    {
-        instRegex += toUpper(iter->first);
-        ++iter;
-        for (; iter != instructions.cend(); ++iter)
-        {
-            instRegex += "|" + toUpper(iter->first);
-        }
-    }
-    instRegex += ")\\b";
-
-    SyntaxInfo info;
-
-    info.name = name;
-    info.fileTypes = {"asm", "inc", "s"};
-
-    info.rules = {
-        {"#.*$", "comment.line"},
-        {R"(\b(?:0[Bb][01]+|0[Oo][0-7]+|[0-9]+|0[Xx][0-9A-Fa-f]+)\b)", "constant.numeric.integer"},
-        {instRegex, "keyword.control"}
-    };
-
-    for (MatchRule& rule : info.rules)
-    {
-        rule.scope += "." + name;
-    }
-
-    return info;
 }
