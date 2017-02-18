@@ -25,7 +25,8 @@ void TextMateSyntaxWriter::write(ostream& os, const SyntaxInfo& info)
 
 void TextMateSyntaxWriter::writeName(ostream& os, const string& name)
 {
-    os << "    <key>name</key>\n    <string>" << name << "</string>\n";
+    os << "    <key>name</key>\n    <string>" << name << "</string>\n"
+       << "    <key>scopeName</key>\n    <string>source." << name << "</string>\n";
 }
 
 void TextMateSyntaxWriter::writeFileTypes(ostream& os, const vector<string>& fileTypes)
