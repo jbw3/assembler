@@ -30,21 +30,42 @@ void SyntaxAnalyzer::process(const vector<Token>& tokens, SyntaxTree& syntaxTree
             // token, this must be an instruction
             if (numTokens > 1)
             {
-                size_t tokenIdx = 0;
                 InstructionTokens instTokens;
 
-                if (numTokens > 2 && lineTokens[1] == LABEL_SEPARATOR)
+                if (numTokens > 2 && lineTokens[1] == ASSIGNMENT_OPERATOR)
                 {
                     addLabel(instTokens, lineTokens[0]);
-                    tokenIdx = 2;
+
+                    // add all tokens after the assignment operator and before
+                    // the end of the line
+                    for (size_t i = 2; i < lineTokens.size() - 1; ++i)
+                    {
+                        instTokens.labelArguments.push_back(lineTokens[i]);
+                    }
+
+                    // error if no arguments were added
+                    if (instTokens.labelArguments.empty())
+                    {
+                        throwError("Expected an expression after \"=\"", lineTokens[1]);
+                    }
                 }
-
-                if (tokenIdx < numTokens - 1)
+                else
                 {
-                    instTokens.mnemonic = lineTokens[tokenIdx];
-                    ++tokenIdx;
+                    size_t tokenIdx = 0;
 
-                    parseArgs(lineTokens, tokenIdx, instTokens.arguments);
+                    if (numTokens > 2 && lineTokens[1] == LABEL_SEPARATOR)
+                    {
+                        addLabel(instTokens, lineTokens[0]);
+                        tokenIdx = 2;
+                    }
+
+                    if (tokenIdx < numTokens - 1)
+                    {
+                        instTokens.mnemonic = lineTokens[tokenIdx];
+                        ++tokenIdx;
+
+                        parseArgs(lineTokens, tokenIdx, instTokens.arguments);
+                    }
                 }
 
                 syntaxTree.instructions.push_back(instTokens);

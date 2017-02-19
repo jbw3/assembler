@@ -8,6 +8,7 @@
 struct InstructionTokens
 {
     Token label;
+    std::vector<Token> labelArguments;
     Token mnemonic;
     std::vector<Token> arguments;
 };

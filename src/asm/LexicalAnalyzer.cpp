@@ -252,6 +252,12 @@ bool LexicalAnalyzer::isValidToken(const string& str)
         return true;
     }
 
+    // assignment operator
+    if (str == ASSIGNMENT_OPERATOR.getValue())
+    {
+        return true;
+    }
+
     // end of line
     if (str == END_OF_LINE.getValue())
     {

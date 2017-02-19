@@ -1,13 +1,12 @@
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 
 #include "CodeGenerator.h"
 #include "Error.h"
 #include "Logger.h"
 #include "SyntaxTree.h"
 #include "utils.h"
-
-#define PRINT_SYMBOLS 0
 
 using namespace std;
 
@@ -19,15 +18,39 @@ void CodeGenerator::process(const SyntaxTree& syntaxTree, InstructionCodeList& i
 {
     processLabels(syntaxTree);
     processInstructions(syntaxTree, instCodeList);
+}
 
-#if PRINT_SYMBOLS
-    cout << left;
+void CodeGenerator::printSymbols(ostream& os, int base) const
+{
+    // save flags
+    ios_base::fmtflags flags = os.flags();
+
+    // get format widths
+    int nameWidth = 0;
+    int valueWidth = 0;
+    stringstream ss;
+    ss << setbase(base);
     for (auto pair : symbols)
     {
-        cout << setw(12) << pair.first << " = " << pair.second << "\n";
+        int temp = pair.first.size();
+        nameWidth = temp > nameWidth ? temp : nameWidth;
+
+        ss.str(""); // clear contents
+        ss << pair.second;
+        temp = ss.str().size();
+        valueWidth = temp > valueWidth ? temp : valueWidth;
     }
-    cout << right;
-#endif
+
+    char valueFill = base == 16 ? '0' : ' ';
+    os << setbase(base);
+    for (auto pair : symbols)
+    {
+        os << left << setw(nameWidth) << pair.first << "  "
+           << right << setw(valueWidth) << setfill(valueFill) << pair.second << "\n";
+    }
+
+    // restore flags
+    os.flags(flags);
 }
 
 void CodeGenerator::processLabels(const SyntaxTree& syntaxTree)
@@ -38,13 +61,25 @@ void CodeGenerator::processLabels(const SyntaxTree& syntaxTree)
     for (const InstructionTokens& tokens : syntaxTree.instructions)
     {
         // register labels (if any)
-        string label = tokens.label.getValue();
-        if (!label.empty())
+        vector<Token> labelArgs = tokens.labelArguments;
+        if (!tokens.label.getValue().empty())
         {
-            auto pair = symbols.insert({label, address});
-            if (!pair.second)
+            // if there are no arguments, assign label value to current address
+            if (labelArgs.empty())
             {
-                throwError("\"" + label + "\" has already been defined.", tokens.label);
+                addSymbol(tokens.label, address);
+            }
+            else // label is being assigned a value
+            {
+                if (labelArgs.size() > 1)
+                {
+                    throwError("Invalid assignment syntax.", labelArgs[1]);
+                }
+
+                // translate value to number
+                uint64_t value = evalImmediateExpression(labelArgs[0]);
+
+                addSymbol(tokens.label, value);
             }
         }
 
@@ -53,6 +88,17 @@ void CodeGenerator::processLabels(const SyntaxTree& syntaxTree)
         {
             address += byteWordSize;
         }
+    }
+}
+
+void CodeGenerator::addSymbol(const Token& token, std::uint64_t value)
+{
+    string symbolName = token.getValue();
+
+    auto pair = symbols.insert({symbolName, value});
+    if (!pair.second)
+    {
+        throwError("\"" + symbolName + "\" has already been defined.", token);
     }
 }
 
@@ -164,23 +210,12 @@ uint64_t CodeGenerator::encodeRegister(const Token& token)
 
 uint64_t CodeGenerator::encodeImmediate(const Token& token, const Argument& arg)
 {
-    uint64_t immCode = 0;
-
-    const string& tokenStr = token.getValue();
-
-    if (isdigit(tokenStr[0]))
-    {
-        immCode = encodeImmediateNum(token);
-    }
-    else
-    {
-        immCode = encodeImmediateLabel(token);
-    }
+    uint64_t immCode = evalImmediateExpression(token);
 
     // Warn if number will be truncated in instruction.
     if ( immCode != (immCode & bitMask(arg.getSize())) )
     {
-        Logger::getInstance().logWarning("Immediate value \"" + tokenStr + "\" was truncated.",
+        Logger::getInstance().logWarning("Immediate value \"" + token.getValue() + "\" was truncated.",
                                          token.getLine(),
                                          token.getColumn());
     }
@@ -188,10 +223,28 @@ uint64_t CodeGenerator::encodeImmediate(const Token& token, const Argument& arg)
     return immCode;
 }
 
-uint64_t CodeGenerator::encodeImmediateNum(const Token& token)
+uint64_t CodeGenerator::evalImmediateExpression(const Token& token)
+{
+    uint64_t value = 0;
+
+    const string& tokenStr = token.getValue();
+
+    if (isdigit(tokenStr[0]))
+    {
+        value = evalImmediateNum(token);
+    }
+    else
+    {
+        value = evalImmediateLabel(token);
+    }
+
+    return value;
+}
+
+uint64_t CodeGenerator::evalImmediateNum(const Token& token)
 {
     bool error = false;
-    uint64_t immCode = 0;
+    uint64_t value = 0;
     size_t pos = 0;
 
     const string& tokenStr = token.getValue();
@@ -229,7 +282,7 @@ uint64_t CodeGenerator::encodeImmediateNum(const Token& token)
     // try to convert the string to an integer
     try
     {
-        immCode = stoull(noPrefixToken, &pos, base);
+        value = stoull(noPrefixToken, &pos, base);
     }
     catch (invalid_argument)
     {
@@ -251,12 +304,12 @@ uint64_t CodeGenerator::encodeImmediateNum(const Token& token)
         throwError(tokenStr + " is not a valid integer.", token);
     }
 
-    return immCode;
+    return value;
 }
 
-uint64_t CodeGenerator::encodeImmediateLabel(const Token& token)
+uint64_t CodeGenerator::evalImmediateLabel(const Token& token)
 {
-    uint64_t immCode = 0;
+    uint64_t value = 0;
     string label = token.getValue();
 
     auto iter = symbols.find(label);
@@ -266,10 +319,10 @@ uint64_t CodeGenerator::encodeImmediateLabel(const Token& token)
     }
     else
     {
-        immCode = iter->second;
+        value = iter->second;
     }
 
-    return immCode;
+    return value;
 }
 
 void CodeGenerator::throwError(const std::string& message, const Token& token)

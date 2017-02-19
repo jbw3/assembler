@@ -20,11 +20,15 @@ public:
 
     void process(const SyntaxTree& syntaxTree, InstructionCodeList& instCodeList);
 
+    void printSymbols(std::ostream& os, int base) const;
+
 private:
     InstructionSet instSet;
     std::map<std::string, std::uint64_t> symbols;
 
     void processLabels(const SyntaxTree& syntaxTree);
+
+    void addSymbol(const Token& token, std::uint64_t value);
 
     void processInstructions(const SyntaxTree& syntaxTree, InstructionCodeList& instCodeList);
 
@@ -36,9 +40,11 @@ private:
 
     uint64_t encodeImmediate(const Token& token, const Argument& arg);
 
-    uint64_t encodeImmediateNum(const Token& token);
+    uint64_t evalImmediateExpression(const Token& token);
 
-    uint64_t encodeImmediateLabel(const Token& token);
+    uint64_t evalImmediateNum(const Token& token);
+
+    uint64_t evalImmediateLabel(const Token& token);
 
     void throwError(const std::string& message, const Token& token);
 };
