@@ -8,7 +8,7 @@
 #include "utils.h"
 
 #define PRINT_CHARS  0
-#define PRINT_TOKENS 0
+#define PRINT_TOKENS 1
 
 using namespace std;
 
@@ -248,6 +248,12 @@ bool LexicalAnalyzer::isValidToken(const string& str)
 
     // label separator
     if (str == LABEL_SEPARATOR.getValue())
+    {
+        return true;
+    }
+
+    // assignment operator
+    if (str == ASSIGNMENT_OPERATOR.getValue())
     {
         return true;
     }

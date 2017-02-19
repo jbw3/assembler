@@ -35,4 +35,7 @@ const Token ARGUMENT_SEPARATOR(",", 0, 0);
 /// Label separator
 const Token LABEL_SEPARATOR(":", 0, 0);
 
+/// Assignment operator
+const Token ASSIGNMENT_OPERATOR("=", 0, 0);
+
 #endif // TOKEN_H_
