@@ -7,7 +7,7 @@ BIN_DIR = os.path.abspath(os.path.join(TEST_DIR, '..', 'bin'))
 
 def asm(iSet, inFilename, outFile, errFile):
     exe = os.path.join(BIN_DIR, 'asm')
-    subprocess.run([exe, '--no-color-output', inFilename, '-i', iSet], stdout=outFile, stderr=errFile)
+    subprocess.run([exe, '--no-color', inFilename, '-i', iSet], stdout=outFile, stderr=errFile)
 
 class Tester(object):
     def __init__(self):

@@ -14,11 +14,11 @@ Assemble the input file and output the result to the output file. If no input
 file is specified, stdin is used. If no output file is specified, stdout is
 used.
 
-  --help             -h  display help message
-  --i-set            -i  instruction set name
-  --list-i-set           list available instruction sets
-  --no-color-output      do not color output messages
-  --output           -o  output file
+  --help        -h  display help message
+  --i-set       -i  instruction set name
+  --list-i-set      list available instruction sets
+  --no-color        do not color output messages
+  --output      -o  output file
 
 Example:
   asm test.s -i W8 -o test.out
@@ -148,7 +148,7 @@ void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
         }
         done = true;
     }
-    else if (std::strcmp(arg, "--no-color-output") == 0)
+    else if (std::strcmp(arg, "--no-color") == 0)
     {
         colorOutput = false;
     }
