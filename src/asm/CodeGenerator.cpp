@@ -53,8 +53,8 @@ void CodeGenerator::processLabels(const SyntaxTree& syntaxTree)
                     throwError("Invalid assignment syntax.", labelArgs[1]);
                 }
 
-                /// @todo translate value to number
-                uint16_t value = 0xcd;
+                // translate value to number
+                uint16_t value = evalImmediateExpression(labelArgs[0]);
 
                 addSymbol(tokens.label, value);
             }
@@ -187,23 +187,12 @@ uint64_t CodeGenerator::encodeRegister(const Token& token)
 
 uint64_t CodeGenerator::encodeImmediate(const Token& token, const Argument& arg)
 {
-    uint64_t immCode = 0;
-
-    const string& tokenStr = token.getValue();
-
-    if (isdigit(tokenStr[0]))
-    {
-        immCode = encodeImmediateNum(token);
-    }
-    else
-    {
-        immCode = encodeImmediateLabel(token);
-    }
+    uint64_t immCode = evalImmediateExpression(token);
 
     // Warn if number will be truncated in instruction.
     if ( immCode != (immCode & bitMask(arg.getSize())) )
     {
-        Logger::getInstance().logWarning("Immediate value \"" + tokenStr + "\" was truncated.",
+        Logger::getInstance().logWarning("Immediate value \"" + token.getValue() + "\" was truncated.",
                                          token.getLine(),
                                          token.getColumn());
     }
@@ -211,10 +200,28 @@ uint64_t CodeGenerator::encodeImmediate(const Token& token, const Argument& arg)
     return immCode;
 }
 
-uint64_t CodeGenerator::encodeImmediateNum(const Token& token)
+uint64_t CodeGenerator::evalImmediateExpression(const Token& token)
+{
+    uint64_t value = 0;
+
+    const string& tokenStr = token.getValue();
+
+    if (isdigit(tokenStr[0]))
+    {
+        value = evalImmediateNum(token);
+    }
+    else
+    {
+        value = evalImmediateLabel(token);
+    }
+
+    return value;
+}
+
+uint64_t CodeGenerator::evalImmediateNum(const Token& token)
 {
     bool error = false;
-    uint64_t immCode = 0;
+    uint64_t value = 0;
     size_t pos = 0;
 
     const string& tokenStr = token.getValue();
@@ -252,7 +259,7 @@ uint64_t CodeGenerator::encodeImmediateNum(const Token& token)
     // try to convert the string to an integer
     try
     {
-        immCode = stoull(noPrefixToken, &pos, base);
+        value = stoull(noPrefixToken, &pos, base);
     }
     catch (invalid_argument)
     {
@@ -274,12 +281,12 @@ uint64_t CodeGenerator::encodeImmediateNum(const Token& token)
         throwError(tokenStr + " is not a valid integer.", token);
     }
 
-    return immCode;
+    return value;
 }
 
-uint64_t CodeGenerator::encodeImmediateLabel(const Token& token)
+uint64_t CodeGenerator::evalImmediateLabel(const Token& token)
 {
-    uint64_t immCode = 0;
+    uint64_t value = 0;
     string label = token.getValue();
 
     auto iter = symbols.find(label);
@@ -289,10 +296,10 @@ uint64_t CodeGenerator::encodeImmediateLabel(const Token& token)
     }
     else
     {
-        immCode = iter->second;
+        value = iter->second;
     }
 
-    return immCode;
+    return value;
 }
 
 void CodeGenerator::throwError(const std::string& message, const Token& token)

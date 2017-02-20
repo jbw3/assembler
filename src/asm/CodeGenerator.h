@@ -38,9 +38,11 @@ private:
 
     uint64_t encodeImmediate(const Token& token, const Argument& arg);
 
-    uint64_t encodeImmediateNum(const Token& token);
+    uint64_t evalImmediateExpression(const Token& token);
 
-    uint64_t encodeImmediateLabel(const Token& token);
+    uint64_t evalImmediateNum(const Token& token);
+
+    uint64_t evalImmediateLabel(const Token& token);
 
     void throwError(const std::string& message, const Token& token);
 };
