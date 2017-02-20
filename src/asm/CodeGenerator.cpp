@@ -38,13 +38,25 @@ void CodeGenerator::processLabels(const SyntaxTree& syntaxTree)
     for (const InstructionTokens& tokens : syntaxTree.instructions)
     {
         // register labels (if any)
-        string label = tokens.label.getValue();
-        if (!label.empty())
+        vector<Token> labelArgs = tokens.labelArguments;
+        if (!tokens.label.getValue().empty())
         {
-            auto pair = symbols.insert({label, address});
-            if (!pair.second)
+            // if there are no arguments, assign label value to current address
+            if (labelArgs.empty())
             {
-                throwError("\"" + label + "\" has already been defined.", tokens.label);
+                addSymbol(tokens.label, address);
+            }
+            else // label is being assigned a value
+            {
+                if (labelArgs.size() > 1)
+                {
+                    throwError("Invalid assignment syntax.", labelArgs[1]);
+                }
+
+                /// @todo translate value to number
+                uint16_t value = 0xcd;
+
+                addSymbol(tokens.label, value);
             }
         }
 
@@ -53,6 +65,17 @@ void CodeGenerator::processLabels(const SyntaxTree& syntaxTree)
         {
             address += byteWordSize;
         }
+    }
+}
+
+void CodeGenerator::addSymbol(const Token& token, std::uint64_t value)
+{
+    string symbolName = token.getValue();
+
+    auto pair = symbols.insert({symbolName, value});
+    if (!pair.second)
+    {
+        throwError("\"" + symbolName + "\" has already been defined.", token);
     }
 }
 

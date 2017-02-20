@@ -36,9 +36,17 @@ void SyntaxAnalyzer::process(const vector<Token>& tokens, SyntaxTree& syntaxTree
                 {
                     addLabel(instTokens, lineTokens[0]);
 
-                    for (size_t i = 2; i < lineTokens.size(); ++i)
+                    // add all tokens after the assignment operator and before
+                    // the end of the line
+                    for (size_t i = 2; i < lineTokens.size() - 1; ++i)
                     {
                         instTokens.labelArguments.push_back(lineTokens[i]);
+                    }
+
+                    // error if no arguments were added
+                    if (instTokens.labelArguments.empty())
+                    {
+                        throwError("Expected an expression after \"=\"", lineTokens[1]);
                     }
                 }
                 else

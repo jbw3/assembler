@@ -26,6 +26,8 @@ private:
 
     void processLabels(const SyntaxTree& syntaxTree);
 
+    void addSymbol(const Token& token, std::uint64_t value);
+
     void processInstructions(const SyntaxTree& syntaxTree, InstructionCodeList& instCodeList);
 
     void encodeInstruction(const InstructionTokens& tokens, InstructionCode& instCode);
