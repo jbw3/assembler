@@ -15,8 +15,8 @@
 
 using namespace std;
 
-Assembler::Assembler(const Arguments& args) :
-    is(*args.is)
+Assembler::Assembler(const Arguments& arguments) :
+    args(arguments)
 {
     Logger::getInstance().setColorOutput(args.colorOutput);
 
@@ -61,7 +61,7 @@ void Assembler::process()
 
     stringstream preProcStream;
 
-    preprocessor.process(is, preProcStream);
+    preprocessor.process(*args.is, preProcStream);
 
     /////////////////////////////////
     // Lexical Analyzer
@@ -86,6 +86,12 @@ void Assembler::process()
     CodeGenerator::InstructionCodeList instCodeList;
 
     codeGenerator->process(syntaxTree, instCodeList);
+
+    if (args.outputSymbols)
+    {
+        codeGenerator->printSymbols(*args.os);
+        return;
+    }
 
     /////////////////////////////////
     // Output Formatter

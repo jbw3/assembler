@@ -21,6 +21,7 @@ public:
     std::istream* is;
     std::ostream* os;
     bool colorOutput;
+    bool outputSymbols;
 
 private:
     static const char* HELP_MESSAGE;

@@ -14,7 +14,7 @@ class SyntaxAnalyzer;
 class Assembler
 {
 public:
-    Assembler(const Arguments& args);
+    Assembler(const Arguments& arguments);
 
     ~Assembler();
 
@@ -27,7 +27,7 @@ private:
     CodeGenerator* codeGenerator;
     IOutputFormatter* outputFormatter;
 
-    std::istream& is;
+    const Arguments& args;
 
     void process();
 };

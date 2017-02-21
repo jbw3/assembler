@@ -20,6 +20,8 @@ public:
 
     void process(const SyntaxTree& syntaxTree, InstructionCodeList& instCodeList);
 
+    void printSymbols(std::ostream& os) const;
+
 private:
     InstructionSet instSet;
     std::map<std::string, std::uint64_t> symbols;

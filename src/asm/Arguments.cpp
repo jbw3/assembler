@@ -8,7 +8,7 @@
 using namespace std;
 
 const char* Arguments::HELP_MESSAGE =
-R"(asm <-i iSet> [input] [-h] [-o output]
+R"(asm <-i iSet> [input] [-h] [-o output] [-s]
 
 Assemble the input file and output the result to the output file. If no input
 file is specified, stdin is used. If no output file is specified, stdout is
@@ -19,6 +19,7 @@ used.
   --list-i-set      list available instruction sets
   --no-color        do not color output messages
   --output      -o  output file
+  --symbols     -s  output symbols
 
 Example:
   asm test.s -i W8 -o test.out
@@ -29,6 +30,7 @@ Arguments::Arguments() :
     is(nullptr),
     os(nullptr),
     colorOutput(true),
+    outputSymbols(false),
     done(false),
     error(false)
 {
@@ -151,6 +153,10 @@ void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
     else if (std::strcmp(arg, "--no-color") == 0)
     {
         colorOutput = false;
+    }
+    else if (std::strcmp(arg, "-s") == 0 || std::strcmp(arg, "--symbols") == 0)
+    {
+        outputSymbols = true;
     }
     else // arg is the input file
     {

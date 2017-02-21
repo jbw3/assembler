@@ -7,8 +7,6 @@
 #include "SyntaxTree.h"
 #include "utils.h"
 
-#define PRINT_SYMBOLS 0
-
 using namespace std;
 
 CodeGenerator::CodeGenerator(const InstructionSet& instructionSet) :
@@ -19,15 +17,29 @@ void CodeGenerator::process(const SyntaxTree& syntaxTree, InstructionCodeList& i
 {
     processLabels(syntaxTree);
     processInstructions(syntaxTree, instCodeList);
+}
 
-#if PRINT_SYMBOLS
-    cout << left;
+void CodeGenerator::printSymbols(ostream& os) const
+{
+    // save flags
+    ios_base::fmtflags flags = os.flags();
+
+    // get width
+    int width = 0;
     for (auto pair : symbols)
     {
-        cout << setw(12) << pair.first << " = " << pair.second << "\n";
+        int currentWidth = pair.first.size();
+        width = currentWidth > width ? currentWidth : width;
     }
-    cout << right;
-#endif
+
+    os << left;
+    for (auto pair : symbols)
+    {
+        os << setw(width) << pair.first << "  " << pair.second << "\n";
+    }
+
+    // restore flags
+    os.flags(flags);
 }
 
 void CodeGenerator::processLabels(const SyntaxTree& syntaxTree)
