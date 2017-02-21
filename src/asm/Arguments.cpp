@@ -22,8 +22,13 @@ used.
   --output      -o  output file
   --symbols     -s  print symbol table
 
-Example:
+Examples:
+
+Assemble test.s and output to test.out:
   asm test.s -i W8 -o test.out
+
+Print symbol table for test.s in hexadecimal format:
+  asm test.s -i W16 -s --hex
 )";
 
 Arguments::Arguments() :
