@@ -47,6 +47,19 @@ label2:
     ADD R1, R3
 ```
 
+A constant may be defined with the assignment operator (`=`).
+It may be assigned to a numeric value or a previously defined constant or label.
+No more than one constant may be defined on a line.
+```
+x = 2
+y = 0xABC
+
+label:
+    ADDI R1, x
+
+z = label
+```
+
 
 ## Adding an Instruction Set
 
