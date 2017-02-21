@@ -1,5 +1,6 @@
 #include <iomanip>
 #include <iostream>
+#include <sstream>
 
 #include "CodeGenerator.h"
 #include "Error.h"
@@ -19,7 +20,7 @@ void CodeGenerator::process(const SyntaxTree& syntaxTree, InstructionCodeList& i
     processInstructions(syntaxTree, instCodeList);
 }
 
-void CodeGenerator::printSymbols(ostream& os) const
+void CodeGenerator::printSymbols(ostream& os, int base) const
 {
     // save flags
     ios_base::fmtflags flags = os.flags();
@@ -27,19 +28,25 @@ void CodeGenerator::printSymbols(ostream& os) const
     // get format widths
     int nameWidth = 0;
     int valueWidth = 0;
+    stringstream ss;
+    ss << setbase(base);
     for (auto pair : symbols)
     {
         int temp = pair.first.size();
         nameWidth = temp > nameWidth ? temp : nameWidth;
 
-        temp = to_string(pair.second).size();
+        ss.str(""); // clear contents
+        ss << pair.second;
+        temp = ss.str().size();
         valueWidth = temp > valueWidth ? temp : valueWidth;
     }
 
+    char valueFill = base == 16 ? '0' : ' ';
+    os << setbase(base);
     for (auto pair : symbols)
     {
         os << left << setw(nameWidth) << pair.first << "  "
-           << right << setw(valueWidth) << pair.second << "\n";
+           << right << setw(valueWidth) << setfill(valueFill) << pair.second << "\n";
     }
 
     // restore flags
@@ -70,7 +77,7 @@ void CodeGenerator::processLabels(const SyntaxTree& syntaxTree)
                 }
 
                 // translate value to number
-                uint16_t value = evalImmediateExpression(labelArgs[0]);
+                uint64_t value = evalImmediateExpression(labelArgs[0]);
 
                 addSymbol(tokens.label, value);
             }

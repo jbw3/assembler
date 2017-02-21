@@ -89,7 +89,8 @@ void Assembler::process()
 
     if (args.outputSymbols)
     {
-        codeGenerator->printSymbols(*args.os);
+        int base = args.formatHex ? 16 : 10;
+        codeGenerator->printSymbols(*args.os, base);
         return;
     }
 

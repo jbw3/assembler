@@ -20,7 +20,7 @@ public:
 
     void process(const SyntaxTree& syntaxTree, InstructionCodeList& instCodeList);
 
-    void printSymbols(std::ostream& os) const;
+    void printSymbols(std::ostream& os, int base) const;
 
 private:
     InstructionSet instSet;
