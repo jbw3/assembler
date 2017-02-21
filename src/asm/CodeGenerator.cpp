@@ -24,18 +24,22 @@ void CodeGenerator::printSymbols(ostream& os) const
     // save flags
     ios_base::fmtflags flags = os.flags();
 
-    // get width
-    int width = 0;
+    // get format widths
+    int nameWidth = 0;
+    int valueWidth = 0;
     for (auto pair : symbols)
     {
-        int currentWidth = pair.first.size();
-        width = currentWidth > width ? currentWidth : width;
+        int temp = pair.first.size();
+        nameWidth = temp > nameWidth ? temp : nameWidth;
+
+        temp = to_string(pair.second).size();
+        valueWidth = temp > valueWidth ? temp : valueWidth;
     }
 
-    os << left;
     for (auto pair : symbols)
     {
-        os << setw(width) << pair.first << "  " << pair.second << "\n";
+        os << left << setw(nameWidth) << pair.first << "  "
+           << right << setw(valueWidth) << pair.second << "\n";
     }
 
     // restore flags

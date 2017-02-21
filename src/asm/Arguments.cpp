@@ -19,7 +19,7 @@ used.
   --list-i-set      list available instruction sets
   --no-color        do not color output messages
   --output      -o  output file
-  --symbols     -s  output symbols
+  --symbols     -s  output symbol table
 
 Example:
   asm test.s -i W8 -o test.out
