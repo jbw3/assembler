@@ -84,7 +84,7 @@ void CodeGenerator::printSymbols(ostream& os) const
 void CodeGenerator::processLabels(const SyntaxTree& syntaxTree)
 {
     uint64_t byteWordSize = instSet.getWordSize() / 8;
-    uint64_t address = 0;
+    int64_t address = 0;
 
     for (const InstructionTokens& tokens : syntaxTree.instructions)
     {
@@ -105,7 +105,7 @@ void CodeGenerator::processLabels(const SyntaxTree& syntaxTree)
                 }
 
                 // translate value to number
-                uint64_t value = evalImmediateExpression(labelArgs[0]);
+                int64_t value = evalImmediateExpression(labelArgs[0]);
 
                 addSymbol(tokens.label, value);
             }
@@ -119,7 +119,7 @@ void CodeGenerator::processLabels(const SyntaxTree& syntaxTree)
     }
 }
 
-void CodeGenerator::addSymbol(const Token& token, std::uint64_t value)
+void CodeGenerator::addSymbol(const Token& token, std::int64_t value)
 {
     string symbolName = token.getValue();
 
@@ -251,9 +251,9 @@ uint64_t CodeGenerator::encodeImmediate(const Token& token, const Argument& arg)
     return immCode;
 }
 
-uint64_t CodeGenerator::evalImmediateExpression(const Token& token)
+int64_t CodeGenerator::evalImmediateExpression(const Token& token)
 {
-    uint64_t value = 0;
+    int64_t value = 0;
 
     const string& tokenStr = token.getValue();
 
@@ -269,10 +269,10 @@ uint64_t CodeGenerator::evalImmediateExpression(const Token& token)
     return value;
 }
 
-uint64_t CodeGenerator::evalImmediateNum(const Token& token)
+int64_t CodeGenerator::evalImmediateNum(const Token& token)
 {
     bool error = false;
-    uint64_t value = 0;
+    int64_t value = 0;
     size_t pos = 0;
 
     const string& tokenStr = token.getValue();
@@ -310,7 +310,7 @@ uint64_t CodeGenerator::evalImmediateNum(const Token& token)
     // try to convert the string to an integer
     try
     {
-        value = stoull(noPrefixToken, &pos, base);
+        value = stoll(noPrefixToken, &pos, base);
     }
     catch (invalid_argument)
     {
@@ -335,9 +335,9 @@ uint64_t CodeGenerator::evalImmediateNum(const Token& token)
     return value;
 }
 
-uint64_t CodeGenerator::evalImmediateLabel(const Token& token)
+int64_t CodeGenerator::evalImmediateLabel(const Token& token)
 {
-    uint64_t value = 0;
+    int64_t value = 0;
     string label = token.getValue();
 
     auto iter = symbols.find(label);
