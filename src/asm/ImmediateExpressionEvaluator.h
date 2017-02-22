@@ -11,14 +11,18 @@ class ImmediateExpressionEvaluator
 public:
     ImmediateExpressionEvaluator(const SymbolMap& symbols);
 
-    std::int64_t eval(const std::vector<Token>& tokens);
+    std::int64_t eval(const TokenVector& tokens);
 
 private:
     const SymbolMap& symbols;
 
-    std::int64_t evalImmediateNum(const Token& token);
+    std::int64_t evalUnary(TokenVector::const_iterator first, TokenVector::const_iterator last);
 
-    std::int64_t evalImmediateLabel(const Token& token);
+    std::int64_t evalImmediate(const Token& token);
+
+    std::int64_t evalNum(const Token& token);
+
+    std::int64_t evalConstant(const Token& token);
 
     void throwError(const std::string& message, const Token& token);
 };

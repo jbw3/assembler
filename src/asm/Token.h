@@ -2,6 +2,7 @@
 #define TOKEN_H_
 
 #include <string>
+#include <vector>
 
 class Token
 {
@@ -26,6 +27,8 @@ private:
     unsigned long column;
 };
 
+typedef std::vector<Token> TokenVector;
+
 /// End of line
 const Token END_OF_LINE("\n", 0, 0);
 
@@ -37,5 +40,11 @@ const Token LABEL_SEPARATOR(":", 0, 0);
 
 /// Assignment operator
 const Token ASSIGNMENT_OPERATOR("=", 0, 0);
+
+/// Addition operator
+const Token ADDITION_OPERATOR("+", 0, 0);
+
+/// Subtraction operator
+const Token SUBTRACTION_OPERATOR("-", 0, 0);
 
 #endif // TOKEN_H_

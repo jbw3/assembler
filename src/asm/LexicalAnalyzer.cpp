@@ -258,6 +258,18 @@ bool LexicalAnalyzer::isValidToken(const string& str)
         return true;
     }
 
+    // addition operator
+    if (str == ADDITION_OPERATOR.getValue())
+    {
+        return true;
+    }
+
+    // subtraction operator
+    if (str == SUBTRACTION_OPERATOR.getValue())
+    {
+        return true;
+    }
+
     // end of line
     if (str == END_OF_LINE.getValue())
     {

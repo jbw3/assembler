@@ -9,32 +9,58 @@ ImmediateExpressionEvaluator::ImmediateExpressionEvaluator(const SymbolMap& symb
 {
 }
 
-int64_t ImmediateExpressionEvaluator::eval(const vector<Token>& tokens)
+int64_t ImmediateExpressionEvaluator::eval(const TokenVector& tokens)
+{
+    int64_t value = evalUnary(tokens.cbegin(), tokens.cend() - 1);
+
+    return value;
+}
+
+int64_t ImmediateExpressionEvaluator::evalUnary(TokenVector::const_iterator first, TokenVector::const_iterator last)
 {
     int64_t value = 0;
 
-    if (tokens.size() > 1)
+    if (first == last)
     {
-        throwError("Invalid syntax.", tokens[1]);
+        value = evalImmediate(*first);
     }
-
-    const Token& token = tokens[0];
-
-    const string& tokenStr = token.getValue();
-
-    if (isdigit(tokenStr[0]))
+    else if (*first == SUBTRACTION_OPERATOR)
     {
-        value = evalImmediateNum(token);
+        // operator is negative sign
+        value = -evalUnary(first + 1, last);
+    }
+    else if (*first == ADDITION_OPERATOR)
+    {
+        // operator is positive sign; do nothing
+        value = evalUnary(first + 1, last);
     }
     else
     {
-        value = evalImmediateLabel(token);
+        // if we get here, there was an error
+        throwError("Invalid syntax: \"" + first->getValue() + "\".", *first);
     }
 
     return value;
 }
 
-int64_t ImmediateExpressionEvaluator::evalImmediateNum(const Token& token)
+int64_t ImmediateExpressionEvaluator::evalImmediate(const Token& token)
+{
+    int64_t value = 0;
+    const string& tokenStr = token.getValue();
+
+    if (isdigit(tokenStr[0]))
+    {
+        value = evalNum(token);
+    }
+    else
+    {
+        value = evalConstant(token);
+    }
+
+    return value;
+}
+
+int64_t ImmediateExpressionEvaluator::evalNum(const Token& token)
 {
     bool error = false;
     int64_t value = 0;
@@ -100,7 +126,7 @@ int64_t ImmediateExpressionEvaluator::evalImmediateNum(const Token& token)
     return value;
 }
 
-int64_t ImmediateExpressionEvaluator::evalImmediateLabel(const Token& token)
+int64_t ImmediateExpressionEvaluator::evalConstant(const Token& token)
 {
     int64_t value = 0;
     string label = token.getValue();
