@@ -4,7 +4,9 @@
 #include <list>
 #include <vector>
 
+#include "ImmediateExpressionEvaluator.h"
 #include "InstructionSet.h"
+#include "SymbolMap.h"
 #include "Token.h"
 
 class SyntaxTree;
@@ -24,7 +26,8 @@ public:
 
 private:
     InstructionSet instSet;
-    std::map<std::string, std::int64_t> symbols;
+    SymbolMap symbols;
+    ImmediateExpressionEvaluator exprEval;
 
     void processLabels(const SyntaxTree& syntaxTree);
 
@@ -39,12 +42,6 @@ private:
     uint64_t encodeRegister(const Token& token);
 
     uint64_t encodeImmediate(const Token& token, const Argument& arg);
-
-    int64_t evalImmediateExpression(const Token& token);
-
-    int64_t evalImmediateNum(const Token& token);
-
-    int64_t evalImmediateLabel(const Token& token);
 
     void throwError(const std::string& message, const Token& token);
 };

@@ -11,7 +11,8 @@
 using namespace std;
 
 CodeGenerator::CodeGenerator(const InstructionSet& instructionSet) :
-    instSet(instructionSet)
+    instSet(instructionSet),
+    exprEval(symbols)
 {}
 
 void CodeGenerator::process(const SyntaxTree& syntaxTree, InstructionCodeList& instCodeList)
@@ -99,13 +100,8 @@ void CodeGenerator::processLabels(const SyntaxTree& syntaxTree)
             }
             else // label is being assigned a value
             {
-                if (labelArgs.size() > 1)
-                {
-                    throwError("Invalid assignment syntax.", labelArgs[1]);
-                }
-
                 // translate value to number
-                int64_t value = evalImmediateExpression(labelArgs[0]);
+                int64_t value = exprEval.eval(labelArgs);
 
                 addSymbol(tokens.label, value);
             }
@@ -238,7 +234,7 @@ uint64_t CodeGenerator::encodeRegister(const Token& token)
 
 uint64_t CodeGenerator::encodeImmediate(const Token& token, const Argument& arg)
 {
-    uint64_t immCode = evalImmediateExpression(token);
+    uint64_t immCode = exprEval.eval({token});
 
     // Warn if number will be truncated in instruction.
     if ( immCode != (immCode & bitMask(arg.getSize())) )
@@ -249,108 +245,6 @@ uint64_t CodeGenerator::encodeImmediate(const Token& token, const Argument& arg)
     }
 
     return immCode;
-}
-
-int64_t CodeGenerator::evalImmediateExpression(const Token& token)
-{
-    int64_t value = 0;
-
-    const string& tokenStr = token.getValue();
-
-    if (isdigit(tokenStr[0]))
-    {
-        value = evalImmediateNum(token);
-    }
-    else
-    {
-        value = evalImmediateLabel(token);
-    }
-
-    return value;
-}
-
-int64_t CodeGenerator::evalImmediateNum(const Token& token)
-{
-    bool error = false;
-    int64_t value = 0;
-    size_t pos = 0;
-
-    const string& tokenStr = token.getValue();
-
-    // determine base
-    int base = 10;
-    if (tokenStr.size() >= 2 && tokenStr[0] == '0')
-    {
-        switch (tokenStr[1])
-        {
-        case 'b':
-        case 'B':
-            base = 2;
-            break;
-
-        case 'o':
-        case 'O':
-            base = 8;
-            break;
-
-        case 'x':
-        case 'X':
-            base = 16;
-            break;
-
-        default:
-            base = 10;
-            break;
-        }
-    }
-
-    // strip prefix if not a decimal number
-    string noPrefixToken = (base == 10) ? tokenStr : tokenStr.substr(2);
-
-    // try to convert the string to an integer
-    try
-    {
-        value = stoll(noPrefixToken, &pos, base);
-    }
-    catch (invalid_argument)
-    {
-        error = true;
-    }
-    catch (out_of_range)
-    {
-        error = true;
-    }
-
-    // make sure the entire string was used
-    if (pos != noPrefixToken.size())
-    {
-        error = true;
-    }
-
-    if (error)
-    {
-        throwError(tokenStr + " is not a valid integer.", token);
-    }
-
-    return value;
-}
-
-int64_t CodeGenerator::evalImmediateLabel(const Token& token)
-{
-    int64_t value = 0;
-    string label = token.getValue();
-
-    auto iter = symbols.find(label);
-    if (iter == symbols.end())
-    {
-        throwError("\"" + label + "\" is not a valid symbol.", token);
-    }
-    else
-    {
-        value = iter->second;
-    }
-
-    return value;
 }
 
 void CodeGenerator::throwError(const std::string& message, const Token& token)
