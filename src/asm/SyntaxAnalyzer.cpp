@@ -12,9 +12,9 @@ SyntaxAnalyzer::SyntaxAnalyzer(const InstructionSet& instructionSet) :
     instSet(instructionSet)
 {}
 
-void SyntaxAnalyzer::process(const vector<Token>& tokens, SyntaxTree& syntaxTree)
+void SyntaxAnalyzer::process(const TokenVec& tokens, SyntaxTree& syntaxTree)
 {
-    vector<Token> lineTokens;
+    TokenVec lineTokens;
     lineTokens.reserve(8);
 
     for (const Token& token : tokens)
@@ -87,9 +87,9 @@ void SyntaxAnalyzer::addLabel(InstructionTokens& instTokens, const Token& token)
     instTokens.label = token;
 }
 
-void SyntaxAnalyzer::parseArgs(const vector<Token>& instTokens, size_t tokenIdx, vector<Token>& argTokens)
+void SyntaxAnalyzer::parseArgs(const TokenVec& instTokens, size_t tokenIdx, TokenVecVec& args)
 {
-    argTokens.clear();
+    args.clear();
 
     // if there are no arguments, we can return
     if (instTokens[tokenIdx] == END_OF_LINE)
@@ -97,22 +97,14 @@ void SyntaxAnalyzer::parseArgs(const vector<Token>& instTokens, size_t tokenIdx,
         return;
     }
 
-    bool expectSep = false;
+    TokenVec argTokens;
     for (; tokenIdx < instTokens.size(); ++tokenIdx)
     {
         const Token& token = instTokens[tokenIdx];
 
-        if (expectSep)
+        if (token == ARGUMENT_SEPARATOR || token == END_OF_LINE)
         {
-            if (token != ARGUMENT_SEPARATOR && token != END_OF_LINE)
-            {
-                string message = "Expected \"" + ARGUMENT_SEPARATOR.getValue() + "\" before argument \"" + token.getValue() + "\".";
-                throwError(message, token);
-            }
-        }
-        else
-        {
-            if (token == ARGUMENT_SEPARATOR || token == END_OF_LINE)
+            if (argTokens.empty())
             {
                 string message = "Expected an argument before ";
                 if (token == ARGUMENT_SEPARATOR)
@@ -127,11 +119,14 @@ void SyntaxAnalyzer::parseArgs(const vector<Token>& instTokens, size_t tokenIdx,
             }
             else
             {
-                argTokens.push_back(token);
+                args.push_back(argTokens);
+                argTokens.clear();
             }
         }
-
-        expectSep = !expectSep;
+        else
+        {
+            argTokens.push_back(token);
+        }
     }
 }
 

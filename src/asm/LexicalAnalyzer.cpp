@@ -258,6 +258,12 @@ bool LexicalAnalyzer::isValidToken(const string& str)
         return true;
     }
 
+    // constant expression operators
+    if (CONSTANT_OPERATORS.find(Token(str, 0, 0)) != CONSTANT_OPERATORS.cend())
+    {
+        return true;
+    }
+
     // end of line
     if (str == END_OF_LINE.getValue())
     {

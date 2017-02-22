@@ -11,7 +11,8 @@
 using namespace std;
 
 CodeGenerator::CodeGenerator(const InstructionSet& instructionSet) :
-    instSet(instructionSet)
+    instSet(instructionSet),
+    exprEval(symbols)
 {}
 
 void CodeGenerator::process(const SyntaxTree& syntaxTree, InstructionCodeList& instCodeList)
@@ -84,7 +85,7 @@ void CodeGenerator::printSymbols(ostream& os) const
 void CodeGenerator::processLabels(const SyntaxTree& syntaxTree)
 {
     uint64_t byteWordSize = instSet.getWordSize() / 8;
-    uint64_t address = 0;
+    int64_t address = 0;
 
     for (const InstructionTokens& tokens : syntaxTree.instructions)
     {
@@ -99,13 +100,8 @@ void CodeGenerator::processLabels(const SyntaxTree& syntaxTree)
             }
             else // label is being assigned a value
             {
-                if (labelArgs.size() > 1)
-                {
-                    throwError("Invalid assignment syntax.", labelArgs[1]);
-                }
-
                 // translate value to number
-                uint64_t value = evalImmediateExpression(labelArgs[0]);
+                int64_t value = exprEval.eval(labelArgs);
 
                 addSymbol(tokens.label, value);
             }
@@ -119,7 +115,7 @@ void CodeGenerator::processLabels(const SyntaxTree& syntaxTree)
     }
 }
 
-void CodeGenerator::addSymbol(const Token& token, std::uint64_t value)
+void CodeGenerator::addSymbol(const Token& token, std::int64_t value)
 {
     string symbolName = token.getValue();
 
@@ -177,7 +173,7 @@ void CodeGenerator::encodeInstruction(const InstructionTokens& tokens, Instructi
 void CodeGenerator::encodeArgs(const Instruction& inst, const InstructionTokens& tokens, uint64_t& code)
 {
     const vector<Argument>& args = inst.getType().getArguments();
-    const vector<Token>& argTokens = tokens.arguments;
+    const TokenVecVec& argTokens = tokens.arguments;
 
     size_t expectedNumArgs = args.size();
     size_t numArgs = argTokens.size();
@@ -220,8 +216,15 @@ void CodeGenerator::encodeArgs(const Instruction& inst, const InstructionTokens&
     }
 }
 
-uint64_t CodeGenerator::encodeRegister(const Token& token)
+uint64_t CodeGenerator::encodeRegister(const TokenVec& tokens)
 {
+    if (tokens.size() > 1)
+    {
+        throwError("Expected only one register name.", tokens[1]);
+    }
+
+    const Token& token = tokens[0];
+
     map<string, Register> registers = instSet.getRegisters();
 
     // look up the register by name
@@ -236,121 +239,49 @@ uint64_t CodeGenerator::encodeRegister(const Token& token)
     return regCode;
 }
 
-uint64_t CodeGenerator::encodeImmediate(const Token& token, const Argument& arg)
+uint64_t CodeGenerator::encodeImmediate(const TokenVec& tokens, const Argument& arg)
 {
-    uint64_t immCode = evalImmediateExpression(token);
+    uint64_t immCode = exprEval.eval(tokens);
 
-    // Warn if number will be truncated in instruction.
-    if ( immCode != (immCode & bitMask(arg.getSize())) )
+    bool trunc = checkTrunc(immCode, arg);
+
+    // warn if number will be truncated in instruction
+    if (trunc)
     {
-        Logger::getInstance().logWarning("Immediate value \"" + token.getValue() + "\" was truncated.",
-                                         token.getLine(),
-                                         token.getColumn());
+        Logger::getInstance().logWarning("Immediate value was truncated.",
+                                         tokens[0].getLine(),
+                                         tokens[0].getColumn());
     }
 
     return immCode;
 }
 
-uint64_t CodeGenerator::evalImmediateExpression(const Token& token)
+bool CodeGenerator::checkTrunc(uint64_t immCode, const Argument& arg)
 {
-    uint64_t value = 0;
+    bool trunc = false;
 
-    const string& tokenStr = token.getValue();
+    uint64_t numMask = bitMask(arg.getSize());
 
-    if (isdigit(tokenStr[0]))
+    if (arg.getIsSigned())
     {
-        value = evalImmediateNum(token);
+        // bitmask to test if number is negative
+        // (get most significate bit of number and
+        // all leading bits)
+        uint64_t signMask = ~(numMask >> 1);
+
+        uint64_t signBits = (immCode & signMask);
+
+        bool isPositive = (signBits == 0);
+        bool isNegative = (signBits == signMask);
+
+        trunc = ( !isPositive && !isNegative );
     }
-    else
+    else // arg is unsigned
     {
-        value = evalImmediateLabel(token);
-    }
-
-    return value;
-}
-
-uint64_t CodeGenerator::evalImmediateNum(const Token& token)
-{
-    bool error = false;
-    uint64_t value = 0;
-    size_t pos = 0;
-
-    const string& tokenStr = token.getValue();
-
-    // determine base
-    int base = 10;
-    if (tokenStr.size() >= 2 && tokenStr[0] == '0')
-    {
-        switch (tokenStr[1])
-        {
-        case 'b':
-        case 'B':
-            base = 2;
-            break;
-
-        case 'o':
-        case 'O':
-            base = 8;
-            break;
-
-        case 'x':
-        case 'X':
-            base = 16;
-            break;
-
-        default:
-            base = 10;
-            break;
-        }
+        trunc = ( immCode != (immCode & numMask) );
     }
 
-    // strip prefix if not a decimal number
-    string noPrefixToken = (base == 10) ? tokenStr : tokenStr.substr(2);
-
-    // try to convert the string to an integer
-    try
-    {
-        value = stoull(noPrefixToken, &pos, base);
-    }
-    catch (invalid_argument)
-    {
-        error = true;
-    }
-    catch (out_of_range)
-    {
-        error = true;
-    }
-
-    // make sure the entire string was used
-    if (pos != noPrefixToken.size())
-    {
-        error = true;
-    }
-
-    if (error)
-    {
-        throwError(tokenStr + " is not a valid integer.", token);
-    }
-
-    return value;
-}
-
-uint64_t CodeGenerator::evalImmediateLabel(const Token& token)
-{
-    uint64_t value = 0;
-    string label = token.getValue();
-
-    auto iter = symbols.find(label);
-    if (iter == symbols.end())
-    {
-        throwError("\"" + label + "\" is not a valid symbol.", token);
-    }
-    else
-    {
-        value = iter->second;
-    }
-
-    return value;
+    return trunc;
 }
 
 void CodeGenerator::throwError(const std::string& message, const Token& token)

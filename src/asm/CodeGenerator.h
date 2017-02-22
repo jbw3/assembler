@@ -4,7 +4,9 @@
 #include <list>
 #include <vector>
 
+#include "ImmediateExpressionEvaluator.h"
 #include "InstructionSet.h"
+#include "SymbolMap.h"
 #include "Token.h"
 
 class SyntaxTree;
@@ -24,11 +26,12 @@ public:
 
 private:
     InstructionSet instSet;
-    std::map<std::string, std::uint64_t> symbols;
+    SymbolMap symbols;
+    ImmediateExpressionEvaluator exprEval;
 
     void processLabels(const SyntaxTree& syntaxTree);
 
-    void addSymbol(const Token& token, std::uint64_t value);
+    void addSymbol(const Token& token, std::int64_t value);
 
     void processInstructions(const SyntaxTree& syntaxTree, InstructionCodeList& instCodeList);
 
@@ -36,15 +39,14 @@ private:
 
     void encodeArgs(const Instruction& inst, const InstructionTokens& tokens, uint64_t& code);
 
-    uint64_t encodeRegister(const Token& token);
+    uint64_t encodeRegister(const TokenVec& tokens);
 
-    uint64_t encodeImmediate(const Token& token, const Argument& arg);
+    uint64_t encodeImmediate(const TokenVec& tokens, const Argument& arg);
 
-    uint64_t evalImmediateExpression(const Token& token);
-
-    uint64_t evalImmediateNum(const Token& token);
-
-    uint64_t evalImmediateLabel(const Token& token);
+    /**
+     * @brief Check if immediate value will be truncated
+     */
+    bool checkTrunc(uint64_t immCode, const Argument& arg);
 
     void throwError(const std::string& message, const Token& token);
 };

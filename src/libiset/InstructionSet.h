@@ -7,6 +7,9 @@
 #include <string>
 #include <vector>
 
+/**
+ * @brief Configuration for an instruction argument
+ */
 class Argument
 {
 public:
@@ -16,18 +19,39 @@ public:
         eImmediate
     };
 
-    Argument(EType type, unsigned int size, unsigned int offset);
+    /**
+     * @brief Constructor
+     */
+    Argument(EType type, unsigned int size, unsigned int offset, bool isSigned = true);
 
+    /**
+     * @brief Get the argument type (register or immediate)
+     */
     EType getType() const;
 
+    /**
+     * @brief Get the number of bits the argument will occupy
+     * in the instruction code
+     */
     unsigned int getSize() const;
 
+    /**
+     * @brief Get the offset in bits of the argument in the
+     * instruction code
+     */
     unsigned int getOffset() const;
+
+    /**
+     * @brief Get whether or not this argument is a signed number
+     * (only meaningful for immediate arguments)
+     */
+    bool getIsSigned() const;
 
 private:
     EType type;
     unsigned int size;
     unsigned int offset;
+    bool isSigned;
 };
 
 class InstructionType

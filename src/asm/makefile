@@ -21,10 +21,12 @@ DEPS = Arguments.h \
        Assembler.h \
        CodeGenerator.h \
        Error.h \
+       ImmediateExpressionEvaluator.h \
        IOutputFormatter.h \
        LexicalAnalyzer.h \
        Logger.h \
        Preprocessor.h \
+       SymbolMap.h \
        SyntaxAnalyzer.h \
        SyntaxTree.h \
        TextOutputFormatter.h \
@@ -33,6 +35,7 @@ DEPS = Arguments.h \
 SRC = Arguments.cpp \
       Assembler.cpp \
       CodeGenerator.cpp \
+      ImmediateExpressionEvaluator.cpp \
       LexicalAnalyzer.cpp \
       Logger.cpp \
       main.cpp \
@@ -80,4 +83,5 @@ $(OBJDIR)/%.o: %.cpp $(DEPS)
 
 .PHONY: clean
 clean:
+	cd ../libiset; make clean
 	rm -f $(OBJDIR)/*.o $(OBJDIR)/*.gcno $(OBJDIR)/*.gcda $(TARGET) *.gcov

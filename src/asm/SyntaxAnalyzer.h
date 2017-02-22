@@ -14,14 +14,14 @@ class SyntaxAnalyzer
 public:
     SyntaxAnalyzer(const InstructionSet& instructionSet);
 
-    void process(const std::vector<Token>& tokens, SyntaxTree& syntaxTree);
+    void process(const TokenVec& tokens, SyntaxTree& syntaxTree);
 
 private:
     InstructionSet instSet;
 
     void addLabel(InstructionTokens& instTokens, const Token& token);
 
-    void parseArgs(const std::vector<Token>& instTokens, std::size_t tokenIdx, std::vector<Token>& argTokens);
+    void parseArgs(const TokenVec& instTokens, std::size_t tokenIdx, TokenVecVec& args);
 
     void throwError(const std::string& message, const Token& token);
 };
