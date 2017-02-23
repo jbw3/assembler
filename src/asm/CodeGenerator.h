@@ -39,9 +39,9 @@ private:
 
     void encodeArgs(const Instruction& inst, const InstructionTokens& tokens, uint64_t& code);
 
-    uint64_t encodeRegister(const Token& token);
+    uint64_t encodeRegister(const TokenVector& tokens);
 
-    uint64_t encodeImmediate(const Token& token, const Argument& arg);
+    uint64_t encodeImmediate(const TokenVector& tokens, const Argument& arg);
 
     void throwError(const std::string& message, const Token& token);
 };

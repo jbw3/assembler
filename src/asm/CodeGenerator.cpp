@@ -173,7 +173,7 @@ void CodeGenerator::encodeInstruction(const InstructionTokens& tokens, Instructi
 void CodeGenerator::encodeArgs(const Instruction& inst, const InstructionTokens& tokens, uint64_t& code)
 {
     const vector<Argument>& args = inst.getType().getArguments();
-    const vector<Token>& argTokens = tokens.arguments;
+    const vector<TokenVector>& argTokens = tokens.arguments;
 
     size_t expectedNumArgs = args.size();
     size_t numArgs = argTokens.size();
@@ -216,8 +216,15 @@ void CodeGenerator::encodeArgs(const Instruction& inst, const InstructionTokens&
     }
 }
 
-uint64_t CodeGenerator::encodeRegister(const Token& token)
+uint64_t CodeGenerator::encodeRegister(const TokenVector& tokens)
 {
+    if (tokens.size() > 1)
+    {
+        throwError("Expected only one register name.", tokens[1]);
+    }
+
+    const Token& token = tokens[0];
+
     map<string, Register> registers = instSet.getRegisters();
 
     // look up the register by name
@@ -232,16 +239,16 @@ uint64_t CodeGenerator::encodeRegister(const Token& token)
     return regCode;
 }
 
-uint64_t CodeGenerator::encodeImmediate(const Token& token, const Argument& arg)
+uint64_t CodeGenerator::encodeImmediate(const TokenVector& tokens, const Argument& arg)
 {
-    uint64_t immCode = exprEval.eval({token});
+    uint64_t immCode = exprEval.eval(tokens);
 
     // Warn if number will be truncated in instruction.
     if ( immCode != (immCode & bitMask(arg.getSize())) )
     {
-        Logger::getInstance().logWarning("Immediate value \"" + token.getValue() + "\" was truncated.",
-                                         token.getLine(),
-                                         token.getColumn());
+        Logger::getInstance().logWarning("Immediate value was truncated.",
+                                         tokens[0].getLine(),
+                                         tokens[0].getColumn());
     }
 
     return immCode;
