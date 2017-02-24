@@ -43,6 +43,11 @@ private:
 
     uint64_t encodeImmediate(const TokenVector& tokens, const Argument& arg);
 
+    /**
+     * @brief Check if immediate value will be truncated
+     */
+    bool checkTrunc(uint64_t immCode, const Argument& arg);
+
     void throwError(const std::string& message, const Token& token);
 };
 

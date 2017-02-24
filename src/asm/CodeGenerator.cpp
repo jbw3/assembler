@@ -243,20 +243,10 @@ uint64_t CodeGenerator::encodeImmediate(const TokenVector& tokens, const Argumen
 {
     uint64_t immCode = exprEval.eval(tokens);
 
-    uint64_t numMask = bitMask(arg.getSize());
-
-    // bitmask to test if number is negative
-    // (get most significate bit of number and
-    // all leading bits)
-    uint64_t signMask = ~(numMask >> 1);
-
-    uint64_t signBits = (immCode & signMask);
-
-    bool isPositive = (signBits == 0);
-    bool isNegative = (signBits == signMask);
+    bool trunc = checkTrunc(immCode, arg);
 
     // warn if number will be truncated in instruction
-    if (!isPositive && !isNegative)
+    if (trunc)
     {
         Logger::getInstance().logWarning("Immediate value was truncated.",
                                          tokens[0].getLine(),
@@ -264,6 +254,34 @@ uint64_t CodeGenerator::encodeImmediate(const TokenVector& tokens, const Argumen
     }
 
     return immCode;
+}
+
+bool CodeGenerator::checkTrunc(uint64_t immCode, const Argument& arg)
+{
+    bool trunc = false;
+
+    uint64_t numMask = bitMask(arg.getSize());
+
+    if (arg.getIsSigned())
+    {
+        // bitmask to test if number is negative
+        // (get most significate bit of number and
+        // all leading bits)
+        uint64_t signMask = ~(numMask >> 1);
+
+        uint64_t signBits = (immCode & signMask);
+
+        bool isPositive = (signBits == 0);
+        bool isNegative = (signBits == signMask);
+
+        trunc = ( !isPositive && !isNegative );
+    }
+    else // arg is unsigned
+    {
+        trunc = ( immCode != (immCode & numMask) );
+    }
+
+    return trunc;
 }
 
 void CodeGenerator::throwError(const std::string& message, const Token& token)
