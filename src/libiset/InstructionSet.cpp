@@ -3,10 +3,11 @@
 
 using namespace std;
 
-Argument::Argument(EType type, unsigned int size, unsigned int offset) :
+Argument::Argument(EType type, unsigned int size, unsigned int offset, bool isSigned) :
     type(type),
     size(size),
-    offset(offset)
+    offset(offset),
+    isSigned(isSigned)
 {}
 
 Argument::EType Argument::getType() const
@@ -22,6 +23,11 @@ unsigned int Argument::getSize() const
 unsigned int Argument::getOffset() const
 {
     return offset;
+}
+
+bool Argument::getIsSigned() const
+{
+    return isSigned;
 }
 
 InstructionType::InstructionType(unsigned int opCodeSize, unsigned int opCodeOffset, std::initializer_list<Argument> arguments) :
