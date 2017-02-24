@@ -243,8 +243,20 @@ uint64_t CodeGenerator::encodeImmediate(const TokenVector& tokens, const Argumen
 {
     uint64_t immCode = exprEval.eval(tokens);
 
-    // Warn if number will be truncated in instruction.
-    if ( immCode != (immCode & bitMask(arg.getSize())) )
+    uint64_t numMask = bitMask(arg.getSize());
+
+    // bitmask to test if number is negative
+    // (get most significate bit of number and
+    // all leading bits)
+    uint64_t signMask = ~(numMask >> 1);
+
+    uint64_t signBits = (immCode & signMask);
+
+    bool isPositive = (signBits == 0);
+    bool isNegative = (signBits == signMask);
+
+    // warn if number will be truncated in instruction
+    if (!isPositive && !isNegative)
     {
         Logger::getInstance().logWarning("Immediate value was truncated.",
                                          tokens[0].getLine(),
