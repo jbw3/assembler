@@ -270,6 +270,24 @@ bool LexicalAnalyzer::isValidToken(const string& str)
         return true;
     }
 
+    // multiplication operator
+    if (str == MULTIPLICATION_OPERATOR.getValue())
+    {
+        return true;
+    }
+
+    // division operator
+    if (str == DIVISION_OPERATOR.getValue())
+    {
+        return true;
+    }
+
+    // modulo operator
+    if (str == MODULO_OPERATOR.getValue())
+    {
+        return true;
+    }
+
     // end of line
     if (str == END_OF_LINE.getValue())
     {

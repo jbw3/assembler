@@ -1,5 +1,3 @@
-#include <list>
-
 #include "Error.h"
 #include "ImmediateExpressionEvaluator.h"
 #include "Logger.h"
@@ -15,7 +13,10 @@ const unordered_set<Token> ImmediateExpressionEvaluator::UNARY_OPERATORS =
 const unordered_set<Token> ImmediateExpressionEvaluator::BINARY_OPERATORS =
 {
     ADDITION_OPERATOR,
-    SUBTRACTION_OPERATOR
+    SUBTRACTION_OPERATOR,
+    MULTIPLICATION_OPERATOR,
+    DIVISION_OPERATOR,
+    MODULO_OPERATOR
 };
 
 ImmediateExpressionEvaluator::ImmediateExpressionEvaluator(const SymbolMap& symbols) :
@@ -25,8 +26,8 @@ ImmediateExpressionEvaluator::ImmediateExpressionEvaluator(const SymbolMap& symb
 
 int64_t ImmediateExpressionEvaluator::eval(const TokenVec& tokens)
 {
-    list<int64_t> terms;
-    list<Token> binOperators;
+    terms.clear();
+    binOperators.clear();
 
     bool expectBinOp = false;
     TokenVec termTokens;
@@ -65,6 +66,13 @@ int64_t ImmediateExpressionEvaluator::eval(const TokenVec& tokens)
         throwError("Expected term after operator.", binOperators.back());
     }
 
+    int64_t value = evalTerms();
+
+    return value;
+}
+
+int64_t ImmediateExpressionEvaluator::evalTerms()
+{
     auto term1Iter = terms.begin();
     auto term2Iter = ++terms.begin();
     while (term2Iter != terms.end())
@@ -116,6 +124,18 @@ int64_t ImmediateExpressionEvaluator::evalBinary(const Token& op, int64_t term1,
     else if (op == SUBTRACTION_OPERATOR)
     {
         value = term1 - term2;
+    }
+    else if (op == MULTIPLICATION_OPERATOR)
+    {
+        value = term1 * term2;
+    }
+    else if (op == DIVISION_OPERATOR)
+    {
+        value = term1 / term2;
+    }
+    else if (op == MODULO_OPERATOR)
+    {
+        value = term1 % term2;
     }
     else
     {

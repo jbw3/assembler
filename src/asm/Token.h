@@ -60,4 +60,13 @@ const Token ADDITION_OPERATOR("+", 0, 0);
 /// Subtraction operator
 const Token SUBTRACTION_OPERATOR("-", 0, 0);
 
+/// Multiplication operator
+const Token MULTIPLICATION_OPERATOR("*", 0, 0);
+
+/// Division operator
+const Token DIVISION_OPERATOR("/", 0, 0);
+
+/// Modulo operator
+const Token MODULO_OPERATOR("%", 0, 0);
+
 #endif // TOKEN_H_

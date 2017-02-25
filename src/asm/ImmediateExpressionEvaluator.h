@@ -1,6 +1,7 @@
 #ifndef IMMEDIATE_EXPRESSION_EVALUATOR_H_
 #define IMMEDIATE_EXPRESSION_EVALUATOR_H_
 
+#include <list>
 #include <unordered_set>
 
 #include "SymbolMap.h"
@@ -18,6 +19,10 @@ private:
     static const std::unordered_set<Token> BINARY_OPERATORS;
 
     const SymbolMap& symbols;
+    std::list<std::int64_t> terms;
+    std::list<Token> binOperators;
+
+    std::int64_t evalTerms();
 
     std::int64_t evalUnary(TokenVec::const_iterator first, TokenVec::const_iterator last);
 
