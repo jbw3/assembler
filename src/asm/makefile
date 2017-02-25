@@ -83,4 +83,5 @@ $(OBJDIR)/%.o: %.cpp $(DEPS)
 
 .PHONY: clean
 clean:
+	cd ../libiset; make clean
 	rm -f $(OBJDIR)/*.o $(OBJDIR)/*.gcno $(OBJDIR)/*.gcda $(TARGET) *.gcov
