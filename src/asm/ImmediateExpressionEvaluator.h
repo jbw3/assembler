@@ -14,17 +14,17 @@ public:
 
     std::int64_t eval(const TokenVec& tokens);
 
+    std::int64_t eval(TokenVec::const_iterator begin, TokenVec::const_iterator end);
+
 private:
     static const std::unordered_set<Token> UNARY_OPERATORS;
     static const std::unordered_set<Token> BINARY_OPERATORS;
 
     const SymbolMap& symbols;
-    std::list<std::int64_t> terms;
-    std::list<Token> binOperators;
 
-    std::int64_t evalTerms();
+    std::int64_t evalTerms(std::list<std::int64_t>& terms, std::list<Token>& binOperators);
 
-    void evalTermsPrecedence(const TokenVec& operators);
+    void evalTermsPrecedence(std::list<std::int64_t>& terms, std::list<Token>& binOperators, const TokenVec& operators);
 
     std::int64_t evalUnary(TokenVec::const_iterator first, TokenVec::const_iterator last);
 

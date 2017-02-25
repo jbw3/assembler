@@ -34,30 +34,35 @@ ImmediateExpressionEvaluator::ImmediateExpressionEvaluator(const SymbolMap& symb
 
 int64_t ImmediateExpressionEvaluator::eval(const TokenVec& tokens)
 {
-    terms.clear();
-    binOperators.clear();
+    return eval(tokens.cbegin(), tokens.cend());
+}
+
+int64_t ImmediateExpressionEvaluator::eval(TokenVec::const_iterator begin, TokenVec::const_iterator end)
+{
+    list<int64_t> terms;
+    list<Token> binOperators;
 
     bool expectBinOp = false;
     TokenVec termTokens;
     termTokens.reserve(8);
-    for (const Token& token : tokens)
+    for (auto tokenIter = begin; tokenIter != end; ++tokenIter)
     {
         if (expectBinOp)
         {
-            if (BINARY_OPERATORS.find(token) == BINARY_OPERATORS.cend())
+            if (BINARY_OPERATORS.find(*tokenIter) == BINARY_OPERATORS.cend())
             {
-                throwError("Expected binary operator.", token);
+                throwError("Expected binary operator.", *tokenIter);
             }
 
-            binOperators.push_back(token);
+            binOperators.push_back(*tokenIter);
             expectBinOp = false;
         }
         else
         {
-            termTokens.push_back(token);
+            termTokens.push_back(*tokenIter);
 
             // if this is not an operator, it must be an immediate value
-            if (UNARY_OPERATORS.find(token) == UNARY_OPERATORS.cend())
+            if (UNARY_OPERATORS.find(*tokenIter) == UNARY_OPERATORS.cend())
             {
                 int64_t term = evalUnary(termTokens.cbegin(), termTokens.cend() - 1);
                 terms.push_back(term);
@@ -74,24 +79,24 @@ int64_t ImmediateExpressionEvaluator::eval(const TokenVec& tokens)
         throwError("Expected term after operator.", binOperators.back());
     }
 
-    int64_t value = evalTerms();
+    int64_t value = evalTerms(terms, binOperators);
 
     return value;
 }
 
-int64_t ImmediateExpressionEvaluator::evalTerms()
+int64_t ImmediateExpressionEvaluator::evalTerms(list<int64_t>& terms, list<Token>& binOperators)
 {
-    evalTermsPrecedence({MULTIPLICATION_OPERATOR, DIVISION_OPERATOR, MODULO_OPERATOR});
-    evalTermsPrecedence({ADDITION_OPERATOR, SUBTRACTION_OPERATOR});
-    evalTermsPrecedence({SHIFT_LEFT_OPERATOR, SHIFT_RIGHT_OPERATOR});
-    evalTermsPrecedence({AND_OPERATOR});
-    evalTermsPrecedence({XOR_OPERATOR});
-    evalTermsPrecedence({OR_OPERATOR});
+    evalTermsPrecedence(terms, binOperators, {MULTIPLICATION_OPERATOR, DIVISION_OPERATOR, MODULO_OPERATOR});
+    evalTermsPrecedence(terms, binOperators, {ADDITION_OPERATOR, SUBTRACTION_OPERATOR});
+    evalTermsPrecedence(terms, binOperators, {SHIFT_LEFT_OPERATOR, SHIFT_RIGHT_OPERATOR});
+    evalTermsPrecedence(terms, binOperators, {AND_OPERATOR});
+    evalTermsPrecedence(terms, binOperators, {XOR_OPERATOR});
+    evalTermsPrecedence(terms, binOperators, {OR_OPERATOR});
 
     return terms.front();
 }
 
-void ImmediateExpressionEvaluator::evalTermsPrecedence(const TokenVec& operators)
+void ImmediateExpressionEvaluator::evalTermsPrecedence(list<int64_t>& terms, list<Token>& binOperators, const TokenVec& operators)
 {
     auto term1Iter = terms.begin();
     for (auto opIter = binOperators.begin(); opIter != binOperators.end(); )
