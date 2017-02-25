@@ -110,7 +110,6 @@ def main():
     tester.add(FileTest('W8_1', 'W8'))
     tester.add(FileTest('W8_2', 'W8'))
     tester.add(FileTest('W16_1', 'W16'))
-    tester.add(FileTest('numbers', 'W16'))
     tester.add(FileTest('invalid_token', 'W16'))
     tester.add(FileTest('invalid_token_eol', 'W16'))
     tester.add(FileTest('no_arg_sep', 'W16'))
@@ -123,7 +122,15 @@ def main():
     tester.add(FileTest('redefined_label', 'W16'))
     tester.add(FileTest('constants', 'W16'))
 
-    tester.add(StringTest('Immediate Dec', 'W16', b'addi r0, 19', outStr=b'b013\n'))
+    # string tests
+    tester.add(StringTest('Immediate Bin Lower', 'W16', b'jmp 0b1010011', outStr=b'c053\n'))
+    tester.add(StringTest('Immediate Bin Upper', 'W16', b'jmp 0B101101', outStr=b'c02d\n'))
+    tester.add(StringTest('Immediate Oct Lower', 'W16', b'jmp 0o107', outStr=b'c047\n'))
+    tester.add(StringTest('Immediate Oct Upper', 'W16', b'jmp 0O6443', outStr=b'cd23\n'))
+    tester.add(StringTest('Immediate Dec 1',     'W16', b'jmp 19', outStr=b'c013\n'))
+    tester.add(StringTest('Immediate Dec 2',     'W16', b'jmp 0123', outStr=b'c07b\n'))
+    tester.add(StringTest('Immediate Hex Lower', 'W16', b'jmp 0xafe', outStr=b'cafe\n'))
+    tester.add(StringTest('Immediate Hex Upper', 'W16', b'jmp 0X6B', outStr=b'c06b\n'))
 
     tester.run()
 
