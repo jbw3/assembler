@@ -102,13 +102,20 @@ class Tester(object):
 
     def run(self):
         numPassed = 0
+        errorMsg = ''
         for test in self.tests:
             passed = test.run()
             if passed:
                 numPassed += 1
+                print('.', end='', flush=True)
             else:
-                print(test.name, 'failed:')
-                print(test.getError())
+                errorMsg += '{} failed:\n{}\n'.format(test.name, test.getError())
+                print('E', end='', flush=True)
+
+        print()
+
+        if errorMsg != '':
+            print(errorMsg, end='')
 
         numTests = len(self.tests)
         print('{} of {} test{} passed.'.format(numPassed, numTests, '' if numTests == 1 else 's'))
