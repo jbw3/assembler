@@ -22,7 +22,9 @@ const unordered_set<Token> ImmediateExpressionEvaluator::BINARY_OPERATORS =
     MODULO_OPERATOR,
     AND_OPERATOR,
     OR_OPERATOR,
-    XOR_OPERATOR
+    XOR_OPERATOR,
+    SHIFT_LEFT_OPERATOR,
+    SHIFT_RIGHT_OPERATOR
 };
 
 ImmediateExpressionEvaluator::ImmediateExpressionEvaluator(const SymbolMap& symbols) :
@@ -81,6 +83,7 @@ int64_t ImmediateExpressionEvaluator::evalTerms()
 {
     evalTermsPrecedence({MULTIPLICATION_OPERATOR, DIVISION_OPERATOR, MODULO_OPERATOR});
     evalTermsPrecedence({ADDITION_OPERATOR, SUBTRACTION_OPERATOR});
+    evalTermsPrecedence({SHIFT_LEFT_OPERATOR, SHIFT_RIGHT_OPERATOR});
     evalTermsPrecedence({AND_OPERATOR});
     evalTermsPrecedence({XOR_OPERATOR});
     evalTermsPrecedence({OR_OPERATOR});
@@ -178,6 +181,14 @@ int64_t ImmediateExpressionEvaluator::evalBinary(const Token& op, int64_t term1,
     else if (op == XOR_OPERATOR)
     {
         value = term1 ^ term2;
+    }
+    else if (op == SHIFT_LEFT_OPERATOR)
+    {
+        value = term1 << term2;
+    }
+    else if (op == SHIFT_RIGHT_OPERATOR)
+    {
+        value = term1 >> term2;
     }
     else
     {

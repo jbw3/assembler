@@ -211,6 +211,8 @@ def main():
     tester.add(SymbolTest('AND 1', 'W16', b'x = 0x3e & 0B110111 & 47', 0x26))
     tester.add(SymbolTest('OR 1', 'W16', b'x = 0o74 | 3', 0o77))
     tester.add(SymbolTest('XOR 1', 'W16', b'x = 0x7b ^ 0Xf ^ 16', 0x64))
+    tester.add(SymbolTest('SHIFT LEFT 1', 'W16', b'x = 0xa << 3', 0x50))
+    tester.add(SymbolTest('SHIFT RIGHT 1', 'W16', b'x = 12 >> 2', 3))
     tester.add(SymbolTest('Operator Precedence 1', 'W16', b'x = 2 + 2 * 3', 8))
     tester.add(SymbolTest('Operator Precedence 1', 'W16', b'x = 2 + -12 / 4 - 5', -6))
 

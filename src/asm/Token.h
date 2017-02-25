@@ -82,6 +82,12 @@ const Token OR_OPERATOR("|", 0, 0);
 /// XOR operator
 const Token XOR_OPERATOR("^", 0, 0);
 
+/// Bitshift left operator
+const Token SHIFT_LEFT_OPERATOR("<<", 0, 0);
+
+/// Bitshift right operator
+const Token SHIFT_RIGHT_OPERATOR(">>", 0, 0);
+
 const std::unordered_set<Token> CONSTANT_OPERATORS = {
     ADDITION_OPERATOR,
     SUBTRACTION_OPERATOR,
@@ -91,7 +97,9 @@ const std::unordered_set<Token> CONSTANT_OPERATORS = {
     COMPLEMENT_OPERATOR,
     AND_OPERATOR,
     OR_OPERATOR,
-    XOR_OPERATOR
+    XOR_OPERATOR,
+    SHIFT_LEFT_OPERATOR,
+    SHIFT_RIGHT_OPERATOR
 };
 
 #endif // TOKEN_H_
