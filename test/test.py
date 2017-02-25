@@ -4,10 +4,10 @@ import filecmp, os, subprocess
 
 TEST_DIR = os.path.dirname(__file__)
 BIN_DIR = os.path.abspath(os.path.join(TEST_DIR, '..', 'bin'))
+ASM_EXE = os.path.join(BIN_DIR, 'asm')
 
 def asm(iSet, inFilename, outFile, errFile):
-    exe = os.path.join(BIN_DIR, 'asm')
-    subprocess.run([exe, '--no-color', inFilename, '-i', iSet], stdout=outFile, stderr=errFile)
+    subprocess.run([ASM_EXE, '--no-color', inFilename, '-i', iSet], stdout=outFile, stderr=errFile)
 
 class Test(object):
     def __init__(self, name):
@@ -20,6 +20,9 @@ class Test(object):
         return self._name
 
     name = property(getName)
+
+    def getError(self):
+        return ''
 
 class FileTest(Test):
     def __init__(self, name, iSet):
@@ -50,6 +53,36 @@ class FileTest(Test):
         except OSError:
             pass
 
+class StringTest(Test):
+    def __init__(self, name, iSet, inStr, outStr=b'', errStr=b'', args=None):
+        super(StringTest, self).__init__(name)
+        self._args = [ASM_EXE, '--no-color', '-i', iSet]
+        if args is not None:
+            self._args += args
+        self._inStr = inStr
+        self._outStr = outStr
+        self._errStr = errStr
+        self._errorMsg = ''
+
+    def run(self):
+        passed = True
+
+        p = subprocess.Popen(self._args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate(self._inStr)
+
+        if out != self._outStr:
+            passed = False
+            self._errorMsg += 'Unexpected stdout:\n' + str(out) + '\n'
+
+        if err != self._errStr:
+            passed = False
+            self._errorMsg += 'Unexpected stderr:\n' + str(err) + '\n'
+
+        return passed
+
+    def getError(self):
+        return self._errorMsg
+
 class Tester(object):
     def __init__(self):
         self.tests = []
@@ -64,7 +97,8 @@ class Tester(object):
             if passed:
                 numPassed += 1
             else:
-                print(test.name, 'failed.')
+                print(test.name, 'failed:')
+                print(test.getError())
 
         numTests = len(self.tests)
         print('{} of {} test{} passed.'.format(numPassed, numTests, '' if numTests == 1 else 's'))
@@ -72,6 +106,7 @@ class Tester(object):
 def main():
     tester = Tester()
 
+    # file tests
     tester.add(FileTest('W8_1', 'W8'))
     tester.add(FileTest('W8_2', 'W8'))
     tester.add(FileTest('W16_1', 'W16'))
@@ -87,6 +122,8 @@ def main():
     tester.add(FileTest('warn_large_labels', 'W8'))
     tester.add(FileTest('redefined_label', 'W16'))
     tester.add(FileTest('constants', 'W16'))
+
+    tester.add(StringTest('Immediate Dec', 'W16', b'addi r0, 19', outStr=b'b013\n'))
 
     tester.run()
 
