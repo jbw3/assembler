@@ -116,7 +116,8 @@ class Tester(object):
 def main():
     tester = Tester()
 
-    # file tests
+    ### file tests ###
+
     tester.add(FileTest('W8_1', 'W8'))
     tester.add(FileTest('W8_2', 'W8'))
     tester.add(FileTest('W16_1', 'W16'))
@@ -132,7 +133,9 @@ def main():
     tester.add(FileTest('redefined_label', 'W16'))
     tester.add(FileTest('constants', 'W16'))
 
-    # string tests
+    ### string tests ###
+
+    # numbers
     tester.add(StringTest('Immediate Bin Lower', 'W16', b'jmp 0b1010011', outStr=b'c053\n'))
     tester.add(StringTest('Immediate Bin Upper', 'W16', b'jmp 0B101101', outStr=b'c02d\n'))
     tester.add(StringTest('Immediate Oct Lower', 'W16', b'jmp 0o107', outStr=b'c047\n'))
@@ -141,6 +144,15 @@ def main():
     tester.add(StringTest('Immediate Dec 2',     'W16', b'jmp 0123', outStr=b'c07b\n'))
     tester.add(StringTest('Immediate Hex Lower', 'W16', b'jmp 0xafe', outStr=b'cafe\n'))
     tester.add(StringTest('Immediate Hex Upper', 'W16', b'jmp 0X6B', outStr=b'c06b\n'))
+
+    # signs
+    tester.add(StringTest('Positive Sign 1', 'W16', b'addi r0, +7', outStr=b'b007\n'))
+    tester.add(StringTest('Positive Sign 2', 'W16', b'addi r0, +++39', outStr=b'b027\n'))
+    tester.add(StringTest('Negative Sign 1', 'W16', b'addi r0, -7', outStr=b'b0f9\n'))
+    tester.add(StringTest('Negative Sign 2', 'W16', b'addi r0, -0b10001', outStr=b'b0ef\n'))
+    tester.add(StringTest('Negative Sign 3', 'W16', b'addi r0, --10', outStr=b'b00a\n'))
+    tester.add(StringTest('Mixed Signs 1', 'W16', b'addi r0, +-+10', outStr=b'b0f6\n'))
+    tester.add(StringTest('Mixed Signs 2', 'W16', b'addi r0, --+100', outStr=b'b064\n'))
 
     tester.run()
 
