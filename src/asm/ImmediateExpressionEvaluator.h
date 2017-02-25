@@ -21,6 +21,8 @@ private:
 
     std::int64_t evalUnary(TokenVec::const_iterator first, TokenVec::const_iterator last);
 
+    std::int64_t evalBinary(const Token& op, std::int64_t term1, std::int64_t term2);
+
     std::int64_t evalImmediate(const Token& token);
 
     std::int64_t evalNum(const Token& token);

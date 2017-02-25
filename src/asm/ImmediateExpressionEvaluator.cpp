@@ -1,4 +1,4 @@
-#include <queue>
+#include <list>
 
 #include "Error.h"
 #include "ImmediateExpressionEvaluator.h"
@@ -25,8 +25,8 @@ ImmediateExpressionEvaluator::ImmediateExpressionEvaluator(const SymbolMap& symb
 
 int64_t ImmediateExpressionEvaluator::eval(const TokenVec& tokens)
 {
-    queue<int64_t> terms;
-    queue<Token> binOperators;
+    list<int64_t> terms;
+    list<Token> binOperators;
 
     bool expectBinOp = false;
     TokenVec termTokens;
@@ -40,7 +40,7 @@ int64_t ImmediateExpressionEvaluator::eval(const TokenVec& tokens)
                 throwError("Expected binary operator.", token);
             }
 
-            binOperators.push(token);
+            binOperators.push_back(token);
             expectBinOp = false;
         }
         else
@@ -51,7 +51,7 @@ int64_t ImmediateExpressionEvaluator::eval(const TokenVec& tokens)
             if (UNARY_OPERATORS.find(token) == UNARY_OPERATORS.cend())
             {
                 int64_t term = evalUnary(termTokens.cbegin(), termTokens.cend() - 1);
-                terms.push(term);
+                terms.push_back(term);
 
                 termTokens.clear();
                 expectBinOp = true;
@@ -65,30 +65,17 @@ int64_t ImmediateExpressionEvaluator::eval(const TokenVec& tokens)
         throwError("Expected term after operator.", binOperators.back());
     }
 
-    int64_t value = terms.front();
-    terms.pop();
-    while (!terms.empty())
+    auto term1Iter = terms.begin();
+    auto term2Iter = ++terms.begin();
+    while (term2Iter != terms.end())
     {
-        const Token& binOp = binOperators.front();
-        if (binOp == ADDITION_OPERATOR)
-        {
-            value += terms.front();
-        }
-        else if (binOp == SUBTRACTION_OPERATOR)
-        {
-            value -= terms.front();
-        }
-        else
-        {
-            // if we get here, there was an error
-            throwError("Invalid syntax: \"" + binOp.getValue() + "\".", binOp);
-        }
+        *term1Iter = evalBinary(binOperators.front(), *term1Iter, *term2Iter);
 
-        terms.pop();
-        binOperators.pop();
+        term2Iter = terms.erase(term2Iter);
+        binOperators.erase(binOperators.begin());
     }
 
-    return value;
+    return *term1Iter;
 }
 
 int64_t ImmediateExpressionEvaluator::evalUnary(TokenVec::const_iterator first, TokenVec::const_iterator last)
@@ -113,6 +100,27 @@ int64_t ImmediateExpressionEvaluator::evalUnary(TokenVec::const_iterator first, 
     {
         // if we get here, there was an error
         throwError("Invalid syntax: \"" + first->getValue() + "\".", *first);
+    }
+
+    return value;
+}
+
+int64_t ImmediateExpressionEvaluator::evalBinary(const Token& op, int64_t term1, int64_t term2)
+{
+    int64_t value = 0;
+
+    if (op == ADDITION_OPERATOR)
+    {
+        value = term1 + term2;
+    }
+    else if (op == SUBTRACTION_OPERATOR)
+    {
+        value = term1 - term2;
+    }
+    else
+    {
+        // if we get here, there was an error
+        throwError("Invalid syntax: \"" + op.getValue() + "\".", op);
     }
 
     return value;
