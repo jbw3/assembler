@@ -4,7 +4,7 @@ namespace W8
 {
 
 // immediate type
-const InstructionType IType{5, 3, {{Argument::eImmediate, 3, 0}}};
+const InstructionType IType{5, 3, {{Argument::eImmediate, 3, 0, false}}};
 
 // no-arg type
 const InstructionType NType{5, 3};
