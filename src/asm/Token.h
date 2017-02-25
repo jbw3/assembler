@@ -27,7 +27,20 @@ private:
     unsigned long column;
 };
 
-typedef std::vector<Token> TokenVector;
+namespace std
+{
+template<>
+struct hash<Token>
+{
+    std::size_t operator ()(const Token& token) const
+    {
+        return std::hash<std::string>{}(token.getValue());
+    }
+};
+}
+
+typedef std::vector<Token> TokenVec;
+typedef std::vector<TokenVec> TokenVecVec;
 
 /// End of line
 const Token END_OF_LINE("\n", 0, 0);

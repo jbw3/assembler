@@ -1,7 +1,7 @@
 #ifndef IMMEDIATE_EXPRESSION_EVALUATOR_H_
 #define IMMEDIATE_EXPRESSION_EVALUATOR_H_
 
-#include <vector>
+#include <unordered_set>
 
 #include "SymbolMap.h"
 #include "Token.h"
@@ -11,12 +11,15 @@ class ImmediateExpressionEvaluator
 public:
     ImmediateExpressionEvaluator(const SymbolMap& symbols);
 
-    std::int64_t eval(const TokenVector& tokens);
+    std::int64_t eval(const TokenVec& tokens);
 
 private:
+    static const std::unordered_set<Token> UNARY_OPERATORS;
+    static const std::unordered_set<Token> BINARY_OPERATORS;
+
     const SymbolMap& symbols;
 
-    std::int64_t evalUnary(TokenVector::const_iterator first, TokenVector::const_iterator last);
+    std::int64_t evalUnary(TokenVec::const_iterator first, TokenVec::const_iterator last);
 
     std::int64_t evalImmediate(const Token& token);
 

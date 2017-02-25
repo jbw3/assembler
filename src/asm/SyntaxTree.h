@@ -8,9 +8,9 @@
 struct InstructionTokens
 {
     Token label;
-    TokenVector labelArguments;
+    TokenVec labelArguments;
     Token mnemonic;
-    std::vector<TokenVector> arguments;
+    TokenVecVec arguments;
 };
 
 class SyntaxTree

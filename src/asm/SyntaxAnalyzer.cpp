@@ -12,9 +12,9 @@ SyntaxAnalyzer::SyntaxAnalyzer(const InstructionSet& instructionSet) :
     instSet(instructionSet)
 {}
 
-void SyntaxAnalyzer::process(const TokenVector& tokens, SyntaxTree& syntaxTree)
+void SyntaxAnalyzer::process(const TokenVec& tokens, SyntaxTree& syntaxTree)
 {
-    TokenVector lineTokens;
+    TokenVec lineTokens;
     lineTokens.reserve(8);
 
     for (const Token& token : tokens)
@@ -87,7 +87,7 @@ void SyntaxAnalyzer::addLabel(InstructionTokens& instTokens, const Token& token)
     instTokens.label = token;
 }
 
-void SyntaxAnalyzer::parseArgs(const TokenVector& instTokens, size_t tokenIdx, vector<TokenVector>& args)
+void SyntaxAnalyzer::parseArgs(const TokenVec& instTokens, size_t tokenIdx, TokenVecVec& args)
 {
     args.clear();
 
@@ -97,7 +97,7 @@ void SyntaxAnalyzer::parseArgs(const TokenVector& instTokens, size_t tokenIdx, v
         return;
     }
 
-    TokenVector argTokens;
+    TokenVec argTokens;
     for (; tokenIdx < instTokens.size(); ++tokenIdx)
     {
         const Token& token = instTokens[tokenIdx];

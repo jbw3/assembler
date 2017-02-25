@@ -173,7 +173,7 @@ void CodeGenerator::encodeInstruction(const InstructionTokens& tokens, Instructi
 void CodeGenerator::encodeArgs(const Instruction& inst, const InstructionTokens& tokens, uint64_t& code)
 {
     const vector<Argument>& args = inst.getType().getArguments();
-    const vector<TokenVector>& argTokens = tokens.arguments;
+    const TokenVecVec& argTokens = tokens.arguments;
 
     size_t expectedNumArgs = args.size();
     size_t numArgs = argTokens.size();
@@ -216,7 +216,7 @@ void CodeGenerator::encodeArgs(const Instruction& inst, const InstructionTokens&
     }
 }
 
-uint64_t CodeGenerator::encodeRegister(const TokenVector& tokens)
+uint64_t CodeGenerator::encodeRegister(const TokenVec& tokens)
 {
     if (tokens.size() > 1)
     {
@@ -239,7 +239,7 @@ uint64_t CodeGenerator::encodeRegister(const TokenVector& tokens)
     return regCode;
 }
 
-uint64_t CodeGenerator::encodeImmediate(const TokenVector& tokens, const Argument& arg)
+uint64_t CodeGenerator::encodeImmediate(const TokenVec& tokens, const Argument& arg)
 {
     uint64_t immCode = exprEval.eval(tokens);
 

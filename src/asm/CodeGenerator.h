@@ -39,9 +39,9 @@ private:
 
     void encodeArgs(const Instruction& inst, const InstructionTokens& tokens, uint64_t& code);
 
-    uint64_t encodeRegister(const TokenVector& tokens);
+    uint64_t encodeRegister(const TokenVec& tokens);
 
-    uint64_t encodeImmediate(const TokenVector& tokens, const Argument& arg);
+    uint64_t encodeImmediate(const TokenVec& tokens, const Argument& arg);
 
     /**
      * @brief Check if immediate value will be truncated

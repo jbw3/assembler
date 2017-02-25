@@ -1,22 +1,97 @@
+#include <queue>
+
 #include "Error.h"
 #include "ImmediateExpressionEvaluator.h"
 #include "Logger.h"
 
 using namespace std;
 
+const unordered_set<Token> ImmediateExpressionEvaluator::UNARY_OPERATORS =
+{
+    ADDITION_OPERATOR,
+    SUBTRACTION_OPERATOR
+};
+
+const unordered_set<Token> ImmediateExpressionEvaluator::BINARY_OPERATORS =
+{
+    ADDITION_OPERATOR,
+    SUBTRACTION_OPERATOR
+};
+
 ImmediateExpressionEvaluator::ImmediateExpressionEvaluator(const SymbolMap& symbols) :
     symbols(symbols)
 {
 }
 
-int64_t ImmediateExpressionEvaluator::eval(const TokenVector& tokens)
+int64_t ImmediateExpressionEvaluator::eval(const TokenVec& tokens)
 {
-    int64_t value = evalUnary(tokens.cbegin(), tokens.cend() - 1);
+    queue<int64_t> terms;
+    queue<Token> binOperators;
+
+    bool expectBinOp = false;
+    TokenVec termTokens;
+    termTokens.reserve(8);
+    for (const Token& token : tokens)
+    {
+        if (expectBinOp)
+        {
+            if (BINARY_OPERATORS.find(token) == BINARY_OPERATORS.cend())
+            {
+                throwError("Expected binary operator.", token);
+            }
+
+            binOperators.push(token);
+            expectBinOp = false;
+        }
+        else
+        {
+            termTokens.push_back(token);
+
+            // if this is not an operator, it must be an immediate value
+            if (UNARY_OPERATORS.find(token) == UNARY_OPERATORS.cend())
+            {
+                int64_t term = evalUnary(termTokens.cbegin(), termTokens.cend() - 1);
+                terms.push(term);
+
+                termTokens.clear();
+                expectBinOp = true;
+            }
+        }
+    }
+
+    // there should be one less operator than terms
+    if (binOperators.size() != terms.size() - 1)
+    {
+        throwError("Expected term after operator.", binOperators.back());
+    }
+
+    int64_t value = terms.front();
+    terms.pop();
+    while (!terms.empty())
+    {
+        const Token& binOp = binOperators.front();
+        if (binOp == ADDITION_OPERATOR)
+        {
+            value += terms.front();
+        }
+        else if (binOp == SUBTRACTION_OPERATOR)
+        {
+            value -= terms.front();
+        }
+        else
+        {
+            // if we get here, there was an error
+            throwError("Invalid syntax: \"" + binOp.getValue() + "\".", binOp);
+        }
+
+        terms.pop();
+        binOperators.pop();
+    }
 
     return value;
 }
 
-int64_t ImmediateExpressionEvaluator::evalUnary(TokenVector::const_iterator first, TokenVector::const_iterator last)
+int64_t ImmediateExpressionEvaluator::evalUnary(TokenVec::const_iterator first, TokenVec::const_iterator last)
 {
     int64_t value = 0;
 
