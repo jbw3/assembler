@@ -202,7 +202,7 @@ def main():
     tester.add(SymbolTest('Addition 2', 'W16', b'x = -1000 + 3002 + 0 + 5', 2007))
     tester.add(SymbolTest('Addition 3', 'W16', b'x = --3 + -0xA + 0b101', -2))
     tester.add(SymbolTest('Subtraction 1', 'W16', b'x = 100 - 25 - 7', 68))
-    tester.add(SymbolTest('Subtraction 2', 'W16', b'x = 100 - -25 - 0', 125))
+    tester.add(SymbolTest('Subtraction 2', 'W16', b'x = 100 - -0O31 - 0', 125))
     tester.add(SymbolTest('Subtraction 3', 'W16', b'x = 100 - 1 - 1 - --1', 97))
 
     tester.run()
