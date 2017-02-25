@@ -1,15 +1,22 @@
 #!/usr/bin/env python3
 
-import filecmp, os, subprocess
+import filecmp, os, re, subprocess
 
 TEST_DIR = os.path.dirname(__file__)
 BIN_DIR = os.path.abspath(os.path.join(TEST_DIR, '..', 'bin'))
 ASM_EXE = os.path.join(BIN_DIR, 'asm')
 
-def asm(iSet, inFilename, outFile, errFile):
+def asmFile(iSet, inFilename, outFile, errFile):
     subprocess.run([ASM_EXE, '--no-color', inFilename, '-i', iSet], stdout=outFile, stderr=errFile)
 
-class Test(object):
+def asmPipe(iSet, inStr, args=None):
+    cmd = [ASM_EXE, '--no-color', '-i', iSet]
+    if args is not None:
+        cmd += args
+    p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return p.communicate(inStr)
+
+class Test:
     def __init__(self, name):
         self._name = name
         self._errorMsg = ''
@@ -40,7 +47,7 @@ class FileTest(Test):
         expectedErr = os.path.join(TEST_DIR, self.name + '.err')
 
         with open(outFilename, 'w') as outFile, open(errFilename, 'w') as errFile:
-            asm(self._iSet, inFilename, outFile, errFile)
+            asmFile(self._iSet, inFilename, outFile, errFile)
 
         equal = filecmp.cmp(outFilename, expectedOut, False)
         if not equal:
@@ -70,30 +77,57 @@ class FileTest(Test):
 class StringTest(Test):
     def __init__(self, name, iSet, inStr, outStr=b'', errStr=b'', args=None):
         super(StringTest, self).__init__(name)
-        self._args = [ASM_EXE, '--no-color', '-i', iSet]
-        if args is not None:
-            self._args += args
+        self._iSet = iSet
         self._inStr = inStr
         self._outStr = outStr
         self._errStr = errStr
+        self._args = args
 
     def run(self):
         passed = True
 
-        p = subprocess.Popen(self._args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, err = p.communicate(self._inStr)
+        out, err = asmPipe(self._iSet, self._inStr, self._args)
 
         if out != self._outStr:
             passed = False
-            self._errorMsg += 'Unexpected stdout:\n' + str(out) + '\n'
+            self._errorMsg += 'Unexpected stdout:\n' + out.decode('utf-8') + '\n'
 
         if err != self._errStr:
             passed = False
-            self._errorMsg += 'Unexpected stderr:\n' + str(err) + '\n'
+            self._errorMsg += 'Unexpected stderr:\n' + err.decode('utf-8') + '\n'
 
         return passed
 
-class Tester(object):
+class SymbolTest(Test):
+    def __init__(self, name, iSet, inStr, value):
+        super(SymbolTest, self).__init__(name)
+        self._iSet = iSet
+        self._inStr = inStr
+        self._value = value
+
+    def _checkStdout(self, out):
+        outStr = str(out)
+        pattern = r'.*\s+{}'.format(self._value)
+        match = re.search(pattern, outStr)
+
+        return match is not None
+
+    def run(self):
+        passed = True
+
+        out, err = asmPipe(self._iSet, self._inStr, ['-s'])
+
+        if not self._checkStdout(out):
+            passed = False
+            self._errorMsg += 'Unexpected stdout:\n' + out.decode('utf-8') + '\n'
+
+        if err != b'':
+            passed = False
+            self._errorMsg += 'Unexpected stderr:\n' + err.decode('utf-8') + '\n'
+
+        return passed
+
+class Tester:
     def __init__(self):
         self.tests = []
 
@@ -160,6 +194,16 @@ def main():
     tester.add(StringTest('Negative Sign 3', 'W16', b'addi r0, --10', outStr=b'b00a\n'))
     tester.add(StringTest('Mixed Signs 1', 'W16', b'addi r0, +-+10', outStr=b'b0f6\n'))
     tester.add(StringTest('Mixed Signs 2', 'W16', b'addi r0, --+100', outStr=b'b064\n'))
+
+    # expressions
+    tester.add(SymbolTest('Single Value', 'W16', b'x = 2', 2))
+    tester.add(SymbolTest('Negative Value', 'W16', b'x = -102943', -102943))
+    tester.add(SymbolTest('Addition 1', 'W16', b'x = 193 + 32 + 7', 232))
+    tester.add(SymbolTest('Addition 2', 'W16', b'x = -1000 + 3002 + 0 + 5', 2007))
+    tester.add(SymbolTest('Addition 3', 'W16', b'x = --3 + -0xA + 0b101', -2))
+    tester.add(SymbolTest('Subtraction 1', 'W16', b'x = 100 - 25 - 7', 68))
+    tester.add(SymbolTest('Subtraction 2', 'W16', b'x = 100 - -25 - 0', 125))
+    tester.add(SymbolTest('Subtraction 3', 'W16', b'x = 100 - 1 - 1 - --1', 97))
 
     tester.run()
 
