@@ -8,6 +8,6 @@ label2:
     mov r3, r4
 
 lbl = label2
-    addi r0, num
-    addi r1, hex
-    addi r2, lbl
+    jmp num
+    jmp hex
+    jmp lbl

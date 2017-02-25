@@ -12,11 +12,11 @@ MOV R7
 
 
 # immediate values
+MOVI -4
+MOVI -3
+MOVI -2
+MOVI -1
 MOVI 0
 MOVI 1
 MOVI 2
 MOVI 3
-MOVI 4
-MOVI 5
-MOVI 6
-MOVI 7

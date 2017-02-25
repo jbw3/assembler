@@ -12,6 +12,7 @@ def asm(iSet, inFilename, outFile, errFile):
 class Test(object):
     def __init__(self, name):
         self._name = name
+        self._errorMsg = ''
 
     def run(self):
         return False
@@ -22,7 +23,7 @@ class Test(object):
     name = property(getName)
 
     def getError(self):
-        return ''
+        return self._errorMsg
 
 class FileTest(Test):
     def __init__(self, name, iSet):
@@ -30,6 +31,8 @@ class FileTest(Test):
         self._iSet = iSet
 
     def run(self):
+        passed = True
+
         inFilename = os.path.join(TEST_DIR, self.name + '.s')
         outFilename = os.path.join(TEST_DIR, 'temp.out')
         errFilename = os.path.join(TEST_DIR, 'temp.err')
@@ -40,12 +43,23 @@ class FileTest(Test):
             asm(self._iSet, inFilename, outFile, errFile)
 
         equal = filecmp.cmp(outFilename, expectedOut, False)
-        equal &= filecmp.cmp(errFilename, expectedErr, False)
+        if not equal:
+            passed = False
+            with open(outFilename, 'r') as outFile:
+                self._errorMsg += 'Unexpected stdout:\n'
+                self._errorMsg += outFile.read()
+
+        equal = filecmp.cmp(errFilename, expectedErr, False)
+        if not equal:
+            passed = False
+            with open(errFilename, 'r') as errFile:
+                self._errorMsg += 'Unexpected stderr:\n'
+                self._errorMsg += errFile.read()
 
         self._rmFile(outFilename)
         self._rmFile(errFilename)
 
-        return equal
+        return passed
 
     def _rmFile(self, filename):
         try:
@@ -62,7 +76,6 @@ class StringTest(Test):
         self._inStr = inStr
         self._outStr = outStr
         self._errStr = errStr
-        self._errorMsg = ''
 
     def run(self):
         passed = True
@@ -79,9 +92,6 @@ class StringTest(Test):
             self._errorMsg += 'Unexpected stderr:\n' + str(err) + '\n'
 
         return passed
-
-    def getError(self):
-        return self._errorMsg
 
 class Tester(object):
     def __init__(self):
