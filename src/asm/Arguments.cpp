@@ -15,7 +15,6 @@ file is specified, stdin is used. If no output file is specified, stdout is
 used.
 
   --help        -h  display help message
-  --hex             format symbol table values as hexadecimal
   --i-set       -i  instruction set name
   --list-i-set      list available instruction sets
   --no-color        do not color output messages
@@ -27,8 +26,8 @@ Examples:
 Assemble test.s and output to test.out:
   asm test.s -i W8 -o test.out
 
-Print symbol table for test.s in hexadecimal format:
-  asm test.s -i W16 -s --hex
+Print symbol table for test.s:
+  asm test.s -i W16 -s
 )";
 
 Arguments::Arguments() :
@@ -37,7 +36,6 @@ Arguments::Arguments() :
     os(nullptr),
     colorOutput(true),
     outputSymbols(false),
-    formatHex(false),
     done(false),
     error(false)
 {
@@ -119,10 +117,6 @@ void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
     {
         cout << HELP_MESSAGE;
         done = true;
-    }
-    else if (std::strcmp(arg, "--hex") == 0)
-    {
-        formatHex = true;
     }
     else if (std::strcmp(arg, "-i") == 0 || std::strcmp(arg, "--i-set") == 0)
     {

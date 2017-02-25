@@ -20,37 +20,65 @@ void CodeGenerator::process(const SyntaxTree& syntaxTree, InstructionCodeList& i
     processInstructions(syntaxTree, instCodeList);
 }
 
-void CodeGenerator::printSymbols(ostream& os, int base) const
+void CodeGenerator::printSymbols(ostream& os) const
 {
-    // save flags
+    const string SYMBOL_HEADER = "symbol";
+    const string DEC_HEADER = "dec";
+    const string HEX_HEADER = "hex";
+
+    // save state
     ios_base::fmtflags flags = os.flags();
+    char fill = os.fill();
 
     // get format widths
-    int nameWidth = 0;
-    int valueWidth = 0;
+    int nameWidth = SYMBOL_HEADER.size();
+    int decWidth = DEC_HEADER.size();
+    int hexWidth = HEX_HEADER.size();
     stringstream ss;
-    ss << setbase(base);
     for (auto pair : symbols)
     {
         int temp = pair.first.size();
         nameWidth = temp > nameWidth ? temp : nameWidth;
 
+        // get decimal width
         ss.str(""); // clear contents
+        ss << dec;
         ss << pair.second;
         temp = ss.str().size();
-        valueWidth = temp > valueWidth ? temp : valueWidth;
+        decWidth = temp > decWidth ? temp : decWidth;
+
+        // get hexadecimal width
+        ss.str(""); // clear contents
+        ss << hex;
+        ss << pair.second;
+        temp = ss.str().size();
+        hexWidth = temp > hexWidth ? temp : hexWidth;
     }
 
-    char valueFill = base == 16 ? '0' : ' ';
-    os << setbase(base);
+    // print header
+    os << setw(nameWidth) << SYMBOL_HEADER << "  "
+       << setw(decWidth) << DEC_HEADER << "  "
+       << setw(hexWidth) << HEX_HEADER << "\n"
+       << string(nameWidth, '-') << "  "
+       << string(decWidth, '-') << "  "
+       << string(hexWidth, '-') << "\n";
+
+    // print values
     for (auto pair : symbols)
     {
-        os << left << setw(nameWidth) << pair.first << "  "
-           << right << setw(valueWidth) << setfill(valueFill) << pair.second << "\n";
+        // name
+        os << setw(nameWidth) << setfill(' ') << pair.first << "  ";
+
+        // dec value
+        os << dec << setw(decWidth) << pair.second << "  ";
+
+        // hex value
+        os << hex << setw(hexWidth) << setfill('0') << pair.second << "\n";
     }
 
-    // restore flags
+    // restore state
     os.flags(flags);
+    os.fill(fill);
 }
 
 void CodeGenerator::processLabels(const SyntaxTree& syntaxTree)

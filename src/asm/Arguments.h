@@ -22,7 +22,6 @@ public:
     std::ostream* os;
     bool colorOutput;
     bool outputSymbols;
-    bool formatHex;
 
 private:
     static const char* HELP_MESSAGE;
