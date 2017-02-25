@@ -204,6 +204,11 @@ def main():
     tester.add(SymbolTest('Subtraction 1', 'W16', b'x = 100 - 25 - 7', 68))
     tester.add(SymbolTest('Subtraction 2', 'W16', b'x = 100 - -0O31 - 0', 125))
     tester.add(SymbolTest('Subtraction 3', 'W16', b'x = 100 - 1 - 1 - --1', 97))
+    tester.add(SymbolTest('Multiplication 1', 'W16', b'x = 5 * 100 * 2', 1000))
+    tester.add(SymbolTest('Division 1', 'W16', b'x = 99 / 3', 33))
+    tester.add(SymbolTest('Modulo 1', 'W16', b'x = 0xa0 / 4', 0x28))
+    tester.add(SymbolTest('Operator Precedence 1', 'W16', b'x = 2 + 2 * 3', 8))
+    tester.add(SymbolTest('Operator Precedence 1', 'W16', b'x = 2 + -12 / 4 - 5', -6))
 
     tester.run()
 

@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "Error.h"
 #include "ImmediateExpressionEvaluator.h"
 #include "Logger.h"
@@ -73,17 +75,33 @@ int64_t ImmediateExpressionEvaluator::eval(const TokenVec& tokens)
 
 int64_t ImmediateExpressionEvaluator::evalTerms()
 {
+    evalTermsPrecedence({MULTIPLICATION_OPERATOR, DIVISION_OPERATOR, MODULO_OPERATOR});
+    evalTermsPrecedence({ADDITION_OPERATOR, SUBTRACTION_OPERATOR});
+
+    return terms.front();
+}
+
+void ImmediateExpressionEvaluator::evalTermsPrecedence(const TokenVec& operators)
+{
     auto term1Iter = terms.begin();
-    auto term2Iter = ++terms.begin();
-    while (term2Iter != terms.end())
+    for (auto opIter = binOperators.begin(); opIter != binOperators.end(); )
     {
-        *term1Iter = evalBinary(binOperators.front(), *term1Iter, *term2Iter);
+        if (find(operators.begin(), operators.end(), *opIter) != operators.end())
+        {
+            auto term2Iter = term1Iter;
+            ++term2Iter;
 
-        term2Iter = terms.erase(term2Iter);
-        binOperators.erase(binOperators.begin());
+            *term1Iter = evalBinary(*opIter, *term1Iter, *term2Iter);
+
+            terms.erase(term2Iter);
+            opIter = binOperators.erase(opIter);
+        }
+        else
+        {
+            ++term1Iter;
+            ++opIter;
+        }
     }
-
-    return *term1Iter;
 }
 
 int64_t ImmediateExpressionEvaluator::evalUnary(TokenVec::const_iterator first, TokenVec::const_iterator last)
