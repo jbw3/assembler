@@ -9,7 +9,8 @@ using namespace std;
 const unordered_set<Token> ImmediateExpressionEvaluator::UNARY_OPERATORS =
 {
     ADDITION_OPERATOR,
-    SUBTRACTION_OPERATOR
+    SUBTRACTION_OPERATOR,
+    COMPLEMENT_OPERATOR
 };
 
 const unordered_set<Token> ImmediateExpressionEvaluator::BINARY_OPERATORS =
@@ -18,7 +19,10 @@ const unordered_set<Token> ImmediateExpressionEvaluator::BINARY_OPERATORS =
     SUBTRACTION_OPERATOR,
     MULTIPLICATION_OPERATOR,
     DIVISION_OPERATOR,
-    MODULO_OPERATOR
+    MODULO_OPERATOR,
+    AND_OPERATOR,
+    OR_OPERATOR,
+    XOR_OPERATOR
 };
 
 ImmediateExpressionEvaluator::ImmediateExpressionEvaluator(const SymbolMap& symbols) :
@@ -77,6 +81,9 @@ int64_t ImmediateExpressionEvaluator::evalTerms()
 {
     evalTermsPrecedence({MULTIPLICATION_OPERATOR, DIVISION_OPERATOR, MODULO_OPERATOR});
     evalTermsPrecedence({ADDITION_OPERATOR, SUBTRACTION_OPERATOR});
+    evalTermsPrecedence({AND_OPERATOR});
+    evalTermsPrecedence({XOR_OPERATOR});
+    evalTermsPrecedence({OR_OPERATOR});
 
     return terms.front();
 }
@@ -117,6 +124,11 @@ int64_t ImmediateExpressionEvaluator::evalUnary(TokenVec::const_iterator first, 
         // operator is negative sign
         value = -evalUnary(first + 1, last);
     }
+    else if (*first == COMPLEMENT_OPERATOR)
+    {
+        // operator is complement
+        value = ~evalUnary(first + 1, last);
+    }
     else if (*first == ADDITION_OPERATOR)
     {
         // operator is positive sign; do nothing
@@ -154,6 +166,18 @@ int64_t ImmediateExpressionEvaluator::evalBinary(const Token& op, int64_t term1,
     else if (op == MODULO_OPERATOR)
     {
         value = term1 % term2;
+    }
+    else if (op == AND_OPERATOR)
+    {
+        value = term1 & term2;
+    }
+    else if (op == OR_OPERATOR)
+    {
+        value = term1 | term2;
+    }
+    else if (op == XOR_OPERATOR)
+    {
+        value = term1 ^ term2;
     }
     else
     {

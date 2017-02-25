@@ -2,6 +2,7 @@
 #define TOKEN_H_
 
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 class Token
@@ -68,5 +69,29 @@ const Token DIVISION_OPERATOR("/", 0, 0);
 
 /// Modulo operator
 const Token MODULO_OPERATOR("%", 0, 0);
+
+/// Complement operator
+const Token COMPLEMENT_OPERATOR("~", 0, 0);
+
+/// AND operator
+const Token AND_OPERATOR("&", 0, 0);
+
+/// OR operator
+const Token OR_OPERATOR("|", 0, 0);
+
+/// XOR operator
+const Token XOR_OPERATOR("^", 0, 0);
+
+const std::unordered_set<Token> CONSTANT_OPERATORS = {
+    ADDITION_OPERATOR,
+    SUBTRACTION_OPERATOR,
+    MULTIPLICATION_OPERATOR,
+    DIVISION_OPERATOR,
+    MODULO_OPERATOR,
+    COMPLEMENT_OPERATOR,
+    AND_OPERATOR,
+    OR_OPERATOR,
+    XOR_OPERATOR
+};
 
 #endif // TOKEN_H_

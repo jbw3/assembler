@@ -258,32 +258,8 @@ bool LexicalAnalyzer::isValidToken(const string& str)
         return true;
     }
 
-    // addition operator
-    if (str == ADDITION_OPERATOR.getValue())
-    {
-        return true;
-    }
-
-    // subtraction operator
-    if (str == SUBTRACTION_OPERATOR.getValue())
-    {
-        return true;
-    }
-
-    // multiplication operator
-    if (str == MULTIPLICATION_OPERATOR.getValue())
-    {
-        return true;
-    }
-
-    // division operator
-    if (str == DIVISION_OPERATOR.getValue())
-    {
-        return true;
-    }
-
-    // modulo operator
-    if (str == MODULO_OPERATOR.getValue())
+    // constant expression operators
+    if (CONSTANT_OPERATORS.find(Token(str, 0, 0)) != CONSTANT_OPERATORS.cend())
     {
         return true;
     }

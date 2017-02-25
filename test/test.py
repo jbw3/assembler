@@ -198,6 +198,7 @@ def main():
     # expressions
     tester.add(SymbolTest('Single Value', 'W16', b'x = 2', 2))
     tester.add(SymbolTest('Negative Value', 'W16', b'x = -102943', -102943))
+    tester.add(StringTest('Complement 1', 'W16', b'addi r0, ~0x6a', outStr=b'b095\n'))
     tester.add(SymbolTest('Addition 1', 'W16', b'x = 193 + 32 + 7', 232))
     tester.add(SymbolTest('Addition 2', 'W16', b'x = -1000 + 3002 + 0 + 5', 2007))
     tester.add(SymbolTest('Addition 3', 'W16', b'x = --3 + -0xA + 0b101', -2))
@@ -207,6 +208,9 @@ def main():
     tester.add(SymbolTest('Multiplication 1', 'W16', b'x = 5 * 100 * 2', 1000))
     tester.add(SymbolTest('Division 1', 'W16', b'x = 99 / 3', 33))
     tester.add(SymbolTest('Modulo 1', 'W16', b'x = 0xa0 / 4', 0x28))
+    tester.add(SymbolTest('AND 1', 'W16', b'x = 0x3e & 0B110111 & 47', 0x26))
+    tester.add(SymbolTest('OR 1', 'W16', b'x = 0o74 | 3', 0o77))
+    tester.add(SymbolTest('XOR 1', 'W16', b'x = 0x7b ^ 0Xf ^ 16', 0x64))
     tester.add(SymbolTest('Operator Precedence 1', 'W16', b'x = 2 + 2 * 3', 8))
     tester.add(SymbolTest('Operator Precedence 1', 'W16', b'x = 2 + -12 / 4 - 5', -6))
 
