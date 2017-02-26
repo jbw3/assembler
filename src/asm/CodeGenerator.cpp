@@ -89,6 +89,8 @@ void CodeGenerator::processConstants(const SyntaxTree& syntaxTree)
 
     for (const InstructionTokens& tokens : syntaxTree.instructions)
     {
+        exprEval.setCurrentAddress(address);
+
         // register constants (if any)
         vector<Token> constantArgs = tokens.constantArguments;
         if (!tokens.constant.getValue().empty())
