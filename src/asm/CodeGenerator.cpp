@@ -17,7 +17,7 @@ CodeGenerator::CodeGenerator(const InstructionSet& instructionSet) :
 
 void CodeGenerator::process(const SyntaxTree& syntaxTree, InstructionCodeList& instCodeList)
 {
-    processLabels(syntaxTree);
+    processConstants(syntaxTree);
     processInstructions(syntaxTree, instCodeList);
 }
 
@@ -82,28 +82,28 @@ void CodeGenerator::printSymbols(ostream& os) const
     os.fill(fill);
 }
 
-void CodeGenerator::processLabels(const SyntaxTree& syntaxTree)
+void CodeGenerator::processConstants(const SyntaxTree& syntaxTree)
 {
     uint64_t byteWordSize = instSet.getWordSize() / 8;
     int64_t address = 0;
 
     for (const InstructionTokens& tokens : syntaxTree.instructions)
     {
-        // register labels (if any)
-        vector<Token> labelArgs = tokens.labelArguments;
-        if (!tokens.label.getValue().empty())
+        // register constants (if any)
+        vector<Token> constantArgs = tokens.constantArguments;
+        if (!tokens.constant.getValue().empty())
         {
-            // if there are no arguments, assign label value to current address
-            if (labelArgs.empty())
+            // if there are no arguments, this is a label; assign value to current address
+            if (constantArgs.empty())
             {
-                addSymbol(tokens.label, address);
+                addSymbol(tokens.constant, address);
             }
-            else // label is being assigned a value
+            else // constant is being assigned a value
             {
                 // translate value to number
-                int64_t value = exprEval.eval(labelArgs);
+                int64_t value = exprEval.eval(constantArgs);
 
-                addSymbol(tokens.label, value);
+                addSymbol(tokens.constant, value);
             }
         }
 

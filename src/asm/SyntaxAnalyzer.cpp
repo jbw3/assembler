@@ -40,11 +40,11 @@ void SyntaxAnalyzer::process(const TokenVec& tokens, SyntaxTree& syntaxTree)
                     // the end of the line
                     for (size_t i = 2; i < lineTokens.size() - 1; ++i)
                     {
-                        instTokens.labelArguments.push_back(lineTokens[i]);
+                        instTokens.constantArguments.push_back(lineTokens[i]);
                     }
 
                     // error if no arguments were added
-                    if (instTokens.labelArguments.empty())
+                    if (instTokens.constantArguments.empty())
                     {
                         throwError("Expected an expression after \"" + lineTokens[1].getValue() + "\".", lineTokens[1]);
                     }
@@ -84,7 +84,7 @@ void SyntaxAnalyzer::addLabel(InstructionTokens& instTokens, const Token& token)
         throwError("\"" + token.getValue() + "\" is not a valid label name.", token);
     }
 
-    instTokens.label = token;
+    instTokens.constant = token;
 }
 
 void SyntaxAnalyzer::parseArgs(const TokenVec& instTokens, size_t tokenIdx, TokenVecVec& args)

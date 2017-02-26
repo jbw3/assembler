@@ -7,8 +7,8 @@
 
 struct InstructionTokens
 {
-    Token label;
-    TokenVec labelArguments;
+    Token constant;
+    TokenVec constantArguments;
     Token mnemonic;
     TokenVecVec arguments;
 };
