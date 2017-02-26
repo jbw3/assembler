@@ -1,10 +1,10 @@
 # Redefining a label should be an error
 
-here:
+label1:
     mov R10, R12
 
-there:
+label2:
     not R10, r10
 
-here:
+label1:
     mov r12, r10
