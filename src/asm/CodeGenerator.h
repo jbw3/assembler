@@ -29,7 +29,7 @@ private:
     SymbolMap symbols;
     ImmediateExpressionEvaluator exprEval;
 
-    void processLabels(const SyntaxTree& syntaxTree);
+    void processConstants(const SyntaxTree& syntaxTree);
 
     void addSymbol(const Token& token, std::int64_t value);
 

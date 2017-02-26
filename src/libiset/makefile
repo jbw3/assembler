@@ -16,12 +16,14 @@ debug: CXXFLAGS += -O0 -g
 
 DEPS = InstructionSet.h \
        InstructionSetRegister.h \
+       Token.h \
        utils.h \
        W8.hpp \
        W16.hpp
 
 SRC = InstructionSet.cpp \
       InstructionSetRegister.cpp \
+      Token.cpp \
       utils.cpp
 OBJ = $(patsubst %.cpp,$(OBJDIR)/%.o,$(SRC))
 

@@ -28,8 +28,14 @@ const unordered_set<Token> ImmediateExpressionEvaluator::BINARY_OPERATORS =
 };
 
 ImmediateExpressionEvaluator::ImmediateExpressionEvaluator(const SymbolMap& symbols) :
-    symbols(symbols)
+    symbols(symbols),
+    currentAddress(0)
 {
+}
+
+void ImmediateExpressionEvaluator::setCurrentAddress(std::int64_t address)
+{
+    currentAddress = address;
 }
 
 int64_t ImmediateExpressionEvaluator::eval(const TokenVec& tokens)
@@ -366,14 +372,22 @@ int64_t ImmediateExpressionEvaluator::evalConstant(const Token& token)
     int64_t value = 0;
     string constant = token.getValue();
 
-    auto iter = symbols.find(constant);
-    if (iter == symbols.end())
+    // check if symbol is the current address
+    if (constant == CURRENT_ADDRESS.getValue())
     {
-        throwError("\"" + constant + "\" has not been defined.", token);
+        value = currentAddress;
     }
-    else
+    else // look up value in symbol table
     {
-        value = iter->second;
+        auto iter = symbols.find(constant);
+        if (iter == symbols.end())
+        {
+            throwError("\"" + constant + "\" has not been defined.", token);
+        }
+        else
+        {
+            value = iter->second;
+        }
     }
 
     return value;

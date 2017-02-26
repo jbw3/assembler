@@ -138,14 +138,21 @@ class Tester:
         numPassed = 0
         errorMsg = ''
         for test in self.tests:
-            passed = test.run()
+            try:
+                passed = test.run()
+                if not passed:
+                    errorMsg += '{} failed:\n{}\n'.format(test.name, test.getError())
+            except Exception as e:
+                passed = False
+                errorMsg += '{} failed:\n{}\n'.format(test.name, e)
+
             if passed:
                 numPassed += 1
                 print('.', end='', flush=True)
             else:
-                errorMsg += '{} failed:\n{}\n'.format(test.name, test.getError())
                 print('E', end='', flush=True)
 
+        # print newline
         print()
 
         if errorMsg != '':
@@ -173,6 +180,7 @@ def main():
     tester.add(FileTest('warn_large_labels', 'W8'))
     tester.add(FileTest('redefined_label', 'W16'))
     tester.add(FileTest('constants', 'W16'))
+    tester.add(FileTest('expressions', 'W16'))
 
     ### string tests ###
 
@@ -224,12 +232,16 @@ def main():
     tester.add(SymbolTest('Parentheses 5', 'W16', b'x = -( ( (1 << 3) + (0xac & 0xf) ) / 10 )', -2))
 
     # invalid expressions
-    tester.add(StringTest('Undefined constant', 'W16', b'x = 2 + y', errStr=b'ERROR: line: 1, col: 9\n"y" has not been defined.\n'))
-    tester.add(StringTest('No closing parenthesis', 'W16', b'x = ( (2 + 2) * 3', errStr=b'ERROR: line: 1, col: 5\nCould not find closing parenthesis.\n'))
-    tester.add(StringTest('No opening parenthesis', 'W16', b'x = (2 + 2) * 3)', errStr=b'ERROR: line: 1, col: 16\nExtra closing parenthesis.\n'))
-    tester.add(StringTest('Missing operator', 'W16', b'x = 12 + 32 41', errStr=b'ERROR: line: 1, col: 13\nExpected operator before "41".\n'))
-    tester.add(StringTest('Empty expression', 'W16', b'x = ', errStr=b'ERROR: line: 1, col: 3\nExpected an expression after "=".\n'))
-    tester.add(StringTest('Empty parentheses expression', 'W16', b'x = 2 + ()', errStr=b'ERROR: line: 1, col: 9\nNo expression after "(".\n'))
+    tester.add(StringTest('Undefined Constant', 'W16', b'x = 2 + y', errStr=b'ERROR: line: 1, col: 9\n"y" has not been defined.\n'))
+    tester.add(StringTest('No Closing Parenthesis', 'W16', b'x = ( (2 + 2) * 3', errStr=b'ERROR: line: 1, col: 5\nCould not find closing parenthesis.\n'))
+    tester.add(StringTest('No Opening Parenthesis', 'W16', b'x = (2 + 2) * 3)', errStr=b'ERROR: line: 1, col: 16\nExtra closing parenthesis.\n'))
+    tester.add(StringTest('Missing Operator', 'W16', b'x = 12 + 32 41', errStr=b'ERROR: line: 1, col: 13\nExpected operator before "41".\n'))
+    tester.add(StringTest('Empty Expression', 'W16', b'x = ', errStr=b'ERROR: line: 1, col: 3\nExpected an expression after "=".\n'))
+    tester.add(StringTest('Empty Parentheses Expression', 'W16', b'x = 2 + ()', errStr=b'ERROR: line: 1, col: 9\nNo expression after "(".\n'))
+    tester.add(StringTest('Instruction Constant Upper', 'W16', b'MOV = 2', errStr=b"ERROR: line: 1, col: 1\nA constant's name cannot be an instruction.\n"))
+    tester.add(StringTest('Instruction Constant Lower', 'W16', b'mov = 2', errStr=b"ERROR: line: 1, col: 1\nA constant's name cannot be an instruction.\n"))
+    tester.add(StringTest('Register Constant Upper', 'W16', b'R0 = 2', errStr=b"ERROR: line: 1, col: 1\nA constant's name cannot be a register.\n"))
+    tester.add(StringTest('Register Constant Lower', 'W16', b'r0 = 2', errStr=b"ERROR: line: 1, col: 1\nA constant's name cannot be a register.\n"))
 
     tester.run()
 

@@ -17,7 +17,7 @@ CodeGenerator::CodeGenerator(const InstructionSet& instructionSet) :
 
 void CodeGenerator::process(const SyntaxTree& syntaxTree, InstructionCodeList& instCodeList)
 {
-    processLabels(syntaxTree);
+    processConstants(syntaxTree);
     processInstructions(syntaxTree, instCodeList);
 }
 
@@ -82,28 +82,30 @@ void CodeGenerator::printSymbols(ostream& os) const
     os.fill(fill);
 }
 
-void CodeGenerator::processLabels(const SyntaxTree& syntaxTree)
+void CodeGenerator::processConstants(const SyntaxTree& syntaxTree)
 {
     uint64_t byteWordSize = instSet.getWordSize() / 8;
     int64_t address = 0;
 
     for (const InstructionTokens& tokens : syntaxTree.instructions)
     {
-        // register labels (if any)
-        vector<Token> labelArgs = tokens.labelArguments;
-        if (!tokens.label.getValue().empty())
+        exprEval.setCurrentAddress(address);
+
+        // register constants (if any)
+        vector<Token> constantArgs = tokens.constantArguments;
+        if (!tokens.constant.getValue().empty())
         {
-            // if there are no arguments, assign label value to current address
-            if (labelArgs.empty())
+            // if there are no arguments, this is a label; assign value to current address
+            if (constantArgs.empty())
             {
-                addSymbol(tokens.label, address);
+                addSymbol(tokens.constant, address);
             }
-            else // label is being assigned a value
+            else // constant is being assigned a value
             {
                 // translate value to number
-                int64_t value = exprEval.eval(labelArgs);
+                int64_t value = exprEval.eval(constantArgs);
 
-                addSymbol(tokens.label, value);
+                addSymbol(tokens.constant, value);
             }
         }
 
@@ -118,7 +120,29 @@ void CodeGenerator::processLabels(const SyntaxTree& syntaxTree)
 void CodeGenerator::addSymbol(const Token& token, std::int64_t value)
 {
     string symbolName = token.getValue();
+    string symbolNameUpper = toUpper(symbolName);
 
+    // check if symbol matches an instruction name
+    const map<string, Instruction>& instructions = instSet.getInstructions();
+    if (instructions.find(symbolNameUpper) != instructions.cend())
+    {
+        throwError("A constant's name cannot be an instruction.", token);
+    }
+
+    // check if symbol matches a register name
+    const map<string, Register>& registers = instSet.getRegisters();
+    if (registers.find(symbolNameUpper) != registers.cend())
+    {
+        throwError("A constant's name cannot be a register.", token);
+    }
+
+    // check if symbol is a reserved identifier
+    if (RESERVED_IDENTIFIERS.find(symbolName) != RESERVED_IDENTIFIERS.cend())
+    {
+        throwError("\"" + symbolName + "\" is a reserved identifier.", token);
+    }
+
+    // add symbol to symbol table
     auto pair = symbols.insert({symbolName, value});
     if (!pair.second)
     {
@@ -131,14 +155,21 @@ void CodeGenerator::processInstructions(const SyntaxTree& syntaxTree, Instructio
     // make sure list is empty
     instCodeList.clear();
 
+    uint64_t byteWordSize = instSet.getWordSize() / 8;
+    int64_t address = 0;
+
     for (const InstructionTokens& tokens : syntaxTree.instructions)
     {
+        exprEval.setCurrentAddress(address);
+
         // encode instruction (if there is one)
         if (!tokens.mnemonic.getValue().empty())
         {
             InstructionCode instCode;
             encodeInstruction(tokens, instCode);
             instCodeList.push_back(instCode);
+
+            address += byteWordSize;
         }
     }
 }

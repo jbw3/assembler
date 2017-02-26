@@ -10,7 +10,7 @@ class Token
 public:
     Token();
 
-    Token(const std::string& value, unsigned long line, unsigned long column);
+    Token(const std::string& value, unsigned long line = 0, unsigned long column = 0);
 
     const std::string& getValue() const;
 
@@ -44,55 +44,58 @@ typedef std::vector<Token> TokenVec;
 typedef std::vector<TokenVec> TokenVecVec;
 
 /// End of line
-const Token END_OF_LINE("\n", 0, 0);
+const Token END_OF_LINE("\n");
 
 /// Argument separator
-const Token ARGUMENT_SEPARATOR(",", 0, 0);
+const Token ARGUMENT_SEPARATOR(",");
 
 /// Label separator
-const Token LABEL_SEPARATOR(":", 0, 0);
+const Token LABEL_SEPARATOR(":");
 
 /// Assignment operator
-const Token ASSIGNMENT_OPERATOR("=", 0, 0);
+const Token ASSIGNMENT_OPERATOR("=");
 
 /// Addition operator
-const Token ADDITION_OPERATOR("+", 0, 0);
+const Token ADDITION_OPERATOR("+");
 
 /// Subtraction operator
-const Token SUBTRACTION_OPERATOR("-", 0, 0);
+const Token SUBTRACTION_OPERATOR("-");
 
 /// Multiplication operator
-const Token MULTIPLICATION_OPERATOR("*", 0, 0);
+const Token MULTIPLICATION_OPERATOR("*");
 
 /// Division operator
-const Token DIVISION_OPERATOR("/", 0, 0);
+const Token DIVISION_OPERATOR("/");
 
 /// Modulo operator
-const Token MODULO_OPERATOR("%", 0, 0);
+const Token MODULO_OPERATOR("%");
 
 /// Complement operator
-const Token COMPLEMENT_OPERATOR("~", 0, 0);
+const Token COMPLEMENT_OPERATOR("~");
 
 /// AND operator
-const Token AND_OPERATOR("&", 0, 0);
+const Token AND_OPERATOR("&");
 
 /// OR operator
-const Token OR_OPERATOR("|", 0, 0);
+const Token OR_OPERATOR("|");
 
 /// XOR operator
-const Token XOR_OPERATOR("^", 0, 0);
+const Token XOR_OPERATOR("^");
 
 /// Bitshift left operator
-const Token SHIFT_LEFT_OPERATOR("<<", 0, 0);
+const Token SHIFT_LEFT_OPERATOR("<<");
 
 /// Bitshift right operator
-const Token SHIFT_RIGHT_OPERATOR(">>", 0, 0);
+const Token SHIFT_RIGHT_OPERATOR(">>");
 
 /// Open parenthesis
-const Token OPEN_PARENTHESIS("(", 0, 0);
+const Token OPEN_PARENTHESIS("(");
 
 /// Close parenthesis
-const Token CLOSE_PARENTHESIS(")", 0, 0);
+const Token CLOSE_PARENTHESIS(")");
+
+/// Current address
+const Token CURRENT_ADDRESS("here");
 
 const std::unordered_set<Token> CONSTANT_OPERATORS = {
     ADDITION_OPERATOR,
@@ -108,6 +111,10 @@ const std::unordered_set<Token> CONSTANT_OPERATORS = {
     SHIFT_RIGHT_OPERATOR,
     OPEN_PARENTHESIS,
     CLOSE_PARENTHESIS
+};
+
+const std::unordered_set<Token> RESERVED_IDENTIFIERS = {
+    CURRENT_ADDRESS
 };
 
 #endif // TOKEN_H_
