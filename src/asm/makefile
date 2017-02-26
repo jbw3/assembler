@@ -29,8 +29,7 @@ DEPS = Arguments.h \
        SymbolMap.h \
        SyntaxAnalyzer.h \
        SyntaxTree.h \
-       TextOutputFormatter.h \
-       Token.h
+       TextOutputFormatter.h
 
 SRC = Arguments.cpp \
       Assembler.cpp \
@@ -42,8 +41,7 @@ SRC = Arguments.cpp \
       Preprocessor.cpp \
       SyntaxAnalyzer.cpp \
       SyntaxTree.cpp \
-      TextOutputFormatter.cpp \
-      Token.cpp
+      TextOutputFormatter.cpp
 OBJ = $(patsubst %.cpp,$(OBJDIR)/%.o,$(SRC))
 
 TARGET = $(BINDIR)/$(NAME)
