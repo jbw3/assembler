@@ -214,7 +214,9 @@ def main():
     tester.add(SymbolTest('SHIFT LEFT 1', 'W16', b'x = 0xa << 3', 0x50))
     tester.add(SymbolTest('SHIFT RIGHT 1', 'W16', b'x = 12 >> 2', 3))
     tester.add(SymbolTest('Operator Precedence 1', 'W16', b'x = 2 + 2 * 3', 8))
-    tester.add(SymbolTest('Operator Precedence 1', 'W16', b'x = 2 + -12 / 4 - 5', -6))
+    tester.add(SymbolTest('Operator Precedence 2', 'W16', b'x = 2 + -12 / 4 - 5', -6))
+    tester.add(SymbolTest('Operator Precedence 3', 'W16', b'x = 9 & -2 + 5', 1))
+    tester.add(SymbolTest('Operator Precedence 4', 'W16', b'x = 0x18 >> -6 - -8 ^ 10 - 5 + 7', 10))
 
     tester.run()
 
