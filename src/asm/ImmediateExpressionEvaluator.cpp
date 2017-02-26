@@ -42,6 +42,11 @@ int64_t ImmediateExpressionEvaluator::eval(TokenVec::const_iterator begin, Token
     list<int64_t> terms;
     list<Token> binOperators;
 
+    if (begin == end)
+    {
+        throwError("Empty expression.", *begin);
+    }
+
     bool expectBinOp = false;
     TokenVec termTokens;
     termTokens.reserve(8);
@@ -66,10 +71,34 @@ int64_t ImmediateExpressionEvaluator::eval(TokenVec::const_iterator begin, Token
             }
             else
             {
-                int64_t term = evalImmediate(*tokenIter);
+                int64_t term = 0;
+
+                // if the token is an open parenthesis, evaluate
+                // the sub-expression
+                if (*tokenIter == OPEN_PARENTHESIS)
+                {
+                    auto beginSubExpr = tokenIter + 1;
+                    auto endSubExpr = findClosingParenthesis(tokenIter, end);
+
+                    // evaluate the expression in the parenthesis
+                    term = eval(beginSubExpr, endSubExpr);
+
+                    // move iterator to end of sub-expression
+                    tokenIter = endSubExpr;
+                }
+                else // the term should be an immediate value
+                {
+                    term = evalImmediate(*tokenIter);
+                }
+
+                // process any unary operators before the term
                 term = evalUnary(termTokens.cbegin(), termTokens.cend(), term);
+
+                // add the term to the list
                 terms.push_back(term);
 
+                // we've finished processing this term, we expect
+                // a binary operator next
                 termTokens.clear();
                 expectBinOp = true;
             }
@@ -205,6 +234,33 @@ int64_t ImmediateExpressionEvaluator::evalBinary(const Token& op, int64_t term1,
     }
 
     return value;
+}
+
+TokenVec::const_iterator ImmediateExpressionEvaluator::findClosingParenthesis(TokenVec::const_iterator openParIter, TokenVec::const_iterator end)
+{
+    uint balance = 0;
+    auto iter = openParIter + 1;
+    while (iter != end && (balance > 0 || *iter != CLOSE_PARENTHESIS))
+    {
+        if (*iter == OPEN_PARENTHESIS)
+        {
+            ++balance;
+        }
+        else if (*iter == CLOSE_PARENTHESIS)
+        {
+            --balance;
+        }
+
+        ++iter;
+    }
+
+    // error if we could not find the closing parenthesis
+    if (iter == end)
+    {
+        throwError("Could not find closing parenthesis.", *openParIter);
+    }
+
+    return iter;
 }
 
 int64_t ImmediateExpressionEvaluator::evalImmediate(const Token& token)

@@ -88,6 +88,12 @@ const Token SHIFT_LEFT_OPERATOR("<<", 0, 0);
 /// Bitshift right operator
 const Token SHIFT_RIGHT_OPERATOR(">>", 0, 0);
 
+/// Open parenthesis
+const Token OPEN_PARENTHESIS("(", 0, 0);
+
+/// Close parenthesis
+const Token CLOSE_PARENTHESIS(")", 0, 0);
+
 const std::unordered_set<Token> CONSTANT_OPERATORS = {
     ADDITION_OPERATOR,
     SUBTRACTION_OPERATOR,
@@ -99,7 +105,9 @@ const std::unordered_set<Token> CONSTANT_OPERATORS = {
     OR_OPERATOR,
     XOR_OPERATOR,
     SHIFT_LEFT_OPERATOR,
-    SHIFT_RIGHT_OPERATOR
+    SHIFT_RIGHT_OPERATOR,
+    OPEN_PARENTHESIS,
+    CLOSE_PARENTHESIS
 };
 
 #endif // TOKEN_H_

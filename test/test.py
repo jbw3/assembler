@@ -217,6 +217,11 @@ def main():
     tester.add(SymbolTest('Operator Precedence 2', 'W16', b'x = 2 + -12 / 4 - 5', -6))
     tester.add(SymbolTest('Operator Precedence 3', 'W16', b'x = 9 & -2 + 5', 1))
     tester.add(SymbolTest('Operator Precedence 4', 'W16', b'x = 0x18 >> -6 - -8 ^ 10 - 5 + 7', 10))
+    tester.add(SymbolTest('Parentheses 1', 'W16', b'x = (2 + 2) * 3', 12))
+    tester.add(SymbolTest('Parentheses 2', 'W16', b'x = (10)', 10))
+    tester.add(SymbolTest('Parentheses 3', 'W16', b'x = (((10)))', 10))
+    tester.add(SymbolTest('Parentheses 4', 'W16', b'x = 2 * -(4 + 8)', -24))
+    tester.add(SymbolTest('Parentheses 5', 'W16', b'x = -( ( (1 << 3) + (0xac & 0xf) ) / 10 )', -2))
 
     tester.run()
 

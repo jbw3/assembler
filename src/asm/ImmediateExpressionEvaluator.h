@@ -30,6 +30,8 @@ private:
 
     std::int64_t evalBinary(const Token& op, std::int64_t term1, std::int64_t term2);
 
+    TokenVec::const_iterator findClosingParenthesis(TokenVec::const_iterator openParIter, TokenVec::const_iterator end);
+
     std::int64_t evalImmediate(const Token& token);
 
     std::int64_t evalNum(const Token& token);
