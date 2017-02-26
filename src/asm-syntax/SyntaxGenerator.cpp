@@ -3,6 +3,7 @@
 #include "InstructionSet.h"
 #include "SyntaxGenerator.h"
 #include "TextMateSyntaxWriter.h"
+#include "Token.h"
 #include "utils.h"
 
 using namespace std;
@@ -58,6 +59,7 @@ SyntaxInfo SyntaxGenerator::createSyntaxInfo(const InstructionSet* iSet)
     info.rules = {
         {"#.*$", "comment.line"},
         {R"(\b(?:0[Bb][01]+|0[Oo][0-7]+|[0-9]+|0[Xx][0-9A-Fa-f]+)\b)", "constant.numeric.integer"},
+        {"\\b" + CURRENT_ADDRESS.getValue() + "\\b", "variable.language"},
         {instRegex, "keyword.control"},
         {regRegex, "variable.language"}
     };
