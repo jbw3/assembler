@@ -26,7 +26,7 @@ private:
 
     void evalTermsPrecedence(std::list<std::int64_t>& terms, std::list<Token>& binOperators, const TokenVec& operators);
 
-    std::int64_t evalUnary(TokenVec::const_iterator first, TokenVec::const_iterator last);
+    std::int64_t evalUnary(TokenVec::const_iterator begin, TokenVec::const_iterator end, int64_t term);
 
     std::int64_t evalBinary(const Token& op, std::int64_t term1, std::int64_t term2);
 

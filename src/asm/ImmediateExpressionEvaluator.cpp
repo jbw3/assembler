@@ -59,12 +59,15 @@ int64_t ImmediateExpressionEvaluator::eval(TokenVec::const_iterator begin, Token
         }
         else
         {
-            termTokens.push_back(*tokenIter);
-
-            // if this is not an operator, it must be an immediate value
-            if (UNARY_OPERATORS.find(*tokenIter) == UNARY_OPERATORS.cend())
+            // if this is a unary operator, add it to the term
+            if (UNARY_OPERATORS.find(*tokenIter) != UNARY_OPERATORS.cend())
             {
-                int64_t term = evalUnary(termTokens.cbegin(), termTokens.cend() - 1);
+                termTokens.push_back(*tokenIter);
+            }
+            else
+            {
+                int64_t term = evalImmediate(*tokenIter);
+                term = evalUnary(termTokens.cbegin(), termTokens.cend(), term);
                 terms.push_back(term);
 
                 termTokens.clear();
@@ -119,33 +122,33 @@ void ImmediateExpressionEvaluator::evalTermsPrecedence(list<int64_t>& terms, lis
     }
 }
 
-int64_t ImmediateExpressionEvaluator::evalUnary(TokenVec::const_iterator first, TokenVec::const_iterator last)
+int64_t ImmediateExpressionEvaluator::evalUnary(TokenVec::const_iterator begin, TokenVec::const_iterator end, int64_t term)
 {
     int64_t value = 0;
 
-    if (first == last)
+    if (begin == end)
     {
-        value = evalImmediate(*first);
+        value = term;
     }
-    else if (*first == SUBTRACTION_OPERATOR)
+    else if (*begin == SUBTRACTION_OPERATOR)
     {
         // operator is negative sign
-        value = -evalUnary(first + 1, last);
+        value = -evalUnary(begin + 1, end, term);
     }
-    else if (*first == COMPLEMENT_OPERATOR)
+    else if (*begin == COMPLEMENT_OPERATOR)
     {
         // operator is complement
-        value = ~evalUnary(first + 1, last);
+        value = ~evalUnary(begin + 1, end, term);
     }
-    else if (*first == ADDITION_OPERATOR)
+    else if (*begin == ADDITION_OPERATOR)
     {
         // operator is positive sign; do nothing
-        value = evalUnary(first + 1, last);
+        value = evalUnary(begin + 1, end, term);
     }
     else
     {
         // if we get here, there was an error
-        throwError("Invalid syntax: \"" + first->getValue() + "\".", *first);
+        throwError("Invalid syntax: \"" + begin->getValue() + "\".", *begin);
     }
 
     return value;
