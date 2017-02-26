@@ -44,7 +44,9 @@ int64_t ImmediateExpressionEvaluator::eval(TokenVec::const_iterator begin, Token
 
     if (begin == end)
     {
-        throwError("Empty expression.", *begin);
+        // we should not get here
+        Logger::getInstance().logError("Internal error. eval() called on empty expression.");
+        throw Error();
     }
 
     bool expectBinOp = false;
@@ -56,7 +58,14 @@ int64_t ImmediateExpressionEvaluator::eval(TokenVec::const_iterator begin, Token
         {
             if (BINARY_OPERATORS.find(*tokenIter) == BINARY_OPERATORS.cend())
             {
-                throwError("Expected binary operator.", *tokenIter);
+                if (*tokenIter == CLOSE_PARENTHESIS)
+                {
+                    throwError("Extra closing parenthesis.", *tokenIter);
+                }
+                else
+                {
+                    throwError("Expected operator before \"" + tokenIter->getValue() + "\".", *tokenIter);
+                }
             }
 
             binOperators.push_back(*tokenIter);
@@ -79,6 +88,12 @@ int64_t ImmediateExpressionEvaluator::eval(TokenVec::const_iterator begin, Token
                 {
                     auto beginSubExpr = tokenIter + 1;
                     auto endSubExpr = findClosingParenthesis(tokenIter, end);
+
+                    // ensure the expression between the parentheses is not empty
+                    if (beginSubExpr == endSubExpr)
+                    {
+                        throwError("No expression after \"" + tokenIter->getValue() + "\".", *tokenIter);
+                    }
 
                     // evaluate the expression in the parenthesis
                     term = eval(beginSubExpr, endSubExpr);
@@ -349,12 +364,12 @@ int64_t ImmediateExpressionEvaluator::evalNum(const Token& token)
 int64_t ImmediateExpressionEvaluator::evalConstant(const Token& token)
 {
     int64_t value = 0;
-    string label = token.getValue();
+    string constant = token.getValue();
 
-    auto iter = symbols.find(label);
+    auto iter = symbols.find(constant);
     if (iter == symbols.end())
     {
-        throwError("\"" + label + "\" is not a valid symbol.", token);
+        throwError("\"" + constant + "\" has not been defined.", token);
     }
     else
     {

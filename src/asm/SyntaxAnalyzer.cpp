@@ -46,7 +46,7 @@ void SyntaxAnalyzer::process(const TokenVec& tokens, SyntaxTree& syntaxTree)
                     // error if no arguments were added
                     if (instTokens.labelArguments.empty())
                     {
-                        throwError("Expected an expression after \"=\"", lineTokens[1]);
+                        throwError("Expected an expression after \"" + lineTokens[1].getValue() + "\".", lineTokens[1]);
                     }
                 }
                 else

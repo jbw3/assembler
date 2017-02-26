@@ -207,7 +207,7 @@ def main():
     tester.add(SymbolTest('Subtraction 3', 'W16', b'x = 100 - 1 - 1 - --1', 97))
     tester.add(SymbolTest('Multiplication 1', 'W16', b'x = 5 * 100 * 2', 1000))
     tester.add(SymbolTest('Division 1', 'W16', b'x = 99 / 3', 33))
-    tester.add(SymbolTest('Modulo 1', 'W16', b'x = 0xa0 / 4', 0x28))
+    tester.add(SymbolTest('Modulo 1', 'W16', b'x = 113 % 25', 13))
     tester.add(SymbolTest('AND 1', 'W16', b'x = 0x3e & 0B110111 & 47', 0x26))
     tester.add(SymbolTest('OR 1', 'W16', b'x = 0o74 | 3', 0o77))
     tester.add(SymbolTest('XOR 1', 'W16', b'x = 0x7b ^ 0Xf ^ 16', 0x64))
@@ -222,6 +222,14 @@ def main():
     tester.add(SymbolTest('Parentheses 3', 'W16', b'x = (((10)))', 10))
     tester.add(SymbolTest('Parentheses 4', 'W16', b'x = 2 * -(4 + 8)', -24))
     tester.add(SymbolTest('Parentheses 5', 'W16', b'x = -( ( (1 << 3) + (0xac & 0xf) ) / 10 )', -2))
+
+    # invalid expressions
+    tester.add(StringTest('Undefined constant', 'W16', b'x = 2 + y', errStr=b'ERROR: line: 1, col: 9\n"y" has not been defined.\n'))
+    tester.add(StringTest('No closing parenthesis', 'W16', b'x = ( (2 + 2) * 3', errStr=b'ERROR: line: 1, col: 5\nCould not find closing parenthesis.\n'))
+    tester.add(StringTest('No opening parenthesis', 'W16', b'x = (2 + 2) * 3)', errStr=b'ERROR: line: 1, col: 16\nExtra closing parenthesis.\n'))
+    tester.add(StringTest('Missing operator', 'W16', b'x = 12 + 32 41', errStr=b'ERROR: line: 1, col: 13\nExpected operator before "41".\n'))
+    tester.add(StringTest('Empty expression', 'W16', b'x = ', errStr=b'ERROR: line: 1, col: 3\nExpected an expression after "=".\n'))
+    tester.add(StringTest('Empty parentheses expression', 'W16', b'x = 2 + ()', errStr=b'ERROR: line: 1, col: 9\nNo expression after "(".\n'))
 
     tester.run()
 
