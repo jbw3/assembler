@@ -9,6 +9,9 @@ start:
     addi r0, SIZE
     addi r0, BITS
 
+secondAdd = here - 4
+    addi r0, secondAdd
+
     # infinite loop
     nop
     jmp here - 2
