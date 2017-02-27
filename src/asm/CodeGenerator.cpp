@@ -155,14 +155,21 @@ void CodeGenerator::processInstructions(const SyntaxTree& syntaxTree, Instructio
     // make sure list is empty
     instCodeList.clear();
 
+    uint64_t byteWordSize = instSet.getWordSize() / 8;
+    int64_t address = 0;
+
     for (const InstructionTokens& tokens : syntaxTree.instructions)
     {
+        exprEval.setCurrentAddress(address);
+
         // encode instruction (if there is one)
         if (!tokens.mnemonic.getValue().empty())
         {
             InstructionCode instCode;
             encodeInstruction(tokens, instCode);
             instCodeList.push_back(instCode);
+
+            address += byteWordSize;
         }
     }
 }
