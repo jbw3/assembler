@@ -138,14 +138,21 @@ class Tester:
         numPassed = 0
         errorMsg = ''
         for test in self.tests:
-            passed = test.run()
+            try:
+                passed = test.run()
+                if not passed:
+                    errorMsg += '{} failed:\n{}\n'.format(test.name, test.getError())
+            except Exception as e:
+                passed = False
+                errorMsg += '{} failed:\n{}\n'.format(test.name, e)
+
             if passed:
                 numPassed += 1
                 print('.', end='', flush=True)
             else:
-                errorMsg += '{} failed:\n{}\n'.format(test.name, test.getError())
                 print('E', end='', flush=True)
 
+        # print newline
         print()
 
         if errorMsg != '':
@@ -173,6 +180,7 @@ def main():
     tester.add(FileTest('warn_large_labels', 'W8'))
     tester.add(FileTest('redefined_label', 'W16'))
     tester.add(FileTest('constants', 'W16'))
+    tester.add(FileTest('expressions', 'W16'))
 
     ### string tests ###
 
