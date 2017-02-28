@@ -22,7 +22,7 @@ public:
     /**
      * @brief Constructor
      */
-    Argument(EType type, unsigned int size, unsigned int offset, bool isSigned = true);
+    Argument(EType type, unsigned int size, unsigned int offset, bool isSigned = true, unsigned int shift = 0);
 
     /**
      * @brief Get the argument type (register or immediate)
@@ -47,11 +47,24 @@ public:
      */
     bool getIsSigned() const;
 
+    /**
+     * @brief Shift an immediate argument to the right before
+     * encoding it (only meaningful for immediate arguments)
+     *
+     * @details This may be useful for jump instructions. For
+     * example, when jumping to a 32-bit aligned address, the
+     * 2 least significant bits are unnecessary. Thus, a shift
+     * of 2 will allow 2 more most significant bits in the
+     * address.
+     */
+    unsigned int getShift() const;
+
 private:
     EType type;
     unsigned int size;
     unsigned int offset;
     bool isSigned;
+    unsigned int shift;
 };
 
 class InstructionType

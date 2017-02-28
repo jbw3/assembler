@@ -3,11 +3,12 @@
 
 using namespace std;
 
-Argument::Argument(EType type, unsigned int size, unsigned int offset, bool isSigned) :
+Argument::Argument(EType type, unsigned int size, unsigned int offset, bool isSigned, unsigned int shift) :
     type(type),
     size(size),
     offset(offset),
-    isSigned(isSigned)
+    isSigned(isSigned),
+    shift(shift)
 {}
 
 Argument::EType Argument::getType() const
@@ -28,6 +29,11 @@ unsigned int Argument::getOffset() const
 bool Argument::getIsSigned() const
 {
     return isSigned;
+}
+
+unsigned int Argument::getShift() const
+{
+    return shift;
 }
 
 InstructionType::InstructionType(unsigned int opCodeSize, unsigned int opCodeOffset, std::initializer_list<Argument> arguments) :
