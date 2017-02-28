@@ -46,7 +46,7 @@ private:
     /**
      * @brief Check if immediate value will be truncated
      */
-    bool checkTrunc(uint64_t immCode, const Argument& arg);
+    bool checkTrunc(uint64_t immCode, uint64_t exprValue, const Argument& arg);
 
     void throwError(const std::string& message, const Token& token);
 };

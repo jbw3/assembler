@@ -272,9 +272,13 @@ uint64_t CodeGenerator::encodeRegister(const TokenVec& tokens)
 
 uint64_t CodeGenerator::encodeImmediate(const TokenVec& tokens, const Argument& arg)
 {
-    uint64_t immCode = exprEval.eval(tokens);
+    // evaluate expression to get code
+    uint64_t exprValue = exprEval.eval(tokens);
 
-    bool trunc = checkTrunc(immCode, arg);
+    // shift right by amount specified in argument
+    uint64_t immCode = exprValue >> arg.getShift();
+
+    bool trunc = checkTrunc(immCode, exprValue, arg);
 
     // warn if number will be truncated in instruction
     if (trunc)
@@ -287,9 +291,16 @@ uint64_t CodeGenerator::encodeImmediate(const TokenVec& tokens, const Argument& 
     return immCode;
 }
 
-bool CodeGenerator::checkTrunc(uint64_t immCode, const Argument& arg)
+bool CodeGenerator::checkTrunc(uint64_t immCode, uint64_t exprValue, const Argument& arg)
 {
     bool trunc = false;
+
+    // --- check if least significant bits will be truncated ---
+
+    uint64_t shiftMask = bitMask(arg.getShift());
+    trunc |= ( (exprValue & shiftMask) != 0 );
+
+    // --- check if most significant bits will be truncated ---
 
     uint64_t numMask = bitMask(arg.getSize());
 
@@ -305,11 +316,11 @@ bool CodeGenerator::checkTrunc(uint64_t immCode, const Argument& arg)
         bool isPositive = (signBits == 0);
         bool isNegative = (signBits == signMask);
 
-        trunc = ( !isPositive && !isNegative );
+        trunc |= ( !isPositive && !isNegative );
     }
     else // arg is unsigned
     {
-        trunc = ( immCode != (immCode & numMask) );
+        trunc |= ( immCode != (immCode & numMask) );
     }
 
     return trunc;
