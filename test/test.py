@@ -185,14 +185,14 @@ def main():
     ### string tests ###
 
     # numbers
-    tester.add(StringTest('Immediate Bin Lower', 'W16', b'jmp 0b1010011', outStr=b'c053\n'))
-    tester.add(StringTest('Immediate Bin Upper', 'W16', b'jmp 0B101101', outStr=b'c02d\n'))
-    tester.add(StringTest('Immediate Oct Lower', 'W16', b'jmp 0o107', outStr=b'c047\n'))
-    tester.add(StringTest('Immediate Oct Upper', 'W16', b'jmp 0O6443', outStr=b'cd23\n'))
-    tester.add(StringTest('Immediate Dec 1',     'W16', b'jmp 19', outStr=b'c013\n'))
-    tester.add(StringTest('Immediate Dec 2',     'W16', b'jmp 0123', outStr=b'c07b\n'))
-    tester.add(StringTest('Immediate Hex Lower', 'W16', b'jmp 0xafe', outStr=b'cafe\n'))
-    tester.add(StringTest('Immediate Hex Upper', 'W16', b'jmp 0X6B', outStr=b'c06b\n'))
+    tester.add(StringTest('Immediate Bin Lower', 'W16', b'jmp 0b1010010', outStr=b'c029\n'))
+    tester.add(StringTest('Immediate Bin Upper', 'W16', b'jmp 0B101100', outStr=b'c016\n'))
+    tester.add(StringTest('Immediate Oct Lower', 'W16', b'jmp 0o106', outStr=b'c023\n'))
+    tester.add(StringTest('Immediate Oct Upper', 'W16', b'jmp 0O6442', outStr=b'c691\n'))
+    tester.add(StringTest('Immediate Dec 1',     'W16', b'jmp 18', outStr=b'c009\n'))
+    tester.add(StringTest('Immediate Dec 2',     'W16', b'jmp 0234', outStr=b'c075\n'))
+    tester.add(StringTest('Immediate Hex Lower', 'W16', b'jmp 0x15fc', outStr=b'cafe\n'))
+    tester.add(StringTest('Immediate Hex Upper', 'W16', b'jmp 0X6c', outStr=b'c036\n'))
 
     # signs
     tester.add(StringTest('Positive Sign 1', 'W16', b'addi r0, +7', outStr=b'b007\n'))

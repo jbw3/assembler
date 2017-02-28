@@ -1,5 +1,5 @@
 num = 2
-hex=0xA1
+hex=0xA2
 
 label1:
     mov r1, r2

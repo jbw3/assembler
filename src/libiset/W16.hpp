@@ -16,7 +16,7 @@ const InstructionType RIType{4, 12, {{Argument::eRegister, 4, 8}, {Argument::eIm
 const InstructionType RRIType{4, 12, {{Argument::eRegister, 4, 8}, {Argument::eRegister, 4, 4}, {Argument::eImmediate, 4, 0, true}}};
 
 // Jump type
-const InstructionType JType{4, 12, {{Argument::eImmediate, 12, 0, false}}};
+const InstructionType JType{4, 12, {{Argument::eImmediate, 12, 0, false, 1}}};
 
 const InstructionSet ISET(
     // name

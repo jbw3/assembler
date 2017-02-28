@@ -272,7 +272,11 @@ uint64_t CodeGenerator::encodeRegister(const TokenVec& tokens)
 
 uint64_t CodeGenerator::encodeImmediate(const TokenVec& tokens, const Argument& arg)
 {
+    // evaluate expression to get code
     uint64_t immCode = exprEval.eval(tokens);
+
+    // shift right by amount specified in argument
+    immCode >>= arg.getShift();
 
     bool trunc = checkTrunc(immCode, arg);
 
