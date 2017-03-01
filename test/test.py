@@ -243,6 +243,13 @@ def main():
     tester.add(StringTest('Register Constant Upper', 'W16', b'R0 = 2', errStr=b"ERROR: line: 1, col: 1\nA constant's name cannot be a register.\n"))
     tester.add(StringTest('Register Constant Lower', 'W16', b'r0 = 2', errStr=b"ERROR: line: 1, col: 1\nA constant's name cannot be a register.\n"))
 
+    # truncation warnings
+    tester.add(StringTest('Positive Number Truncation 1', 'W16', b'addi r0, 200', outStr=b'b0c8\n', errStr=b'WARNING: line: 1, col: 10\nImmediate value was truncated.\n'))
+    tester.add(StringTest('Positive Number Truncation 2', 'W16', b'addi r0, 5000', outStr=b'b088\n', errStr=b'WARNING: line: 1, col: 10\nImmediate value was truncated.\n'))
+    tester.add(StringTest('Negative Number Truncation 1', 'W16', b'addi r0, -200', outStr=b'b038\n', errStr=b'WARNING: line: 1, col: 10\nImmediate value was truncated.\n'))
+    tester.add(StringTest('Negative Number Truncation 2', 'W16', b'addi r0, -3000', outStr=b'b048\n', errStr=b'WARNING: line: 1, col: 10\nImmediate value was truncated.\n'))
+    tester.add(StringTest('LSB Truncation', 'W16', b'jmp 3', outStr=b'c001\n', errStr=b'WARNING: line: 1, col: 5\nImmediate value was truncated.\n'))
+
     tester.run()
 
 if __name__ == '__main__':
