@@ -9,6 +9,8 @@ bool BinaryOutputFormatter::isBinaryOutput() const
 
 void BinaryOutputFormatter::generate(ostream& os, unsigned int wordSize, const CodeGenerator::InstructionCodeList& instCodeList)
 {
+    unsigned int wordSizeBytes = wordSize / 8;
+
     for (CodeGenerator::InstructionCode code : instCodeList)
     {
         /// @todo support instructions longer than 64-bit
@@ -16,6 +18,6 @@ void BinaryOutputFormatter::generate(ostream& os, unsigned int wordSize, const C
         // this only works on little endian processors
         const char* ptr = reinterpret_cast<const char*>(&(code[0]));
 
-        os.write(ptr, wordSize);
+        os.write(ptr, wordSizeBytes);
     }
 }

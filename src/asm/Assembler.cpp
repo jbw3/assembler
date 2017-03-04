@@ -27,9 +27,21 @@ Assembler::Assembler(const Arguments& arguments) :
 
     codeGenerator = new CodeGenerator(*iSet);
 
-    /// @todo Add an argument to let the user specify the output formatter.
-    outputFormatter = new TextOutputFormatter;
-    // outputFormatter = new BinaryOutputFormatter;
+    switch (args.outputFormat)
+    {
+        case Arguments::EOutputFormat::eBinary:
+            outputFormatter = new BinaryOutputFormatter;
+            break;
+
+        case Arguments::EOutputFormat::eText:
+            outputFormatter = new TextOutputFormatter;
+            break;
+
+        default:
+            cerr << "Internal error! Invalid output format\n" << flush;
+            outputFormatter = nullptr;
+            break;
+    }
 }
 
 Assembler::~Assembler()

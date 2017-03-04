@@ -6,6 +6,12 @@
 class Arguments
 {
 public:
+    enum struct EOutputFormat
+    {
+        eBinary,
+        eText
+    };
+
     Arguments();
 
     bool isDone() const;
@@ -17,6 +23,7 @@ public:
     std::string instructionSetName;
     std::string inFilename;
     std::string outFilename;
+    EOutputFormat outputFormat;
     bool colorOutput;
     bool outputSymbols;
 
@@ -25,6 +32,7 @@ private:
 
     bool done;
     bool error;
+    bool seenFormatFlag;
 
     void parseNextArgs(int& idx, int argc, const char* argv[]);
 };
