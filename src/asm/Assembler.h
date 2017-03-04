@@ -8,6 +8,7 @@
 
 class Arguments;
 class CodeGenerator;
+class InstructionSet;
 class IOutputFormatter;
 class SyntaxAnalyzer;
 
@@ -28,6 +29,11 @@ private:
     IOutputFormatter* outputFormatter;
 
     const Arguments& args;
+    const InstructionSet* iSet;
+    std::istream* is;
+    std::ostream* os;
+
+    bool configIO();
 
     void process();
 };

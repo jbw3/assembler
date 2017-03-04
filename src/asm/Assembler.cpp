@@ -3,6 +3,7 @@
 
 #include "Arguments.h"
 #include "Assembler.h"
+#include "BinaryOutputFormatter.h"
 #include "CodeGenerator.h"
 #include "Error.h"
 #include "InstructionSetRegister.h"
@@ -20,14 +21,27 @@ Assembler::Assembler(const Arguments& arguments) :
 {
     Logger::getInstance().setColorOutput(args.colorOutput);
 
-    const InstructionSet* iSet = InstructionSetRegister::getInstance().getInstructionSet(args.instructionSetName);
+    iSet = InstructionSetRegister::getInstance().getInstructionSet(args.instructionSetName);
 
     syntaxAnalyzer = new SyntaxAnalyzer(*iSet);
 
     codeGenerator = new CodeGenerator(*iSet);
 
-    /// @todo Add an argument to let the user specify the output formatter.
-    outputFormatter = new TextOutputFormatter(*args.os, iSet->getWordSize());
+    switch (args.outputFormat)
+    {
+        case Arguments::EOutputFormat::eBinary:
+            outputFormatter = new BinaryOutputFormatter;
+            break;
+
+        case Arguments::EOutputFormat::eText:
+            outputFormatter = new TextOutputFormatter;
+            break;
+
+        default:
+            cerr << "Internal error! Invalid output format\n" << flush;
+            outputFormatter = nullptr;
+            break;
+    }
 }
 
 Assembler::~Assembler()
@@ -35,19 +49,83 @@ Assembler::~Assembler()
     delete syntaxAnalyzer;
     delete codeGenerator;
     delete outputFormatter;
+
+    if (is != &cin)
+    {
+        delete is;
+    }
+
+    if (os != &cout)
+    {
+        delete os;
+    }
 }
 
 bool Assembler::assemble()
 {
+    bool ok = configIO();
+
+    if (ok)
+    {
+        try
+        {
+            process();
+        }
+        catch (const Error&)
+        {
+            ok = false;
+        }
+    }
+
+    return ok;
+}
+
+bool Assembler::configIO()
+{
     bool ok = true;
 
-    try
+    // --- Input ---
+
+    if (args.inFilename.empty())
     {
-        process();
+        is = &cin;
     }
-    catch (const Error&)
+    else
     {
-        ok = false;
+        fstream* inFile = new fstream;
+        inFile->open(args.inFilename, ios_base::in);
+
+        is = inFile;
+        if (is->fail())
+        {
+            cerr << "Error: Could not open file \"" << args.inFilename << "\".\n";
+            ok = false;
+        }
+    }
+
+    // --- Output ---
+
+    if (args.outFilename.empty())
+    {
+        os = &cout;
+    }
+    else
+    {
+        ios_base::openmode mode = ios_base::out;
+        if (outputFormatter->isBinaryOutput())
+        {
+            mode |= ios_base::binary;
+        }
+
+        fstream* outFile = new fstream;
+        outFile->open(args.outFilename, mode);
+
+        os = outFile;
+        if (os->fail())
+        {
+            cerr << "Error: Could not open file \"" << args.outFilename << "\".\n";
+            ok = false;
+        }
     }
 
     return ok;
@@ -61,7 +139,7 @@ void Assembler::process()
 
     stringstream preProcStream;
 
-    preprocessor.process(*args.is, preProcStream);
+    preprocessor.process(*is, preProcStream);
 
     /////////////////////////////////
     // Lexical Analyzer
@@ -89,7 +167,7 @@ void Assembler::process()
 
     if (args.outputSymbols)
     {
-        codeGenerator->printSymbols(*args.os);
+        codeGenerator->printSymbols(*os);
         return;
     }
 
@@ -97,5 +175,5 @@ void Assembler::process()
     // Output Formatter
     /////////////////////////////////
 
-    outputFormatter->generate(instCodeList);
+    outputFormatter->generate(*os, iSet->getWordSize(), instCodeList);
 }

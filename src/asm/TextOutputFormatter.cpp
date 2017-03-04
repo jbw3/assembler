@@ -1,21 +1,21 @@
 #include <iomanip>
 #include <ostream>
 
+#include "FormatSaver.hpp"
 #include "TextOutputFormatter.h"
 
 using namespace std;
 
-TextOutputFormatter::TextOutputFormatter(ostream& os, unsigned int wordSize) :
-    os(os),
-    wordSize(wordSize)
+bool TextOutputFormatter::isBinaryOutput() const
 {
+    return false;
 }
 
-void TextOutputFormatter::generate(const CodeGenerator::InstructionCodeList& instCodeList)
+void TextOutputFormatter::generate(ostream& os, unsigned int wordSize, const CodeGenerator::InstructionCodeList& instCodeList)
 {
-    // save original settings
-    ios_base::fmtflags origFlags = os.flags();
-    char origFill = os.fill();
+    // Save settings. They will be restored in
+    // the object's destructor
+    FormatSaver<ostream::char_type> saver(os);
 
     os << hex << setfill('0');
 
@@ -25,8 +25,4 @@ void TextOutputFormatter::generate(const CodeGenerator::InstructionCodeList& ins
         /// @todo support instructions longer than 64-bit
         os << setw(width) << code[0] << "\n";
     }
-
-    // restore original settings
-    os.flags(origFlags);
-    os.fill(origFill);
 }

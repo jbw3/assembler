@@ -1,15 +1,18 @@
 #ifndef ARGUMENTS_H_
 #define ARGUMENTS_H_
 
-#include <iostream>
 #include <string>
 
 class Arguments
 {
 public:
-    Arguments();
+    enum struct EOutputFormat
+    {
+        eBinary,
+        eText
+    };
 
-    ~Arguments();
+    Arguments();
 
     bool isDone() const;
 
@@ -18,8 +21,9 @@ public:
     void parse(int argc, const char* argv[]);
 
     std::string instructionSetName;
-    std::istream* is;
-    std::ostream* os;
+    std::string inFilename;
+    std::string outFilename;
+    EOutputFormat outputFormat;
     bool colorOutput;
     bool outputSymbols;
 
@@ -28,12 +32,9 @@ private:
 
     bool done;
     bool error;
-    std::string inFilename;
-    std::string outFilename;
+    bool seenFormatFlag;
 
     void parseNextArgs(int& idx, int argc, const char* argv[]);
-
-    void configIO();
 };
 
 #endif // ARGUMENTS_H_

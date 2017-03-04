@@ -8,12 +8,13 @@
 using namespace std;
 
 const char* Arguments::HELP_MESSAGE =
-R"(asm <-i iSet> [input] [-h] [-o output] [-s]
+R"(asm <-i iSet> [input] [-f format] [-h] [-o output] [-s]
 
 Assemble the input file and output the result to the output file. If no input
 file is specified, stdin is used. If no output file is specified, stdout is
 used.
 
+  --format      -f  output format (bin or text)
   --help        -h  display help message
   --i-set       -i  instruction set name
   --list-i-set      list available instruction sets
@@ -32,26 +33,13 @@ Print symbol table for test.s:
 
 Arguments::Arguments() :
     instructionSetName(""),
-    is(nullptr),
-    os(nullptr),
+    outputFormat(EOutputFormat::eText),
     colorOutput(true),
     outputSymbols(false),
     done(false),
-    error(false)
+    error(false),
+    seenFormatFlag(false)
 {
-}
-
-Arguments::~Arguments()
-{
-    if (is != &cin)
-    {
-        delete is;
-    }
-
-    if (os != &cout)
-    {
-        delete os;
-    }
 }
 
 bool Arguments::isDone() const
@@ -82,7 +70,6 @@ void Arguments::parse(int argc, const char* argv[])
         return;
     }
 
-    configIO();
     if (error)
     {
         return;
@@ -93,25 +80,40 @@ void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
 {
     const char* arg = argv[idx];
 
-    if (std::strcmp(arg, "-o") == 0 || std::strcmp(arg, "--output") == 0)
+    if (std::strcmp(arg, "-f") == 0 || std::strcmp(arg, "--format") == 0)
     {
         if (idx + 1 >= argc)
         {
             cerr << "Error: Expected an argument after " << arg << ".\n";
             error = true;
         }
-        else if (!outFilename.empty())
+        else if (seenFormatFlag)
         {
             cerr << "Error: Argument " << arg << " was given more than once.\n";
             error = true;
         }
         else
         {
-            outFilename = argv[idx + 1];
+            const char* format = argv[idx + 1];
+            if (std::strcmp(format, "bin") == 0)
+            {
+                outputFormat = EOutputFormat::eBinary;
+            }
+            else if (std::strcmp(format, "text") == 0)
+            {
+                outputFormat = EOutputFormat::eText;
+            }
+            else
+            {
+                cerr << "Error: \"" << format << "\" is not a valid format.\n";
+                error = true;
+            }
 
             // increment index
             ++idx;
         }
+
+        seenFormatFlag = true;
     }
     else if (std::strcmp(arg, "-h") == 0 || std::strcmp(arg, "--help") == 0)
     {
@@ -135,7 +137,7 @@ void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
             const char* name = argv[idx + 1];
             if (InstructionSetRegister::getInstance().getInstructionSet(name) == nullptr)
             {
-                cerr << "Error: " << name << " is not a valid instruction set.\n";
+                cerr << "Error: \"" << name << "\" is not a valid instruction set.\n";
                 error = true;
             }
             else
@@ -159,6 +161,26 @@ void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
     {
         colorOutput = false;
     }
+    else if (std::strcmp(arg, "-o") == 0 || std::strcmp(arg, "--output") == 0)
+    {
+        if (idx + 1 >= argc)
+        {
+            cerr << "Error: Expected an argument after " << arg << ".\n";
+            error = true;
+        }
+        else if (!outFilename.empty())
+        {
+            cerr << "Error: Argument " << arg << " was given more than once.\n";
+            error = true;
+        }
+        else
+        {
+            outFilename = argv[idx + 1];
+
+            // increment index
+            ++idx;
+        }
+    }
     else if (std::strcmp(arg, "-s") == 0 || std::strcmp(arg, "--symbols") == 0)
     {
         outputSymbols = true;
@@ -173,47 +195,6 @@ void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
         else
         {
             inFilename = arg;
-        }
-    }
-}
-
-void Arguments::configIO()
-{
-    // --- Input ---
-
-    if (inFilename.empty())
-    {
-        is = &cin;
-    }
-    else
-    {
-        fstream* inFile = new fstream;
-        inFile->open(inFilename, ios_base::in);
-
-        is = inFile;
-        if (is->fail())
-        {
-            cerr << "Error: Could not open file \"" << inFilename << "\".\n";
-            error = true;
-        }
-    }
-
-    // --- Output ---
-
-    if (outFilename.empty())
-    {
-        os = &cout;
-    }
-    else
-    {
-        fstream* outFile = new fstream;
-        outFile->open(outFilename, ios_base::out);
-
-        os = outFile;
-        if (os->fail())
-        {
-            cerr << "Error: Could not open file \"" << outFilename << "\".\n";
-            error = true;
         }
     }
 }
