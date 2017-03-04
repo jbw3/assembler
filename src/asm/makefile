@@ -19,6 +19,7 @@ cov: LDFLAGS += --coverage
 
 DEPS = Arguments.h \
        Assembler.h \
+       BinaryOutputFormatter.h \
        CodeGenerator.h \
        Error.h \
        ImmediateExpressionEvaluator.h \
@@ -33,6 +34,7 @@ DEPS = Arguments.h \
 
 SRC = Arguments.cpp \
       Assembler.cpp \
+      BinaryOutputFormatter.cpp \
       CodeGenerator.cpp \
       ImmediateExpressionEvaluator.cpp \
       LexicalAnalyzer.cpp \

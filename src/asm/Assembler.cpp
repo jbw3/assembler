@@ -3,6 +3,7 @@
 
 #include "Arguments.h"
 #include "Assembler.h"
+#include "BinaryOutputFormatter.h"
 #include "CodeGenerator.h"
 #include "Error.h"
 #include "InstructionSetRegister.h"
@@ -20,14 +21,15 @@ Assembler::Assembler(const Arguments& arguments) :
 {
     Logger::getInstance().setColorOutput(args.colorOutput);
 
-    const InstructionSet* iSet = InstructionSetRegister::getInstance().getInstructionSet(args.instructionSetName);
+    iSet = InstructionSetRegister::getInstance().getInstructionSet(args.instructionSetName);
 
     syntaxAnalyzer = new SyntaxAnalyzer(*iSet);
 
     codeGenerator = new CodeGenerator(*iSet);
 
     /// @todo Add an argument to let the user specify the output formatter.
-    outputFormatter = new TextOutputFormatter(*args.os, iSet->getWordSize());
+    outputFormatter = new TextOutputFormatter;
+    // outputFormatter = new BinaryOutputFormatter;
 }
 
 Assembler::~Assembler()
@@ -97,5 +99,5 @@ void Assembler::process()
     // Output Formatter
     /////////////////////////////////
 
-    outputFormatter->generate(instCodeList);
+    outputFormatter->generate(*args.os, iSet->getWordSize(), instCodeList);
 }

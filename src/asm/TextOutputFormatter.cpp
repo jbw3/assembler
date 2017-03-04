@@ -6,13 +6,7 @@
 
 using namespace std;
 
-TextOutputFormatter::TextOutputFormatter(ostream& os, unsigned int wordSize) :
-    os(os),
-    wordSize(wordSize)
-{
-}
-
-void TextOutputFormatter::generate(const CodeGenerator::InstructionCodeList& instCodeList)
+void TextOutputFormatter::generate(ostream& os, unsigned int wordSize, const CodeGenerator::InstructionCodeList& instCodeList)
 {
     // Save settings. They will be restored in
     // the object's destructor

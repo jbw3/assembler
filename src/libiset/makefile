@@ -14,7 +14,8 @@ LDFLAGS = -rcs $(LDLIBS)
 release: CXXFLAGS += -O2
 debug: CXXFLAGS += -O0 -g
 
-DEPS = InstructionSet.h \
+DEPS = FormatSaver.hpp \
+       InstructionSet.h \
        InstructionSetRegister.h \
        Token.h \
        utils.h \

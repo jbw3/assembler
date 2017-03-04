@@ -1,12 +1,12 @@
-#ifndef TEXT_OUTPUT_FORMATTER_H_
-#define TEXT_OUTPUT_FORMATTER_H_
+#ifndef BINARY_OUTPUT_FORMATTER_H_
+#define BINARY_OUTPUT_FORMATTER_H_
 
 #include "IOutputFormatter.h"
 
-class TextOutputFormatter : public IOutputFormatter
+class BinaryOutputFormatter : public IOutputFormatter
 {
 public:
     void generate(std::ostream& os, unsigned int wordSize, const CodeGenerator::InstructionCodeList& instCodeList) override;
 };
 
-#endif // TEXT_OUTPUT_FORMATTER_H_
+#endif // BINARY_OUTPUT_FORMATTER_H_

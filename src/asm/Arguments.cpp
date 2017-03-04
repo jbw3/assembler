@@ -207,7 +207,7 @@ void Arguments::configIO()
     else
     {
         fstream* outFile = new fstream;
-        outFile->open(outFilename, ios_base::out);
+        outFile->open(outFilename, ios_base::out | ios_base::binary);
 
         os = outFile;
         if (os->fail())
