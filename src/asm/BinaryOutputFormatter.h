@@ -6,6 +6,8 @@
 class BinaryOutputFormatter : public IOutputFormatter
 {
 public:
+    bool isBinaryOutput() const override;
+
     void generate(std::ostream& os, unsigned int wordSize, const CodeGenerator::InstructionCodeList& instCodeList) override;
 };
 

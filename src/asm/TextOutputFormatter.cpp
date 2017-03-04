@@ -6,6 +6,11 @@
 
 using namespace std;
 
+bool TextOutputFormatter::isBinaryOutput() const
+{
+    return false;
+}
+
 void TextOutputFormatter::generate(ostream& os, unsigned int wordSize, const CodeGenerator::InstructionCodeList& instCodeList)
 {
     // Save settings. They will be restored in

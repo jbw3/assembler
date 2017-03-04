@@ -10,6 +10,8 @@ class IOutputFormatter
 public:
     virtual ~IOutputFormatter() = default;
 
+    virtual bool isBinaryOutput() const = 0;
+
     virtual void generate(std::ostream& os, unsigned int wordSize, const CodeGenerator::InstructionCodeList&) = 0;
 };
 

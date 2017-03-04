@@ -2,6 +2,11 @@
 
 using namespace std;
 
+bool BinaryOutputFormatter::isBinaryOutput() const
+{
+    return true;
+}
+
 void BinaryOutputFormatter::generate(ostream& os, unsigned int wordSize, const CodeGenerator::InstructionCodeList& instCodeList)
 {
     for (CodeGenerator::InstructionCode code : instCodeList)

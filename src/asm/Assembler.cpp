@@ -99,8 +99,14 @@ bool Assembler::configIO()
     }
     else
     {
+        ios_base::openmode mode = ios_base::out;
+        if (outputFormatter->isBinaryOutput())
+        {
+            mode |= ios_base::binary;
+        }
+
         fstream* outFile = new fstream;
-        outFile->open(args.outFilename, ios_base::out);
+        outFile->open(args.outFilename, mode);
 
         os = outFile;
         if (os->fail())
