@@ -37,19 +37,77 @@ Assembler::~Assembler()
     delete syntaxAnalyzer;
     delete codeGenerator;
     delete outputFormatter;
+
+    if (is != &cin)
+    {
+        delete is;
+    }
+
+    if (os != &cout)
+    {
+        delete os;
+    }
 }
 
 bool Assembler::assemble()
 {
+    bool ok = configIO();
+
+    if (ok)
+    {
+        try
+        {
+            process();
+        }
+        catch (const Error&)
+        {
+            ok = false;
+        }
+    }
+
+    return ok;
+}
+
+bool Assembler::configIO()
+{
     bool ok = true;
 
-    try
+    // --- Input ---
+
+    if (args.inFilename.empty())
     {
-        process();
+        is = &cin;
     }
-    catch (const Error&)
+    else
     {
-        ok = false;
+        fstream* inFile = new fstream;
+        inFile->open(args.inFilename, ios_base::in);
+
+        is = inFile;
+        if (is->fail())
+        {
+            cerr << "Error: Could not open file \"" << args.inFilename << "\".\n";
+            ok = false;
+        }
+    }
+
+    // --- Output ---
+
+    if (args.outFilename.empty())
+    {
+        os = &cout;
+    }
+    else
+    {
+        fstream* outFile = new fstream;
+        outFile->open(args.outFilename, ios_base::out);
+
+        os = outFile;
+        if (os->fail())
+        {
+            cerr << "Error: Could not open file \"" << args.outFilename << "\".\n";
+            ok = false;
+        }
     }
 
     return ok;
@@ -63,7 +121,7 @@ void Assembler::process()
 
     stringstream preProcStream;
 
-    preprocessor.process(*args.is, preProcStream);
+    preprocessor.process(*is, preProcStream);
 
     /////////////////////////////////
     // Lexical Analyzer
@@ -91,7 +149,7 @@ void Assembler::process()
 
     if (args.outputSymbols)
     {
-        codeGenerator->printSymbols(*args.os);
+        codeGenerator->printSymbols(*os);
         return;
     }
 
@@ -99,5 +157,5 @@ void Assembler::process()
     // Output Formatter
     /////////////////////////////////
 
-    outputFormatter->generate(*args.os, iSet->getWordSize(), instCodeList);
+    outputFormatter->generate(*os, iSet->getWordSize(), instCodeList);
 }

@@ -32,26 +32,11 @@ Print symbol table for test.s:
 
 Arguments::Arguments() :
     instructionSetName(""),
-    is(nullptr),
-    os(nullptr),
     colorOutput(true),
     outputSymbols(false),
     done(false),
     error(false)
 {
-}
-
-Arguments::~Arguments()
-{
-    if (is != &cin)
-    {
-        delete is;
-    }
-
-    if (os != &cout)
-    {
-        delete os;
-    }
 }
 
 bool Arguments::isDone() const
@@ -82,7 +67,6 @@ void Arguments::parse(int argc, const char* argv[])
         return;
     }
 
-    configIO();
     if (error)
     {
         return;
@@ -173,47 +157,6 @@ void Arguments::parseNextArgs(int& idx, int argc, const char* argv[])
         else
         {
             inFilename = arg;
-        }
-    }
-}
-
-void Arguments::configIO()
-{
-    // --- Input ---
-
-    if (inFilename.empty())
-    {
-        is = &cin;
-    }
-    else
-    {
-        fstream* inFile = new fstream;
-        inFile->open(inFilename, ios_base::in);
-
-        is = inFile;
-        if (is->fail())
-        {
-            cerr << "Error: Could not open file \"" << inFilename << "\".\n";
-            error = true;
-        }
-    }
-
-    // --- Output ---
-
-    if (outFilename.empty())
-    {
-        os = &cout;
-    }
-    else
-    {
-        fstream* outFile = new fstream;
-        outFile->open(outFilename, ios_base::out | ios_base::binary);
-
-        os = outFile;
-        if (os->fail())
-        {
-            cerr << "Error: Could not open file \"" << outFilename << "\".\n";
-            error = true;
         }
     }
 }

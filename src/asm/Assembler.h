@@ -30,6 +30,10 @@ private:
 
     const Arguments& args;
     const InstructionSet* iSet;
+    std::istream* is;
+    std::ostream* os;
+
+    bool configIO();
 
     void process();
 };
