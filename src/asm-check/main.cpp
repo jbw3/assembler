@@ -1,6 +1,8 @@
 #include <cstring>
 #include <iostream>
 
+#include "Checker.h"
+
 using namespace std;
 
 constexpr char HELP_MESSAGE[] = R"(asm-check <instruction set> [-h]
@@ -29,7 +31,8 @@ int main(int argc, const char* argv[])
         return 0;
     }
 
-    cout << "TODO: Check stuff\n";
+    Checker checker(argv[1]);
+    checker.check();
 
     return 0;
 }

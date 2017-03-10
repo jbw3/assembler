@@ -14,9 +14,10 @@ LDFLAGS = $(LDLIBS)
 release: CXXFLAGS += -O2
 debug: CXXFLAGS += -O0 -g
 
-DEPS =
+DEPS = Checker.h
 
-SRC = main.cpp
+SRC = main.cpp \
+      Checker.cpp
 OBJ = $(patsubst %.cpp,$(OBJDIR)/%.o,$(SRC))
 
 TARGET = $(BINDIR)/$(NAME)
