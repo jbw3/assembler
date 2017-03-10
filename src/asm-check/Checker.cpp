@@ -4,66 +4,76 @@
 #include "Checker.h"
 #include "InstructionSet.h"
 #include "InstructionSetRegister.h"
+#include "utils.h"
 
 using namespace std;
 
 typedef bool (*CheckFunc)(string&);
 
 Checker::Checker(const string& iSetName) :
-    iSetName(iSetName)
+    iSetName(iSetName),
+    errors(false)
 {
     iSet = InstructionSetRegister::getInstance().getInstructionSet(iSetName);
 }
 
 void Checker::check()
 {
+    // check if instruction set exists
     if (iSet == nullptr)
     {
-        cerr << "ERROR: \"" << iSetName << "\" is not a known instruction set.\n";
+        logError("\"" + iSetName + "\" is not a known instruction set.");
         return;
     }
 
-    // create checks
-    vector<function<bool(string&)>> checks = {
-        [this](string& errorMsg)
-        {
-            if (iSet->getWordSize() % 8 != 0)
-            {
-                errorMsg = "Word size is not a multiple of 8.";
-                return false;
-            }
-            return true;
-        },
-
-        [this](string& errorMsg)
-        {
-            if (iSet->getInstructions().size() == 0)
-            {
-                errorMsg = "No instructions are defined.";
-                return false;
-            }
-            return true;
-        }
-    };
-
-    // run checks
-    size_t numPassed = 0;
-    string errorMsg;
-    for (auto check : checks)
+    // check if word size is a multiple of 8
+    if (iSet->getWordSize() % 8 != 0)
     {
-        errorMsg.clear();
+        logError("Word size is not a multiple of 8.");
+    }
 
-        bool passed = check(errorMsg);
-        if (passed)
+    // check if instructions have been defined
+    if (iSet->getInstructions().size() == 0)
+    {
+        logError("No instructions are defined.");
+    }
+
+    // check if instruction names are valid
+    string instName;
+    for (auto pair : iSet->getInstructions())
+    {
+        instName = pair.first;
+        if (!isIdentifierString(instName))
         {
-            ++numPassed;
-        }
-        else
-        {
-            cerr << "ERROR: " << errorMsg << "\n";
+            logError("\"" + instName + "\" is not a valid instruction name.");
         }
     }
 
-    size_t totalChecks = checks.size();
-    cout << numPassed << " of " << totalChecks << " check" << (totalChecks == 1 ? "" : "s") << " passed.\n";
+    // check if registers have been defined
+    if (iSet->getRegisters().size() == 0)
+    {
+        logError("No registers are defined.");
+    }
+
+    // check if register names are valid
+    string regName;
+    for (auto pair : iSet->getRegisters())
+    {
+        regName = pair.first;
+        if (!isIdentifierString(regName))
+        {
+            logError("\"" + regName + "\" is not a valid register name.");
+        }
+    }
+
+    if (!errors)
+    {
+        cout << "All checks passed!\n";
+    }
+}
+
+void Checker::logError(const std::string& errorMsg)
+{
+    cerr << "ERROR: " << errorMsg << "\n";
+    errors = true;
 }

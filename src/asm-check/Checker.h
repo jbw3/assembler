@@ -16,6 +16,9 @@ public:
 private:
     std::string iSetName;
     const InstructionSet* iSet;
+    bool errors;
+
+    void logError(const std::string& errorMsg);
 };
 
 #endif // CHECKER_H_
