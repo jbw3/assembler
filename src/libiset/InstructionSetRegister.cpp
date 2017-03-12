@@ -1,5 +1,6 @@
 #include "InstructionSet.h"
 #include "InstructionSetRegister.h"
+#include "Mips32.hpp"
 #include "W8.hpp"
 #include "W16.hpp"
 
@@ -13,8 +14,9 @@ InstructionSetRegister& InstructionSetRegister::getInstance()
 
 InstructionSetRegister::InstructionSetRegister()
 {
-    instructionSets.insert({W8::ISET.getName(), &W8::ISET});
-    instructionSets.insert({W16::ISET.getName(), &W16::ISET});
+    addInstructionSet(Mips32::ISET);
+    addInstructionSet(W8::ISET);
+    addInstructionSet(W16::ISET);
 }
 
 vector<string> InstructionSetRegister::getInstructionSetNames() const
@@ -41,4 +43,9 @@ const InstructionSet* InstructionSetRegister::getInstructionSet(const string& na
     {
         return iter->second;
     }
+}
+
+void InstructionSetRegister::addInstructionSet(const InstructionSet& iSet)
+{
+    instructionSets.insert({iSet.getName(), &iSet});
 }
