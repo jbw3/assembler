@@ -17,6 +17,7 @@ debug: CXXFLAGS += -O0 -g
 DEPS = FormatSaver.hpp \
        InstructionSet.h \
        InstructionSetRegister.h \
+       Mips32.hpp \
        Token.h \
        utils.h \
        W8.hpp \
