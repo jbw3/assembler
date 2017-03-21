@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cstdint>
 
 #include "Error.h"
 #include "ImmediateExpressionEvaluator.h"
@@ -259,7 +260,7 @@ int64_t ImmediateExpressionEvaluator::evalBinary(const Token& op, int64_t term1,
 
 TokenVec::const_iterator ImmediateExpressionEvaluator::findClosingParenthesis(TokenVec::const_iterator openParIter, TokenVec::const_iterator end)
 {
-    uint balance = 0;
+    unsigned int balance = 0;
     auto iter = openParIter + 1;
     while (iter != end && (balance > 0 || *iter != CLOSE_PARENTHESIS))
     {
