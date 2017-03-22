@@ -2,6 +2,7 @@
 #include "InstructionSetRegister.h"
 #include "W8.hpp"
 #include "W16.hpp"
+#include "machI.hpp"
 
 using namespace std;
 
@@ -15,6 +16,7 @@ InstructionSetRegister::InstructionSetRegister()
 {
     instructionSets.insert({W8::ISET.getName(), &W8::ISET});
     instructionSets.insert({W16::ISET.getName(), &W16::ISET});
+    instructionSets.insert({ machI::ISET.getName(), &machI::ISET });
 }
 
 vector<string> InstructionSetRegister::getInstructionSetNames() const

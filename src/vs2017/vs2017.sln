@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asm", "asm\asm.vcxproj", "{
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libiset", "libiset\libiset.vcxproj", "{DDD07624-4EC8-42EE-95DB-22A0DAFB37E5}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "asm-syntax", "asm-syntax\asm-syntax.vcxproj", "{2657AB67-F3AB-4716-B90F-8A4D80F18222}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{DDD07624-4EC8-42EE-95DB-22A0DAFB37E5}.Release|x64.Build.0 = Release|x64
 		{DDD07624-4EC8-42EE-95DB-22A0DAFB37E5}.Release|x86.ActiveCfg = Release|Win32
 		{DDD07624-4EC8-42EE-95DB-22A0DAFB37E5}.Release|x86.Build.0 = Release|Win32
+		{2657AB67-F3AB-4716-B90F-8A4D80F18222}.Debug|x64.ActiveCfg = Debug|x64
+		{2657AB67-F3AB-4716-B90F-8A4D80F18222}.Debug|x64.Build.0 = Debug|x64
+		{2657AB67-F3AB-4716-B90F-8A4D80F18222}.Debug|x86.ActiveCfg = Debug|Win32
+		{2657AB67-F3AB-4716-B90F-8A4D80F18222}.Debug|x86.Build.0 = Debug|Win32
+		{2657AB67-F3AB-4716-B90F-8A4D80F18222}.Release|x64.ActiveCfg = Release|x64
+		{2657AB67-F3AB-4716-B90F-8A4D80F18222}.Release|x64.Build.0 = Release|x64
+		{2657AB67-F3AB-4716-B90F-8A4D80F18222}.Release|x86.ActiveCfg = Release|Win32
+		{2657AB67-F3AB-4716-B90F-8A4D80F18222}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
