@@ -5,6 +5,7 @@
 
 #include "LexicalAnalyzer.h"
 #include "Preprocessor.h"
+#include "SyntaxAnalyzer.h"
 
 class Arguments;
 class CodeGenerator;
@@ -24,7 +25,7 @@ public:
 private:
     Preprocessor preprocessor;
     LexicalAnalyzer lexicalAnalyzer;
-    SyntaxAnalyzer* syntaxAnalyzer;
+    SyntaxAnalyzer syntaxAnalyzer;
     CodeGenerator* codeGenerator;
     IOutputFormatter* outputFormatter;
 

@@ -3,20 +3,27 @@
 namespace W16
 {
 
-// no-arg type
-const InstructionType NType{8, 8};
-
 // Register-Register type
-const InstructionType RRType{8, 8, {{Argument::eRegister, 4, 4}, {Argument::eRegister, 4, 0}}};
+const InstructionType RRType{8, 4, 4};
 
 // Register-Immediate type
-const InstructionType RIType{4, 12, {{Argument::eRegister, 4, 8}, {Argument::eImmediate, 8, 0, true}}};
+const InstructionType RIType{4, 4, 8};
 
 // Register-Register-Immediate type
-const InstructionType RRIType{4, 12, {{Argument::eRegister, 4, 8}, {Argument::eRegister, 4, 4}, {Argument::eImmediate, 4, 0, true}}};
+const InstructionType RRIType{4, 4, 4, 4};
 
 // Jump type
-const InstructionType JType{4, 12, {{Argument::eImmediate, 12, 0, false, 1}}};
+const InstructionType JType{4, 12};
+
+// immediate argument
+const Argument ImmArg{ Argument::eImmediate, true };
+
+// jump immediate argument
+const Argument JImmArg{ Argument::eImmediate, false, 1, 1 };
+
+const std::initializer_list<Argument> RRArgs = {{ Argument::eRegister, 1 }, { Argument::eRegister }};
+
+const std::initializer_list<Argument> RIArgs = {{ Argument::eRegister, 1 }, ImmArg};
 
 const InstructionSet ISET(
     // name
@@ -32,11 +39,11 @@ const InstructionSet ISET(
 
     // instructions
     {
-        { "NOP",  0x00, NType   },  // no operation
-        { "MOV",  0x01, RRType  },  // move
-        { "NOT",  0x02, RRType  },  // not
-        { "ADDI", 0xb,  RIType  },  // add immediate
-        { "JMP",  0xc,  JType   }   // jump
+        { "NOP",  RRType, {0x00}, },           // no operation
+        { "MOV",  RRType, {0x01}, RRArgs },    // move
+        { "NOT",  RRType, {0x02}, RRArgs },    // not
+        { "ADDI", RIType, {0xb},  RIArgs },    // add immediate
+        { "JMP",  JType,  {0xc},  {JImmArg} }  // jump
     }
 );
 

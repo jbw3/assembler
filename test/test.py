@@ -150,7 +150,7 @@ class Tester:
                 numPassed += 1
                 print('.', end='', flush=True)
             else:
-                print('E', end='', flush=True)
+                print('F', end='', flush=True)
 
         # print newline
         print()
