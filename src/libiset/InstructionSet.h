@@ -87,7 +87,9 @@ public:
 
     InstructionType(std::initializer_list<unsigned int> fieldSizes);
 
-    std::vector<unsigned int> getFieldSizes() const;
+    unsigned int getFieldSize(int index) const;
+
+    unsigned int getFieldOffset(int index) const;
 
 private:
     std::vector<unsigned int> fieldSizes;
@@ -101,6 +103,8 @@ public:
     std::string getMnemonic() const;
 
     const InstructionType& getType() const;
+
+    const std::vector<Code>& getCodes() const;
 
     const std::vector<Argument>& getArguments() const;
 

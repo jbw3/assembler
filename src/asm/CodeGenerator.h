@@ -37,6 +37,8 @@ private:
 
     void encodeInstruction(const InstructionTokens& tokens, InstructionCode& instCode);
 
+    void addCodes(const Instruction& inst, uint64_t& instCode);
+
     void encodeArgs(const Instruction& inst, const InstructionTokens& tokens, uint64_t& code);
 
     uint64_t encodeRegister(const TokenVec& tokens);

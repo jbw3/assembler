@@ -49,12 +49,23 @@ InstructionType::InstructionType(std::initializer_list<unsigned int> fieldSizes)
     fieldSizes(fieldSizes)
 {}
 
-std::vector<unsigned int> InstructionType::getFieldSizes() const
+unsigned int InstructionType::getFieldSize(int index) const
 {
-    return fieldSizes;
+    return fieldSizes.at(index);
 }
 
-Instruction::Instruction(const std::string& mnemonic, const InstructionType& type, std::initializer_list<Code> codeList, std::initializer_list<Argument> argumentList) :
+unsigned int InstructionType::getFieldOffset(int index) const
+{
+    unsigned int offset = 0;
+    for (size_t i = index + 1; i < fieldSizes.size(); ++i)
+    {
+        offset += fieldSizes[i];
+    }
+
+    return offset;
+}
+
+Instruction::Instruction(const string& mnemonic, const InstructionType& type, initializer_list<Code> codeList, initializer_list<Argument> argumentList) :
     mnemonic(toUpper(mnemonic)),
     type(type)
 {
@@ -83,7 +94,7 @@ Instruction::Instruction(const std::string& mnemonic, const InstructionType& typ
     }
 }
 
-std::string Instruction::getMnemonic() const
+string Instruction::getMnemonic() const
 {
     return mnemonic;
 }
@@ -93,7 +104,12 @@ const InstructionType& Instruction::getType() const
     return type;
 }
 
-const std::vector<Argument>& Instruction::getArguments() const
+const vector<Code>& Instruction::getCodes() const
+{
+    return codes;
+}
+
+const vector<Argument>& Instruction::getArguments() const
 {
     return arguments;
 }

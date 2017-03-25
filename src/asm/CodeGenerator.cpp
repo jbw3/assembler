@@ -188,17 +188,34 @@ void CodeGenerator::encodeInstruction(const InstructionTokens& tokens, Instructi
     }
 
     const Instruction& inst = instIter->second;
-    const InstructionType& instType = inst.getType();
 
-    // op code
-    uint64_t code = inst.getOpCode();
-    code &= bitMask(instType.getOpCodeSize());
-    code <<= instType.getOpCodeOffset();
+    uint64_t code = 0;
+
+    // add codes (e.g. op code)
+    addCodes(inst, code);
 
     // arguments
     encodeArgs(inst, tokens, code);
 
     instCode.push_back(code);
+}
+
+void CodeGenerator::addCodes(const Instruction& inst, uint64_t& instCode)
+{
+    const InstructionType& instType = inst.getType();
+
+    for (const Code& code : inst.getCodes())
+    {
+        int index = code.getIndex();
+        unsigned int fieldSize = instType.getFieldSize(index);
+        unsigned int fieldOffset = instType.getFieldOffset(index);
+
+        uint64_t value = code.getValue();
+        value &= bitMask(fieldSize);
+        value <<= fieldOffset;
+
+        instCode |= value;
+    }
 }
 
 void CodeGenerator::encodeArgs(const Instruction& inst, const InstructionTokens& tokens, uint64_t& code)
