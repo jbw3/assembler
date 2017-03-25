@@ -8,10 +8,6 @@
 
 using namespace std;
 
-SyntaxAnalyzer::SyntaxAnalyzer(const InstructionSet& instructionSet) :
-    instSet(instructionSet)
-{}
-
 void SyntaxAnalyzer::process(const TokenVec& tokens, SyntaxTree& syntaxTree)
 {
     TokenVec lineTokens;
