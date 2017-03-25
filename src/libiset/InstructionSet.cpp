@@ -33,12 +33,17 @@ uint64_t Code::getValue() const
     return value;
 }
 
-Argument::Argument(EType type, bool isSigned, unsigned int shift, int index) :
+Argument::Argument(EType type, int index) :
     FieldType(index),
-    type(type),
-    isSigned(isSigned),
-    shift(shift)
+    type(type)
 {}
+
+Argument::Argument(EType type, bool isSigned, unsigned int shift, int index) :
+    Argument(type, index)
+{
+    this->isSigned = isSigned;
+    this->shift = shift;
+}
 
 Argument::EType Argument::getType() const
 {

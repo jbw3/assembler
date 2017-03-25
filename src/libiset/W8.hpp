@@ -6,10 +6,10 @@ namespace W8
 const InstructionType Type{5, 3};
 
 // register argument
-const Argument RegArg{ Argument::eRegister };
+const Argument RegArg{ Argument::eRegister, 1 };
 
 // immediate argument
-const Argument ImmArg{ Argument::eImmediate, false };
+const Argument ImmArg{ Argument::eImmediate, false, 0, 1 };
 
 const InstructionSet ISET(
     // name

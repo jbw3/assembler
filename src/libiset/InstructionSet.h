@@ -63,6 +63,11 @@ public:
     /**
      * @brief Constructor
      */
+    Argument(EType type, int index);
+
+    /**
+     * @brief Constructor
+     */
     Argument(EType type, bool isSigned = true, unsigned int shift = 0, int index = -1);
 
     /**
