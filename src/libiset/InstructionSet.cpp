@@ -3,10 +3,24 @@
 
 using namespace std;
 
-Argument::Argument(EType type, unsigned int size, unsigned int offset, bool isSigned, unsigned int shift) :
+Code::Code(uint64_t value, int index) :
+    value(value),
+    index(index)
+{}
+
+uint64_t Code::getValue() const
+{
+    return value;
+}
+
+int Code::getIndex() const
+{
+    return index;
+}
+
+Argument::Argument(EType type, bool isSigned, unsigned int shift, int index) :
     type(type),
-    size(size),
-    offset(offset),
+    index(index),
     isSigned(isSigned),
     shift(shift)
 {}
@@ -16,14 +30,9 @@ Argument::EType Argument::getType() const
     return type;
 }
 
-unsigned int Argument::getSize() const
+int Argument::getIndex() const
 {
-    return size;
-}
-
-unsigned int Argument::getOffset() const
-{
-    return offset;
+    return index;
 }
 
 bool Argument::getIsSigned() const
@@ -36,46 +45,57 @@ unsigned int Argument::getShift() const
     return shift;
 }
 
-InstructionType::InstructionType(unsigned int opCodeSize, unsigned int opCodeOffset, std::initializer_list<Argument> arguments) :
-    opCodeSize(opCodeSize),
-    opCodeOffset(opCodeOffset),
-    arguments(arguments)
+InstructionType::InstructionType(std::initializer_list<unsigned int> fieldSizes) :
+    fieldSizes(fieldSizes)
 {}
 
-unsigned int InstructionType::getOpCodeSize() const
+std::vector<unsigned int> InstructionType::getFieldSizes() const
 {
-    return opCodeSize;
+    return fieldSizes;
 }
 
-unsigned int InstructionType::getOpCodeOffset() const
-{
-    return opCodeOffset;
-}
-
-std::vector<Argument> InstructionType::getArguments() const
-{
-    return arguments;
-}
-
-Instruction::Instruction(const std::string& mnemonic, std::uint64_t opCode, const InstructionType& type) :
+Instruction::Instruction(const std::string& mnemonic, const InstructionType& type, std::initializer_list<Code> codeList, std::initializer_list<Argument> argumentList) :
     mnemonic(toUpper(mnemonic)),
-    opCode(opCode),
     type(type)
-{}
+{
+    int index = 0;
+    for (Code code : codeList)
+    {
+        if (code.index < 0)
+        {
+            code.index = index;
+        }
+
+        codes.push_back(code);
+        index = code.index + 1;
+    }
+
+    index = 0;
+    for (Argument arg : argumentList)
+    {
+        if (arg.index < 0)
+        {
+            arg.index = index;
+        }
+
+        arguments.push_back(arg);
+        index = arg.index + 1;
+    }
+}
 
 std::string Instruction::getMnemonic() const
 {
     return mnemonic;
 }
 
-std::uint64_t Instruction::getOpCode() const
-{
-    return opCode;
-}
-
 const InstructionType& Instruction::getType() const
 {
     return type;
+}
+
+const std::vector<Argument>& Instruction::getArguments() const
+{
+    return arguments;
 }
 
 Register::Register(const std::string& name, std::uint64_t code) :

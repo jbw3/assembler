@@ -8,11 +8,32 @@
 #include <vector>
 
 /**
+ * @brief A hard-coded value in an instruction
+ */
+class Code
+{
+public:
+    friend class Instruction;
+
+    Code(std::uint64_t value, int index = -1);
+
+    std::uint64_t getValue() const;
+
+    int getIndex() const;
+
+private:
+    std::uint64_t value;
+    int index;
+};
+
+/**
  * @brief Configuration for an instruction argument
  */
 class Argument
 {
 public:
+    friend class Instruction;
+
     enum EType
     {
         eRegister,
@@ -22,7 +43,7 @@ public:
     /**
      * @brief Constructor
      */
-    Argument(EType type, unsigned int size, unsigned int offset, bool isSigned = true, unsigned int shift = 0);
+    Argument(EType type, bool isSigned = true, unsigned int shift = 0, int index = -1);
 
     /**
      * @brief Get the argument type (register or immediate)
@@ -30,16 +51,9 @@ public:
     EType getType() const;
 
     /**
-     * @brief Get the number of bits the argument will occupy
-     * in the instruction code
+     * @brief Get the index
      */
-    unsigned int getSize() const;
-
-    /**
-     * @brief Get the offset in bits of the argument in the
-     * instruction code
-     */
-    unsigned int getOffset() const;
+    int getIndex() const;
 
     /**
      * @brief Get whether or not this argument is a signed number
@@ -61,8 +75,7 @@ public:
 
 private:
     EType type;
-    unsigned int size;
-    unsigned int offset;
+    int index;
     bool isSigned;
     unsigned int shift;
 };
@@ -72,35 +85,30 @@ class InstructionType
 public:
     friend class Instruction;
 
-    InstructionType(unsigned int opCodeSize, unsigned int opCodeOffset, std::initializer_list<Argument> arguments = {});
+    InstructionType(std::initializer_list<unsigned int> fieldSizes);
 
-    unsigned int getOpCodeSize() const;
-
-    unsigned int getOpCodeOffset() const;
-
-    std::vector<Argument> getArguments() const;
+    std::vector<unsigned int> getFieldSizes() const;
 
 private:
-    unsigned int opCodeSize;
-    unsigned int opCodeOffset;
-    std::vector<Argument> arguments;
+    std::vector<unsigned int> fieldSizes;
 };
 
 class Instruction
 {
 public:
-    Instruction(const std::string& mnemonic, std::uint64_t opCode, const InstructionType& type);
+    Instruction(const std::string& mnemonic, const InstructionType& type, std::initializer_list<Code> codeList, std::initializer_list<Argument> argumentList = {});
 
     std::string getMnemonic() const;
 
-    std::uint64_t getOpCode() const;
-
     const InstructionType& getType() const;
+
+    const std::vector<Argument>& getArguments() const;
 
 private:
     std::string mnemonic;
-    std::uint64_t opCode;
     const InstructionType& type;
+    std::vector<Code> codes;
+    std::vector<Argument> arguments;
 };
 
 class Register
