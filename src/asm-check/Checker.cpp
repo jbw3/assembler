@@ -41,20 +41,11 @@ void Checker::check()
     {
         const Instruction& inst = pair.second;
         instName = inst.getMnemonic();
-        const InstructionType& type = inst.getType();
 
         // check if instruction names are valid
         if (!isIdentifierString(instName))
         {
             logError("\"" + instName + "\" is not a valid instruction name.");
-        }
-
-        // check if op code will be truncated
-        uint64_t opCode = inst.getOpCode();
-        uint64_t opCodeMask = bitMask(type.getOpCodeSize());
-        if ((opCodeMask & opCode) != opCode)
-        {
-            logError(instName + " op code will be truncated.");
         }
     }
 
