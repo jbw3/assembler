@@ -202,25 +202,16 @@ void CodeGenerator::encodeInstruction(const InstructionTokens& tokens, Instructi
 
 void CodeGenerator::addCodes(const Instruction& inst, uint64_t& instCode)
 {
-    const InstructionType& instType = inst.getType();
-
     for (const Code& code : inst.getCodes())
     {
-        int index = code.getIndex();
-        unsigned int fieldSize = instType.getFieldSize(index);
-        unsigned int fieldOffset = instType.getFieldOffset(index);
-
         uint64_t value = code.getValue();
-        value &= bitMask(fieldSize);
-        value <<= fieldOffset;
-
-        instCode |= value;
+        addField(code, value, instCode);
     }
 }
 
 void CodeGenerator::encodeArgs(const Instruction& inst, const InstructionTokens& tokens, uint64_t& code)
 {
-    const vector<Argument>& args = inst.getType().getArguments();
+    const vector<Argument>& args = inst.getArguments();
     const TokenVecVec& argTokens = tokens.arguments;
 
     size_t expectedNumArgs = args.size();
@@ -257,10 +248,7 @@ void CodeGenerator::encodeArgs(const Instruction& inst, const InstructionTokens&
         }
 
         // add arg code to instruction code
-        argCode &= bitMask(arg.getSize());
-        argCode <<= arg.getOffset();
-
-        code |= argCode;
+        addField(arg, argCode, code);
     }
 }
 
@@ -319,7 +307,7 @@ bool CodeGenerator::checkTrunc(uint64_t immCode, uint64_t exprValue, const Argum
 
     // --- check if most significant bits will be truncated ---
 
-    uint64_t numMask = bitMask(arg.getSize());
+    uint64_t numMask = bitMask(arg.getFieldSize());
 
     if (arg.getIsSigned())
     {
@@ -341,6 +329,17 @@ bool CodeGenerator::checkTrunc(uint64_t immCode, uint64_t exprValue, const Argum
     }
 
     return trunc;
+}
+
+void CodeGenerator::addField(const FieldType& field, std::uint64_t value, uint64_t& code)
+{
+    unsigned int fieldSize = field.getFieldSize();
+    unsigned int fieldOffset = field.getFieldOffset();
+
+    value &= bitMask(fieldSize);
+    value <<= fieldOffset;
+
+    code |= value;
 }
 
 void CodeGenerator::throwError(const std::string& message, const Token& token)

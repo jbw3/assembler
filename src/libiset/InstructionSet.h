@@ -7,10 +7,33 @@
 #include <string>
 #include <vector>
 
+class InstructionType;
+
+class FieldType
+{
+public:
+    friend class Instruction;
+
+    FieldType(int index);
+
+    /**
+     * @brief Get the index
+     */
+    int getIndex() const;
+
+    unsigned int getFieldSize() const;
+
+    unsigned int getFieldOffset() const;
+
+private:
+    const InstructionType* instType;
+    int index;
+};
+
 /**
  * @brief A hard-coded value in an instruction
  */
-class Code
+class Code : public FieldType
 {
 public:
     friend class Instruction;
@@ -19,17 +42,14 @@ public:
 
     std::uint64_t getValue() const;
 
-    int getIndex() const;
-
 private:
     std::uint64_t value;
-    int index;
 };
 
 /**
  * @brief Configuration for an instruction argument
  */
-class Argument
+class Argument : public FieldType
 {
 public:
     friend class Instruction;
@@ -51,11 +71,6 @@ public:
     EType getType() const;
 
     /**
-     * @brief Get the index
-     */
-    int getIndex() const;
-
-    /**
      * @brief Get whether or not this argument is a signed number
      * (only meaningful for immediate arguments)
      */
@@ -75,7 +90,6 @@ public:
 
 private:
     EType type;
-    int index;
     bool isSigned;
     unsigned int shift;
 };

@@ -50,6 +50,8 @@ private:
      */
     bool checkTrunc(uint64_t immCode, uint64_t exprValue, const Argument& arg);
 
+    void addField(const FieldType& field, std::uint64_t value, uint64_t& code);
+
     void throwError(const std::string& message, const Token& token);
 };
 

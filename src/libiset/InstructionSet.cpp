@@ -3,9 +3,29 @@
 
 using namespace std;
 
-Code::Code(uint64_t value, int index) :
-    value(value),
+FieldType::FieldType(int index) :
+    instType(nullptr),
     index(index)
+{}
+
+int FieldType::getIndex() const
+{
+    return index;
+}
+
+unsigned int FieldType::getFieldSize() const
+{
+    return instType->getFieldSize(index);
+}
+
+unsigned int FieldType::getFieldOffset() const
+{
+    return instType->getFieldOffset(index);
+}
+
+Code::Code(uint64_t value, int index) :
+    FieldType(index),
+    value(value)
 {}
 
 uint64_t Code::getValue() const
@@ -13,14 +33,9 @@ uint64_t Code::getValue() const
     return value;
 }
 
-int Code::getIndex() const
-{
-    return index;
-}
-
 Argument::Argument(EType type, bool isSigned, unsigned int shift, int index) :
+    FieldType(index),
     type(type),
-    index(index),
     isSigned(isSigned),
     shift(shift)
 {}
@@ -28,11 +43,6 @@ Argument::Argument(EType type, bool isSigned, unsigned int shift, int index) :
 Argument::EType Argument::getType() const
 {
     return type;
-}
-
-int Argument::getIndex() const
-{
-    return index;
 }
 
 bool Argument::getIsSigned() const
@@ -72,6 +82,7 @@ Instruction::Instruction(const string& mnemonic, const InstructionType& type, in
     int index = 0;
     for (Code code : codeList)
     {
+        code.instType = &type;
         if (code.index < 0)
         {
             code.index = index;
@@ -84,6 +95,7 @@ Instruction::Instruction(const string& mnemonic, const InstructionType& type, in
     index = 0;
     for (Argument arg : argumentList)
     {
+        arg.instType = &type;
         if (arg.index < 0)
         {
             arg.index = index;
