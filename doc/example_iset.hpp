@@ -8,25 +8,45 @@ namespace Example
 {
 
 ////////////////////////////////////////////////////////////
-// Define instruction types here.
-// An instruction type take 3 parameters. The first 2 are
-// required while the third is optional:
-// 1. Op code size in bits
-// 2. Op code offset (shift) in bits
-// 3. Argument list
+// Define instruction types here. This is a list of field
+// sizes.
 ////////////////////////////////////////////////////////////
 
-// no-arg type
-const InstructionType NType{8, 8};
+// Register-Register type: 8-bit op code and 2 4-bit register fields
+const InstructionType RRType{8, 4, 4};
 
-// Register-Register type
-const InstructionType RRType{8, 8, {{Argument::eRegister, 4, 4}, {Argument::eRegister, 4, 0}}};
+// Register-Immediate type: 4-bit op code, 4-bit register field, and
+// 8-bit immediate field
+const InstructionType RIType{4, 4, 8};
 
-// Register-Immediate type
-const InstructionType RIType{4, 12, {{Argument::eRegister, 4, 8}, {Argument::eImmediate, 8, 0}}};
+// Register-Register-Immediate type: 4-bit op code, 2 4-bit register fields,
+// and 4-bit immediate field
+const InstructionType RRIType{4, 4, 4, 4};
 
-// Register-Register-Immediate type
-const InstructionType RRIType{4, 12, {{Argument::eRegister, 4, 8}, {Argument::eRegister, 4, 4}, {Argument::eImmediate, 4, 0}}};
+////////////////////////////////////////////////////////////
+// Define arguments here. An argument may either be a
+// register or an immediate value. Each argument is mapped
+// to a field in the type above with a zero based index.
+////////////////////////////////////////////////////////////
+
+// Two register arguments for RRType instructions.
+const std::initializer_list<Argument> RRArgs = {
+    // The first argument is mapped to field 1 in
+    // the instruction type.
+    { Argument::eRegister, 1 },
+
+    // The second argument is not explicitly mapped
+    // to a field, so it will be mapped to the field
+    // after the argument above (i.e. 2).
+    { Argument::eRegister }
+};
+
+// A register argument and an immediate argument
+// for RIType instructions.
+const std::initializer_list<Argument> RIArgs = {
+    { Argument::eRegister, 1 },
+    { Argument::eImmediate, true }
+};
 
 ////////////////////////////////////////////////////////////
 // Define instruction set here.
@@ -54,18 +74,19 @@ const InstructionSet ISET(
         { "R", 0, 7, 1 }
     },
 
-    // Define instructions here. Three parameters are
-    // required for each instruction:
+    // Define instructions here. The following parameters are
+    // specified for each instruction:
     // 1. Mnemonic
-    // 2. Op code
-    // 3. Instruction type (defined above)
+    // 2. Instruction type (defined above)
+    // 3. Constant values (e.g. op code)
+    // 4. Arguments (optional, defined above)
     {
-        { "NOP",  0b00000, NType  },  // no operation
-        { "MOV",  0b00001, RRType },  // move register
-        { "NOT",  0b00100, RRType },  // not
-        { "ADD",  0b01000, RRType },  // add
-        { "ADDI", 0b01000, RIType },  // add immediate
-        { "SUB",  0b01001, RRType },  // subtract
+        { "NOP",  RRType, {0b00000} },          // no operation
+        { "MOV",  RRType, {0b00001}, RRArgs },  // move register
+        { "NOT",  RRType, {0b00100}, RRArgs },  // not
+        { "ADD",  RRType, {0b01000}, RRArgs },  // add
+        { "ADDI", RIType, {0b01000}, RIArgs },  // add immediate
+        { "SUB",  RRType, {0b01001}, RRArgs },  // subtract
     }
 );
 
