@@ -8,7 +8,7 @@ class TextOutputFormatter : public IOutputFormatter
 public:
     bool isBinaryOutput() const override;
 
-    void generate(std::ostream& os, unsigned int wordSize, const CodeGenerator::InstructionCodeList& instCodeList) override;
+    void generate(IOutputFormatter::Config& config) override;
 };
 
 #endif // TEXT_OUTPUT_FORMATTER_H_

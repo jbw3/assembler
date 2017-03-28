@@ -32,6 +32,9 @@ const InstructionSet ISET(
     // word size
     16,
 
+    // endianness
+    Endianness::Big,
+
     // registers
     {
         { "R", 0, 15, 0b0000 }

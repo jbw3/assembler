@@ -250,11 +250,11 @@ def main():
     tester.add(StringTest('Negative Number Truncation 2', 'W16', b'addi r0, -3000', outStr=b'b048\n', errStr=b'WARNING: line: 1, col: 10\nImmediate value was truncated.\n'))
     tester.add(StringTest('LSB Truncation', 'W16', b'jmp 3', outStr=b'c001\n', errStr=b'WARNING: line: 1, col: 5\nImmediate value was truncated.\n'))
 
-    # format (note that binary is little endian)
+    # format
     tester.add(StringTest('Format Text 1', 'W8', b'nop\nmov r0\nadd r4', outStr=b'00\n08\n44\n', args=['-f', 'text']))
     tester.add(StringTest('Format Text 2', 'W16', b'nop\nmov r0, r1\nnot r4, r7', outStr=b'0000\n0101\n0247\n', args=['-f', 'text']))
     tester.add(StringTest('Format Binary 1', 'W8', b'nop\nmov r0\nadd r4', outStr=b'\x00\x08\x44', args=['-f', 'bin']))
-    tester.add(StringTest('Format Binary 2', 'W16', b'nop\nmov r12, r1\nnot r4, r7', outStr=b'\x00\x00\xc1\x01\x47\x02', args=['-f', 'bin']))
+    tester.add(StringTest('Format Binary 2', 'W16', b'nop\nmov r12, r1\nnot r4, r7', outStr=b'\x00\x00\x01\xc1\x02\x47', args=['-f', 'bin']))
 
     tester.run()
 

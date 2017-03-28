@@ -61,6 +61,9 @@ const InstructionSet ISET(
     // Word size in bits
     16,
 
+    // endianness
+    Endianness::Big,
+
     // Define registers here. Registers can be defined
     // in two ways:
     {
