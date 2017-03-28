@@ -171,5 +171,12 @@ void Assembler::process()
     // Output Formatter
     /////////////////////////////////
 
-    outputFormatter->generate(*os, iSet->getWordSize(), instCodeList);
+    IOutputFormatter::Config config
+    {
+        *os,
+        iSet->getWordSize(),
+        instCodeList,
+        false
+    };
+    outputFormatter->generate(config);
 }
