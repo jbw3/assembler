@@ -171,12 +171,13 @@ void Assembler::process()
     // Output Formatter
     /////////////////////////////////
 
+    bool isLittleEndian = (iSet->getEndianness() == Endianness::Little);
     IOutputFormatter::Config config
     {
         *os,
         iSet->getWordSize(),
         instCodeList,
-        false
+        isLittleEndian
     };
     outputFormatter->generate(config);
 }

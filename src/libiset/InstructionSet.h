@@ -161,14 +161,23 @@ private:
     std::map<std::string, Register> registers;
 };
 
+
+enum struct Endianness
+{
+    Big,
+    Little
+};
+
 class InstructionSet
 {
 public:
-    InstructionSet(const std::string& name, unsigned int wordSize, std::initializer_list<RegisterSet> registerList, std::initializer_list<Instruction> instructionList);
+    InstructionSet(const std::string& name, unsigned int wordSize, Endianness endianness, std::initializer_list<RegisterSet> registerList, std::initializer_list<Instruction> instructionList);
 
     std::string getName() const;
 
     unsigned int getWordSize() const;
+
+    Endianness getEndianness() const;
 
     std::map<std::string, Register> getRegisters() const;
 
@@ -177,6 +186,7 @@ public:
 private:
     std::string name;
     unsigned int wordSize;
+    Endianness endianness;
     std::map<std::string, Register> registers;
     std::map<std::string, Instruction> instructions;
 };

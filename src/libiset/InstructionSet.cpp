@@ -172,9 +172,10 @@ std::map<std::string, Register> RegisterSet::getRegisters() const
     return registers;
 }
 
-InstructionSet::InstructionSet(const string& name, unsigned int wordSize, initializer_list<RegisterSet> registerList, initializer_list<Instruction> instructionList) :
+InstructionSet::InstructionSet(const string& name, unsigned int wordSize, Endianness endianness, initializer_list<RegisterSet> registerList, initializer_list<Instruction> instructionList) :
     name(name),
-    wordSize(wordSize)
+    wordSize(wordSize),
+    endianness(endianness)
 {
     for (const RegisterSet& regSet : registerList)
     {
@@ -196,6 +197,11 @@ string InstructionSet::getName() const
 unsigned int InstructionSet::getWordSize() const
 {
     return wordSize;
+}
+
+Endianness InstructionSet::getEndianness() const
+{
+    return endianness;
 }
 
 map<string, Register> InstructionSet::getRegisters() const
