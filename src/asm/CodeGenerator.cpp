@@ -85,7 +85,7 @@ void CodeGenerator::printSymbols(ostream& os) const
 void CodeGenerator::processConstants(const SyntaxTree& syntaxTree)
 {
     uint64_t byteWordSize = instSet.getWordSize() / 8;
-    int64_t address = 0;
+    int64_t address = 0x4000'0000;
 
     for (const InstructionTokens& tokens : syntaxTree.instructions)
     {
@@ -156,7 +156,7 @@ void CodeGenerator::processInstructions(const SyntaxTree& syntaxTree, Instructio
     instCodeList.clear();
 
     uint64_t byteWordSize = instSet.getWordSize() / 8;
-    int64_t address = 0;
+    int64_t address = 0x4000'0000;
 
     for (const InstructionTokens& tokens : syntaxTree.instructions)
     {
