@@ -12,7 +12,9 @@ using namespace std;
 
 CodeGenerator::CodeGenerator(const InstructionSet& instructionSet) :
     instSet(instructionSet),
-    exprEval(symbols)
+    exprEval(symbols),
+    startAddress(0), ///< @todo allow the user to set this
+    address(0)
 {}
 
 void CodeGenerator::process(const SyntaxTree& syntaxTree, InstructionCodeList& instCodeList)
@@ -85,7 +87,7 @@ void CodeGenerator::printSymbols(ostream& os) const
 void CodeGenerator::processConstants(const SyntaxTree& syntaxTree)
 {
     uint64_t byteWordSize = instSet.getWordSize() / 8;
-    int64_t address = 0;
+    address = startAddress;
 
     for (const InstructionTokens& tokens : syntaxTree.instructions)
     {
@@ -156,7 +158,7 @@ void CodeGenerator::processInstructions(const SyntaxTree& syntaxTree, Instructio
     instCodeList.clear();
 
     uint64_t byteWordSize = instSet.getWordSize() / 8;
-    int64_t address = 0;
+    address = startAddress;
 
     for (const InstructionTokens& tokens : syntaxTree.instructions)
     {
@@ -278,10 +280,19 @@ uint64_t CodeGenerator::encodeRegister(const TokenVec& tokens)
 uint64_t CodeGenerator::encodeImmediate(const TokenVec& tokens, const Argument& arg)
 {
     // evaluate expression to get code
-    uint64_t exprValue = exprEval.eval(tokens);
+    int64_t exprValue = exprEval.eval(tokens);
+
+    // add constant
+    exprValue += arg.getConstant();
+
+    // subtract current address if the argument is a relative address
+    if (arg.getIsRelativeAddress())
+    {
+        exprValue -= address;
+    }
 
     // shift right by amount specified in argument
-    uint64_t immCode = exprValue >> arg.getShift();
+    int64_t immCode = exprValue >> arg.getShift();
 
     bool trunc = checkTrunc(immCode, exprValue, arg);
 
@@ -293,10 +304,10 @@ uint64_t CodeGenerator::encodeImmediate(const TokenVec& tokens, const Argument& 
                                          tokens[0].getColumn());
     }
 
-    return immCode;
+    return static_cast<uint64_t>(immCode);
 }
 
-bool CodeGenerator::checkTrunc(uint64_t immCode, uint64_t exprValue, const Argument& arg)
+bool CodeGenerator::checkTrunc(int64_t immCode, int64_t exprValue, const Argument& arg)
 {
     bool trunc = false;
 
@@ -325,7 +336,7 @@ bool CodeGenerator::checkTrunc(uint64_t immCode, uint64_t exprValue, const Argum
     }
     else // arg is unsigned
     {
-        trunc |= ( immCode != (immCode & numMask) );
+        trunc |= ( static_cast<uint64_t>(immCode) != (immCode & numMask) );
     }
 
     return trunc;

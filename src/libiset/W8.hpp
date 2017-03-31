@@ -9,7 +9,7 @@ const InstructionType Type{5, 3};
 const Argument RegArg{ Argument::eRegister, 1 };
 
 // immediate argument
-const Argument ImmArg{ Argument::eImmediate, false, 0, 1 };
+const Argument ImmArg{ Argument::eImmediate, 1, false };
 
 const InstructionSet ISET(
     // name
