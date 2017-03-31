@@ -9,7 +9,6 @@
 #include "InstructionSetRegister.h"
 #include "IOutputFormatter.h"
 #include "Logger.h"
-#include "SyntaxAnalyzer.h"
 #include "SyntaxTree.h"
 #include "TextOutputFormatter.h"
 #include "Token.h"
@@ -22,8 +21,6 @@ Assembler::Assembler(const Arguments& arguments) :
     Logger::getInstance().setColorOutput(args.colorOutput);
 
     iSet = InstructionSetRegister::getInstance().getInstructionSet(args.instructionSetName);
-
-    syntaxAnalyzer = new SyntaxAnalyzer(*iSet);
 
     codeGenerator = new CodeGenerator(*iSet);
 
@@ -46,7 +43,6 @@ Assembler::Assembler(const Arguments& arguments) :
 
 Assembler::~Assembler()
 {
-    delete syntaxAnalyzer;
     delete codeGenerator;
     delete outputFormatter;
 
@@ -155,7 +151,7 @@ void Assembler::process()
 
     SyntaxTree syntaxTree;
 
-    syntaxAnalyzer->process(tokens, syntaxTree);
+    syntaxAnalyzer.process(tokens, syntaxTree);
 
     /////////////////////////////////
     // Code Generator
@@ -175,5 +171,13 @@ void Assembler::process()
     // Output Formatter
     /////////////////////////////////
 
-    outputFormatter->generate(*os, iSet->getWordSize(), instCodeList);
+    bool isLittleEndian = (iSet->getEndianness() == Endianness::Little);
+    IOutputFormatter::Config config
+    {
+        *os,
+        iSet->getWordSize(),
+        instCodeList,
+        isLittleEndian
+    };
+    outputFormatter->generate(config);
 }

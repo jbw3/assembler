@@ -3,27 +3,51 @@
 
 using namespace std;
 
-Argument::Argument(EType type, unsigned int size, unsigned int offset, bool isSigned, unsigned int shift) :
-    type(type),
-    size(size),
-    offset(offset),
-    isSigned(isSigned),
-    shift(shift)
+FieldType::FieldType(int index) :
+    instType(nullptr),
+    index(index)
 {}
+
+int FieldType::getIndex() const
+{
+    return index;
+}
+
+unsigned int FieldType::getFieldSize() const
+{
+    return instType->getFieldSize(index);
+}
+
+unsigned int FieldType::getFieldOffset() const
+{
+    return instType->getFieldOffset(index);
+}
+
+Code::Code(uint64_t value, int index) :
+    FieldType(index),
+    value(value)
+{}
+
+uint64_t Code::getValue() const
+{
+    return value;
+}
+
+Argument::Argument(EType type, int index) :
+    FieldType(index),
+    type(type)
+{}
+
+Argument::Argument(EType type, bool isSigned, unsigned int shift, int index) :
+    Argument(type, index)
+{
+    this->isSigned = isSigned;
+    this->shift = shift;
+}
 
 Argument::EType Argument::getType() const
 {
     return type;
-}
-
-unsigned int Argument::getSize() const
-{
-    return size;
-}
-
-unsigned int Argument::getOffset() const
-{
-    return offset;
 }
 
 bool Argument::getIsSigned() const
@@ -36,46 +60,75 @@ unsigned int Argument::getShift() const
     return shift;
 }
 
-InstructionType::InstructionType(unsigned int opCodeSize, unsigned int opCodeOffset, std::initializer_list<Argument> arguments) :
-    opCodeSize(opCodeSize),
-    opCodeOffset(opCodeOffset),
-    arguments(arguments)
+InstructionType::InstructionType(std::initializer_list<unsigned int> fieldSizes) :
+    fieldSizes(fieldSizes)
 {}
 
-unsigned int InstructionType::getOpCodeSize() const
+unsigned int InstructionType::getFieldSize(int index) const
 {
-    return opCodeSize;
+    return fieldSizes.at(index);
 }
 
-unsigned int InstructionType::getOpCodeOffset() const
+unsigned int InstructionType::getFieldOffset(int index) const
 {
-    return opCodeOffset;
+    unsigned int offset = 0;
+    for (size_t i = index + 1; i < fieldSizes.size(); ++i)
+    {
+        offset += fieldSizes[i];
+    }
+
+    return offset;
 }
 
-std::vector<Argument> InstructionType::getArguments() const
-{
-    return arguments;
-}
-
-Instruction::Instruction(const std::string& mnemonic, std::uint64_t opCode, const InstructionType& type) :
+Instruction::Instruction(const string& mnemonic, const InstructionType& type, initializer_list<Code> codeList, initializer_list<Argument> argumentList) :
     mnemonic(toUpper(mnemonic)),
-    opCode(opCode),
     type(type)
-{}
+{
+    int index = 0;
+    for (Code code : codeList)
+    {
+        code.instType = &type;
+        if (code.index < 0)
+        {
+            code.index = index;
+        }
 
-std::string Instruction::getMnemonic() const
+        codes.push_back(code);
+        index = code.index + 1;
+    }
+
+    index = 0;
+    for (Argument arg : argumentList)
+    {
+        arg.instType = &type;
+        if (arg.index < 0)
+        {
+            arg.index = index;
+        }
+
+        arguments.push_back(arg);
+        index = arg.index + 1;
+    }
+}
+
+string Instruction::getMnemonic() const
 {
     return mnemonic;
-}
-
-std::uint64_t Instruction::getOpCode() const
-{
-    return opCode;
 }
 
 const InstructionType& Instruction::getType() const
 {
     return type;
+}
+
+const vector<Code>& Instruction::getCodes() const
+{
+    return codes;
+}
+
+const vector<Argument>& Instruction::getArguments() const
+{
+    return arguments;
 }
 
 Register::Register(const std::string& name, std::uint64_t code) :
@@ -119,9 +172,10 @@ std::map<std::string, Register> RegisterSet::getRegisters() const
     return registers;
 }
 
-InstructionSet::InstructionSet(const string& name, unsigned int wordSize, initializer_list<RegisterSet> registerList, initializer_list<Instruction> instructionList) :
+InstructionSet::InstructionSet(const string& name, unsigned int wordSize, Endianness endianness, initializer_list<RegisterSet> registerList, initializer_list<Instruction> instructionList) :
     name(name),
-    wordSize(wordSize)
+    wordSize(wordSize),
+    endianness(endianness)
 {
     for (const RegisterSet& regSet : registerList)
     {
@@ -143,6 +197,11 @@ string InstructionSet::getName() const
 unsigned int InstructionSet::getWordSize() const
 {
     return wordSize;
+}
+
+Endianness InstructionSet::getEndianness() const
+{
+    return endianness;
 }
 
 map<string, Register> InstructionSet::getRegisters() const

@@ -3,14 +3,13 @@
 namespace W8
 {
 
-// immediate type
-const InstructionType IType{5, 3, {{Argument::eImmediate, 3, 0, false}}};
+const InstructionType Type{5, 3};
 
-// no-arg type
-const InstructionType NType{5, 3};
+// register argument
+const Argument RegArg{ Argument::eRegister, 1 };
 
-// register type
-const InstructionType RType{5, 3, {{Argument::eRegister, 3, 0}}};
+// immediate argument
+const Argument ImmArg{ Argument::eImmediate, false, 0, 1 };
 
 const InstructionSet ISET(
     // name
@@ -19,6 +18,9 @@ const InstructionSet ISET(
     // word size
     8,
 
+    // endianness
+    Endianness::Big,
+
     // registers
     {
         { "R", 0, 7, 0b000 }
@@ -26,24 +28,24 @@ const InstructionSet ISET(
 
     // instructions
     {
-        { "NOP",  0b00000, NType },  // no operation
-        { "MOV",  0b00001, RType },  // move register to R0
-        { "MOVI", 0b00010, IType },  // move constant to R0
-        { "MVR0", 0b00011, RType },  // move R0 to register
-        { "NOT",  0b00100, RType },  // not
-        { "AND",  0b00101, RType },  // and
-        { "OR",   0b00110, RType },  // or
-        { "XOR",  0b00111, RType },  // xor
-        { "ADD",  0b01000, RType },  // add
-        { "SUB",  0b01001, RType },  // sub
-        { "SHLL", 0b01010, RType },  // shift left logical
-        { "SHRL", 0b01011, RType },  // shift right logical
-        { "SHRA", 0b01100, RType },  // shift right arithmetic
-        { "JMP",  0b01101, RType },  // jump
-        { "BEZ",  0b01110, RType },  // branch equal zero
-        { "BNEZ", 0b01111, RType },  // branch not equal zero
-        { "BGTZ", 0b10000, RType },  // branch greater than zero
-        { "BLTZ", 0b10001, RType },  // branch less than zero
+        { "NOP",  Type, {0b00000} },            // no operation
+        { "MOV",  Type, {0b00001}, {RegArg} },  // move register to R0
+        { "MOVI", Type, {0b00010}, {ImmArg} },  // move constant to R0
+        { "MVR0", Type, {0b00011}, {RegArg} },  // move R0 to register
+        { "NOT",  Type, {0b00100}, {RegArg} },  // not
+        { "AND",  Type, {0b00101}, {RegArg} },  // and
+        { "OR",   Type, {0b00110}, {RegArg} },  // or
+        { "XOR",  Type, {0b00111}, {RegArg} },  // xor
+        { "ADD",  Type, {0b01000}, {RegArg} },  // add
+        { "SUB",  Type, {0b01001}, {RegArg} },  // sub
+        { "SHLL", Type, {0b01010}, {RegArg} },  // shift left logical
+        { "SHRL", Type, {0b01011}, {RegArg} },  // shift right logical
+        { "SHRA", Type, {0b01100}, {RegArg} },  // shift right arithmetic
+        { "JMP",  Type, {0b01101}, {RegArg} },  // jump
+        { "BEZ",  Type, {0b01110}, {RegArg} },  // branch equal zero
+        { "BNEZ", Type, {0b01111}, {RegArg} },  // branch not equal zero
+        { "BGTZ", Type, {0b10000}, {RegArg} },  // branch greater than zero
+        { "BLTZ", Type, {0b10001}, {RegArg} },  // branch less than zero
     }
 );
 

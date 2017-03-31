@@ -3,7 +3,6 @@
 
 #include <vector>
 
-#include "InstructionSet.h"
 #include "Token.h"
 
 struct InstructionTokens;
@@ -12,13 +11,11 @@ class SyntaxTree;
 class SyntaxAnalyzer
 {
 public:
-    SyntaxAnalyzer(const InstructionSet& instructionSet);
+    SyntaxAnalyzer() = default;
 
     void process(const TokenVec& tokens, SyntaxTree& syntaxTree);
 
 private:
-    InstructionSet instSet;
-
     void addLabel(InstructionTokens& instTokens, const Token& token);
 
     void parseArgs(const TokenVec& instTokens, std::size_t tokenIdx, TokenVecVec& args);
