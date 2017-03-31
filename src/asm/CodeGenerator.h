@@ -28,6 +28,8 @@ private:
     InstructionSet instSet;
     SymbolMap symbols;
     ImmediateExpressionEvaluator exprEval;
+    int64_t startAddress;
+    int64_t address;
 
     void processConstants(const SyntaxTree& syntaxTree);
 

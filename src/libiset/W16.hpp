@@ -16,10 +16,10 @@ const InstructionType RRIType{4, 4, 4, 4};
 const InstructionType JType{4, 12};
 
 // immediate argument
-const Argument ImmArg{ Argument::eImmediate, true };
+const Argument ImmArg{ Argument::eImmediate, -1, true };
 
 // jump immediate argument
-const Argument JImmArg{ Argument::eImmediate, false, 1, 1 };
+const Argument JImmArg{ Argument::eImmediate, 1, false, 1 };
 
 const std::initializer_list<Argument> RRArgs = {{ Argument::eRegister, 1 }, { Argument::eRegister }};
 

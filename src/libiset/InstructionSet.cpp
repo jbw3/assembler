@@ -33,17 +33,13 @@ uint64_t Code::getValue() const
     return value;
 }
 
-Argument::Argument(EType type, int index) :
+Argument::Argument(EType type, int index, bool isSigned, unsigned int shift, bool isRelativeAddress) :
     FieldType(index),
-    type(type)
+    type(type),
+    isSigned(isSigned),
+    shift(shift),
+    isRelativeAddress(isRelativeAddress)
 {}
-
-Argument::Argument(EType type, bool isSigned, unsigned int shift, int index) :
-    Argument(type, index)
-{
-    this->isSigned = isSigned;
-    this->shift = shift;
-}
 
 Argument::EType Argument::getType() const
 {
@@ -58,6 +54,11 @@ bool Argument::getIsSigned() const
 unsigned int Argument::getShift() const
 {
     return shift;
+}
+
+bool Argument::getIsRelativeAddress() const
+{
+    return isRelativeAddress;
 }
 
 InstructionType::InstructionType(std::initializer_list<unsigned int> fieldSizes) :

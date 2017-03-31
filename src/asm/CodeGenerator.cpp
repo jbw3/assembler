@@ -12,7 +12,9 @@ using namespace std;
 
 CodeGenerator::CodeGenerator(const InstructionSet& instructionSet) :
     instSet(instructionSet),
-    exprEval(symbols)
+    exprEval(symbols),
+    startAddress(0), ///< @todo allow the user to set this
+    address(0)
 {}
 
 void CodeGenerator::process(const SyntaxTree& syntaxTree, InstructionCodeList& instCodeList)
@@ -85,7 +87,7 @@ void CodeGenerator::printSymbols(ostream& os) const
 void CodeGenerator::processConstants(const SyntaxTree& syntaxTree)
 {
     uint64_t byteWordSize = instSet.getWordSize() / 8;
-    int64_t address = 0;
+    address = startAddress;
 
     for (const InstructionTokens& tokens : syntaxTree.instructions)
     {
@@ -156,7 +158,7 @@ void CodeGenerator::processInstructions(const SyntaxTree& syntaxTree, Instructio
     instCodeList.clear();
 
     uint64_t byteWordSize = instSet.getWordSize() / 8;
-    int64_t address = 0;
+    address = startAddress;
 
     for (const InstructionTokens& tokens : syntaxTree.instructions)
     {
@@ -279,6 +281,12 @@ uint64_t CodeGenerator::encodeImmediate(const TokenVec& tokens, const Argument& 
 {
     // evaluate expression to get code
     uint64_t exprValue = exprEval.eval(tokens);
+
+    // subtract current address if the argument is a relative address
+    if (arg.getIsRelativeAddress())
+    {
+        exprValue -= address;
+    }
 
     // shift right by amount specified in argument
     uint64_t immCode = exprValue >> arg.getShift();
