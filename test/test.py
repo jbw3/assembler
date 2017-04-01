@@ -184,6 +184,9 @@ def main():
     tester.add(FileTest('constants', 'W16'))
     tester.add(FileTest('expressions', 'W16'))
 
+    # MIPS
+    tester.add(FileTest('mips32', 'MIPS32'))
+
     ### string tests ###
 
     # numbers
