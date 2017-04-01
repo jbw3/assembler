@@ -13,7 +13,7 @@ using namespace std;
 CodeGenerator::CodeGenerator(const InstructionSet& instructionSet) :
     instSet(instructionSet),
     exprEval(symbols),
-    startAddress(0), ///< @todo allow the user to set this
+    startAddress(0),
     address(0)
 {}
 
@@ -124,31 +124,40 @@ void CodeGenerator::addSymbol(const Token& token, std::int64_t value)
     string symbolName = token.getValue();
     string symbolNameUpper = toUpper(symbolName);
 
-    // check if symbol matches an instruction name
-    const map<string, Instruction>& instructions = instSet.getInstructions();
-    if (instructions.find(symbolNameUpper) != instructions.cend())
+    // check if the start address is being set
+    if (symbolName == START_ADDRESS.getValue())
     {
-        throwError("A constant's name cannot be an instruction.", token);
+        startAddress = value;
+        address = value;
     }
-
-    // check if symbol matches a register name
-    const map<string, Register>& registers = instSet.getRegisters();
-    if (registers.find(symbolNameUpper) != registers.cend())
+    else
     {
-        throwError("A constant's name cannot be a register.", token);
-    }
+        // check if symbol matches an instruction name
+        const map<string, Instruction>& instructions = instSet.getInstructions();
+        if (instructions.find(symbolNameUpper) != instructions.cend())
+        {
+            throwError("A constant's name cannot be an instruction.", token);
+        }
 
-    // check if symbol is a reserved identifier
-    if (RESERVED_IDENTIFIERS.find(symbolName) != RESERVED_IDENTIFIERS.cend())
-    {
-        throwError("\"" + symbolName + "\" is a reserved identifier.", token);
-    }
+        // check if symbol matches a register name
+        const map<string, Register>& registers = instSet.getRegisters();
+        if (registers.find(symbolNameUpper) != registers.cend())
+        {
+            throwError("A constant's name cannot be a register.", token);
+        }
 
-    // add symbol to symbol table
-    auto pair = symbols.insert({symbolName, value});
-    if (!pair.second)
-    {
-        throwError("\"" + symbolName + "\" has already been defined.", token);
+        // check if symbol is a reserved identifier
+        if (RESERVED_IDENTIFIERS.find(symbolName) != RESERVED_IDENTIFIERS.cend())
+        {
+            throwError("\"" + symbolName + "\" is a reserved identifier.", token);
+        }
+
+        // add symbol to symbol table
+        auto pair = symbols.insert({symbolName, value});
+        if (!pair.second)
+        {
+            throwError("\"" + symbolName + "\" has already been defined.", token);
+        }
     }
 }
 
