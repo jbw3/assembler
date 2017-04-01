@@ -280,7 +280,7 @@ uint64_t CodeGenerator::encodeRegister(const TokenVec& tokens)
 uint64_t CodeGenerator::encodeImmediate(const TokenVec& tokens, const Argument& arg)
 {
     // evaluate expression to get code
-    uint64_t exprValue = exprEval.eval(tokens);
+    int64_t exprValue = exprEval.eval(tokens);
 
     // subtract current address if the argument is a relative address
     if (arg.getIsRelativeAddress())
@@ -289,7 +289,7 @@ uint64_t CodeGenerator::encodeImmediate(const TokenVec& tokens, const Argument& 
     }
 
     // shift right by amount specified in argument
-    uint64_t immCode = exprValue >> arg.getShift();
+    int64_t immCode = exprValue >> arg.getShift();
 
     bool trunc = checkTrunc(immCode, exprValue, arg);
 
@@ -301,10 +301,10 @@ uint64_t CodeGenerator::encodeImmediate(const TokenVec& tokens, const Argument& 
                                          tokens[0].getColumn());
     }
 
-    return immCode;
+    return static_cast<uint64_t>(immCode);
 }
 
-bool CodeGenerator::checkTrunc(uint64_t immCode, uint64_t exprValue, const Argument& arg)
+bool CodeGenerator::checkTrunc(int64_t immCode, int64_t exprValue, const Argument& arg)
 {
     bool trunc = false;
 
@@ -333,7 +333,7 @@ bool CodeGenerator::checkTrunc(uint64_t immCode, uint64_t exprValue, const Argum
     }
     else // arg is unsigned
     {
-        trunc |= ( immCode != (immCode & numMask) );
+        trunc |= ( static_cast<uint64_t>(immCode) != (immCode & numMask) );
     }
 
     return trunc;

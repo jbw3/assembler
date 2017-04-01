@@ -50,7 +50,7 @@ private:
     /**
      * @brief Check if immediate value will be truncated
      */
-    bool checkTrunc(uint64_t immCode, uint64_t exprValue, const Argument& arg);
+    bool checkTrunc(int64_t immCode, int64_t exprValue, const Argument& arg);
 
     void addField(const FieldType& field, std::uint64_t value, uint64_t& code);
 
