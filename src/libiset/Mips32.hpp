@@ -26,6 +26,12 @@ const std::initializer_list<Argument> BranchRRIArgs = {{Argument::eRegister, 1},
 
 const std::initializer_list<Argument> BranchRIArgs = {{Argument::eRegister, 1}, {Argument::eImmediate, 3, true, 2, true, -4}};
 
+const std::initializer_list<Argument> CountArgs =
+{
+    {Argument::eRegister, 3},
+    {Argument::eRegister, 1}
+};
+
 const InstructionSet ISET(
     // name
     "MIPS32",
@@ -67,6 +73,8 @@ const InstructionSet ISET(
         { "BLEZ",  IType, {0x06, {0x0, 2}}, BranchRIArgs },
         { "BLTZ",  IType, {0x01, {0x0, 2}}, BranchRIArgs },
         { "BNE",   IType, {0x05}, BranchRRIArgs },
+        { "CLO",   RType, {0x1c, {0x21, 5}}, CountArgs },
+        { "CLZ",   RType, {0x1c, {0x20, 5}}, CountArgs },
         { "J",     JType, {0x02}, JArgs },
         { "JAL",   JType, {0x03}, JArgs },
         { "JR",    RType, {0x00, {0x08, 5}}, RArgs },
