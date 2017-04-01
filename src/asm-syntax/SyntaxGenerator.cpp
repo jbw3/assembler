@@ -51,6 +51,20 @@ SyntaxInfo SyntaxGenerator::createSyntaxInfo(const InstructionSet* iSet)
     }
     regRegex += ")\\b";
 
+    // generate reserved identifiers regex
+    string reservedRegex = "\\b(?:";
+    auto resIter = RESERVED_IDENTIFIERS.cbegin();
+    if (resIter != RESERVED_IDENTIFIERS.cend())
+    {
+        reservedRegex += resIter->getValue();
+        ++resIter;
+        for (; resIter != RESERVED_IDENTIFIERS.cend(); ++resIter)
+        {
+            reservedRegex += "|" + resIter->getValue();
+        }
+    }
+    reservedRegex += ")\\b";
+
     SyntaxInfo info;
 
     info.name = name;
@@ -59,7 +73,7 @@ SyntaxInfo SyntaxGenerator::createSyntaxInfo(const InstructionSet* iSet)
     info.rules = {
         {"#.*$", "comment.line"},
         {R"(\b(?:0[Bb][01]+|0[Oo][0-7]+|[0-9]+|0[Xx][0-9A-Fa-f]+)\b)", "constant.numeric.integer"},
-        {"\\b" + CURRENT_ADDRESS.getValue() + "\\b", "variable.language"},
+        {reservedRegex, "variable.language"},
         {instRegex, "keyword.control"},
         {regRegex, "variable.language"}
     };
