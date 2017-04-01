@@ -282,6 +282,9 @@ uint64_t CodeGenerator::encodeImmediate(const TokenVec& tokens, const Argument& 
     // evaluate expression to get code
     int64_t exprValue = exprEval.eval(tokens);
 
+    // add constant
+    exprValue += arg.getConstant();
+
     // subtract current address if the argument is a relative address
     if (arg.getIsRelativeAddress())
     {
