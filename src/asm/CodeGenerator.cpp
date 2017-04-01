@@ -14,7 +14,9 @@ CodeGenerator::CodeGenerator(const InstructionSet& instructionSet) :
     instSet(instructionSet),
     exprEval(symbols),
     startAddress(0),
-    address(0)
+    address(0),
+    isStartAddressDefined(false),
+    isConstantDefined(false)
 {}
 
 void CodeGenerator::process(const SyntaxTree& syntaxTree, InstructionCodeList& instCodeList)
@@ -109,6 +111,8 @@ void CodeGenerator::processConstants(const SyntaxTree& syntaxTree)
 
                 addSymbol(tokens.constant, value);
             }
+
+            isConstantDefined = true;
         }
 
         // increment address if there is an instruction
@@ -127,8 +131,24 @@ void CodeGenerator::addSymbol(const Token& token, std::int64_t value)
     // check if the start address is being set
     if (symbolName == START_ADDRESS.getValue())
     {
+        // check if start_address has already been defined
+        if (isStartAddressDefined)
+        {
+            throwError("The start address has already been defined.", token);
+        }
+
+        // check if a constant has already been defined;
+        // the start address must be defined before other
+        // constants so that labels and the "here" identifier
+        // may be calculated properly
+        if (isConstantDefined)
+        {
+            throwError("The start address must be defined before other constants.", token);
+        }
+
         startAddress = value;
         address = value;
+        isStartAddressDefined = true;
     }
     else
     {

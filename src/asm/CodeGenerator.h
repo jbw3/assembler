@@ -30,6 +30,8 @@ private:
     ImmediateExpressionEvaluator exprEval;
     int64_t startAddress;
     int64_t address;
+    bool isStartAddressDefined;
+    bool isConstantDefined;
 
     void processConstants(const SyntaxTree& syntaxTree);
 
