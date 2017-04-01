@@ -4,6 +4,7 @@
 
 #include "CodeGenerator.h"
 #include "Error.h"
+#include "FormatSaver.hpp"
 #include "Logger.h"
 #include "SyntaxTree.h"
 #include "utils.h"
@@ -13,8 +14,10 @@ using namespace std;
 CodeGenerator::CodeGenerator(const InstructionSet& instructionSet) :
     instSet(instructionSet),
     exprEval(symbols),
-    startAddress(0), ///< @todo allow the user to set this
-    address(0)
+    startAddress(0),
+    address(0),
+    isStartAddressDefined(false),
+    isConstantDefined(false)
 {}
 
 void CodeGenerator::process(const SyntaxTree& syntaxTree, InstructionCodeList& instCodeList)
@@ -29,9 +32,9 @@ void CodeGenerator::printSymbols(ostream& os) const
     const string DEC_HEADER = "dec";
     const string HEX_HEADER = "hex";
 
-    // save state
-    ios_base::fmtflags flags = os.flags();
-    char fill = os.fill();
+    // Save settings. They will be restored in
+    // the object's destructor
+    FormatSaver<ostream::char_type> saver(os);
 
     // get format widths
     int nameWidth = SYMBOL_HEADER.size();
@@ -78,10 +81,6 @@ void CodeGenerator::printSymbols(ostream& os) const
         // hex value
         os << hex << setw(hexWidth) << setfill('0') << pair.second << "\n";
     }
-
-    // restore state
-    os.flags(flags);
-    os.fill(fill);
 }
 
 void CodeGenerator::processConstants(const SyntaxTree& syntaxTree)
@@ -104,11 +103,16 @@ void CodeGenerator::processConstants(const SyntaxTree& syntaxTree)
             }
             else // constant is being assigned a value
             {
+                // don't allow currant and start addresses to be used in start address expression
+                bool allowCurrentAndStart = (tokens.constant != START_ADDRESS);
+
                 // translate value to number
-                int64_t value = exprEval.eval(constantArgs);
+                int64_t value = exprEval.eval(constantArgs, allowCurrentAndStart);
 
                 addSymbol(tokens.constant, value);
             }
+
+            isConstantDefined = true;
         }
 
         // increment address if there is an instruction
@@ -124,31 +128,65 @@ void CodeGenerator::addSymbol(const Token& token, std::int64_t value)
     string symbolName = token.getValue();
     string symbolNameUpper = toUpper(symbolName);
 
-    // check if symbol matches an instruction name
-    const map<string, Instruction>& instructions = instSet.getInstructions();
-    if (instructions.find(symbolNameUpper) != instructions.cend())
+    // check if the start address is being set
+    if (symbolName == START_ADDRESS.getValue())
     {
-        throwError("A constant's name cannot be an instruction.", token);
-    }
+        // check if start_address has already been defined
+        if (isStartAddressDefined)
+        {
+            throwError("The start address has already been defined.", token);
+        }
 
-    // check if symbol matches a register name
-    const map<string, Register>& registers = instSet.getRegisters();
-    if (registers.find(symbolNameUpper) != registers.cend())
-    {
-        throwError("A constant's name cannot be a register.", token);
-    }
+        // check if a constant has already been defined;
+        // the start address must be defined before other
+        // constants so that labels and the "here" identifier
+        // may be calculated properly
+        if (isConstantDefined)
+        {
+            throwError("The start address must be defined before other constants.", token);
+        }
 
-    // check if symbol is a reserved identifier
-    if (RESERVED_IDENTIFIERS.find(symbolName) != RESERVED_IDENTIFIERS.cend())
-    {
-        throwError("\"" + symbolName + "\" is a reserved identifier.", token);
-    }
+        // check if the start address is word aligned
+        unsigned int wordSizeBytes = instSet.getWordSize() / 8;
+        if (value % wordSizeBytes != 0)
+        {
+            throwError("The start address is not word aligned.", token);
+        }
 
-    // add symbol to symbol table
-    auto pair = symbols.insert({symbolName, value});
-    if (!pair.second)
+        startAddress = value;
+        address = value;
+        exprEval.setStartAddress(value);
+
+        isStartAddressDefined = true;
+    }
+    else
     {
-        throwError("\"" + symbolName + "\" has already been defined.", token);
+        // check if symbol matches an instruction name
+        const map<string, Instruction>& instructions = instSet.getInstructions();
+        if (instructions.find(symbolNameUpper) != instructions.cend())
+        {
+            throwError("A constant's name cannot be an instruction.", token);
+        }
+
+        // check if symbol matches a register name
+        const map<string, Register>& registers = instSet.getRegisters();
+        if (registers.find(symbolNameUpper) != registers.cend())
+        {
+            throwError("A constant's name cannot be a register.", token);
+        }
+
+        // check if symbol is a reserved identifier
+        if (RESERVED_IDENTIFIERS.find(symbolName) != RESERVED_IDENTIFIERS.cend())
+        {
+            throwError("\"" + symbolName + "\" is a reserved identifier.", token);
+        }
+
+        // add symbol to symbol table
+        auto pair = symbols.insert({symbolName, value});
+        if (!pair.second)
+        {
+            throwError("\"" + symbolName + "\" has already been defined.", token);
+        }
     }
 }
 
