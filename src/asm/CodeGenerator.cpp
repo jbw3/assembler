@@ -4,6 +4,7 @@
 
 #include "CodeGenerator.h"
 #include "Error.h"
+#include "FormatSaver.hpp"
 #include "Logger.h"
 #include "SyntaxTree.h"
 #include "utils.h"
@@ -31,9 +32,9 @@ void CodeGenerator::printSymbols(ostream& os) const
     const string DEC_HEADER = "dec";
     const string HEX_HEADER = "hex";
 
-    // save state
-    ios_base::fmtflags flags = os.flags();
-    char fill = os.fill();
+    // Save settings. They will be restored in
+    // the object's destructor
+    FormatSaver<ostream::char_type> saver(os);
 
     // get format widths
     int nameWidth = SYMBOL_HEADER.size();
@@ -80,10 +81,6 @@ void CodeGenerator::printSymbols(ostream& os) const
         // hex value
         os << hex << setw(hexWidth) << setfill('0') << pair.second << "\n";
     }
-
-    // restore state
-    os.flags(flags);
-    os.fill(fill);
 }
 
 void CodeGenerator::processConstants(const SyntaxTree& syntaxTree)
@@ -144,6 +141,13 @@ void CodeGenerator::addSymbol(const Token& token, std::int64_t value)
         if (isConstantDefined)
         {
             throwError("The start address must be defined before other constants.", token);
+        }
+
+        // check if the start address is word aligned
+        unsigned int wordSizeBytes = instSet.getWordSize() / 8;
+        if (value % wordSizeBytes != 0)
+        {
+            throwError("The start address is not word aligned.", token);
         }
 
         startAddress = value;
