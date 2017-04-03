@@ -152,6 +152,8 @@ void CodeGenerator::addSymbol(const Token& token, std::int64_t value)
 
         startAddress = value;
         address = value;
+        exprEval.setStartAddress(value);
+
         isStartAddressDefined = true;
     }
     else

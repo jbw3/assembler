@@ -29,13 +29,19 @@ const unordered_set<Token> ImmediateExpressionEvaluator::BINARY_OPERATORS =
 
 ImmediateExpressionEvaluator::ImmediateExpressionEvaluator(const SymbolMap& symbols) :
     symbols(symbols),
-    currentAddress(0)
+    currentAddress(0),
+    startAddress(0)
 {
 }
 
-void ImmediateExpressionEvaluator::setCurrentAddress(std::int64_t address)
+void ImmediateExpressionEvaluator::setCurrentAddress(int64_t address)
 {
     currentAddress = address;
+}
+
+void ImmediateExpressionEvaluator::setStartAddress(int64_t address)
+{
+    startAddress = address;
 }
 
 int64_t ImmediateExpressionEvaluator::eval(const TokenVec& tokens)
@@ -376,6 +382,11 @@ int64_t ImmediateExpressionEvaluator::evalConstant(const Token& token)
     if (constant == CURRENT_ADDRESS.getValue())
     {
         value = currentAddress;
+    }
+    // check if symbol is the start address
+    else if (constant == START_ADDRESS.getValue())
+    {
+        value = startAddress;
     }
     else // look up value in symbol table
     {

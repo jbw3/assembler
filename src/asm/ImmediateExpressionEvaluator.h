@@ -14,6 +14,8 @@ public:
 
     void setCurrentAddress(std::int64_t address);
 
+    void setStartAddress(std::int64_t address);
+
     std::int64_t eval(const TokenVec& tokens);
 
     std::int64_t eval(TokenVec::const_iterator begin, TokenVec::const_iterator end);
@@ -24,6 +26,7 @@ private:
 
     const SymbolMap& symbols;
     std::int64_t currentAddress;
+    std::int64_t startAddress;
 
     std::int64_t evalTerms(std::list<std::int64_t>& terms, std::list<Token>& binOperators);
 
