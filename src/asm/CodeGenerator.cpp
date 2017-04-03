@@ -103,8 +103,11 @@ void CodeGenerator::processConstants(const SyntaxTree& syntaxTree)
             }
             else // constant is being assigned a value
             {
+                // don't allow currant and start addresses to be used in start address expression
+                bool allowCurrentAndStart = (tokens.constant != START_ADDRESS);
+
                 // translate value to number
-                int64_t value = exprEval.eval(constantArgs);
+                int64_t value = exprEval.eval(constantArgs, allowCurrentAndStart);
 
                 addSymbol(tokens.constant, value);
             }

@@ -16,9 +16,9 @@ public:
 
     void setStartAddress(std::int64_t address);
 
-    std::int64_t eval(const TokenVec& tokens);
+    std::int64_t eval(const TokenVec& tokens, bool allowCurrentAndStart = true);
 
-    std::int64_t eval(TokenVec::const_iterator begin, TokenVec::const_iterator end);
+    std::int64_t eval(TokenVec::const_iterator begin, TokenVec::const_iterator end, bool allowCurrentAndStart = true);
 
 private:
     static const std::unordered_set<Token> UNARY_OPERATORS;
@@ -38,11 +38,11 @@ private:
 
     TokenVec::const_iterator findClosingParenthesis(TokenVec::const_iterator openParIter, TokenVec::const_iterator end);
 
-    std::int64_t evalImmediate(const Token& token);
+    std::int64_t evalImmediate(const Token& token, bool allowCurrentAndStart);
 
     std::int64_t evalNum(const Token& token);
 
-    std::int64_t evalConstant(const Token& token);
+    std::int64_t evalConstant(const Token& token, bool allowCurrentAndStart);
 
     void throwError(const std::string& message, const Token& token);
 };

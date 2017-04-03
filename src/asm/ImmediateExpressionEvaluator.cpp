@@ -44,12 +44,12 @@ void ImmediateExpressionEvaluator::setStartAddress(int64_t address)
     startAddress = address;
 }
 
-int64_t ImmediateExpressionEvaluator::eval(const TokenVec& tokens)
+int64_t ImmediateExpressionEvaluator::eval(const TokenVec& tokens, bool allowCurrentAndStart)
 {
-    return eval(tokens.cbegin(), tokens.cend());
+    return eval(tokens.cbegin(), tokens.cend(), allowCurrentAndStart);
 }
 
-int64_t ImmediateExpressionEvaluator::eval(TokenVec::const_iterator begin, TokenVec::const_iterator end)
+int64_t ImmediateExpressionEvaluator::eval(TokenVec::const_iterator begin, TokenVec::const_iterator end, bool allowCurrentAndStart)
 {
     list<int64_t> terms;
     list<Token> binOperators;
@@ -115,7 +115,7 @@ int64_t ImmediateExpressionEvaluator::eval(TokenVec::const_iterator begin, Token
                 }
                 else // the term should be an immediate value
                 {
-                    term = evalImmediate(*tokenIter);
+                    term = evalImmediate(*tokenIter, allowCurrentAndStart);
                 }
 
                 // process any unary operators before the term
@@ -290,7 +290,7 @@ TokenVec::const_iterator ImmediateExpressionEvaluator::findClosingParenthesis(To
     return iter;
 }
 
-int64_t ImmediateExpressionEvaluator::evalImmediate(const Token& token)
+int64_t ImmediateExpressionEvaluator::evalImmediate(const Token& token, bool allowCurrentAndStart)
 {
     int64_t value = 0;
     const string& tokenStr = token.getValue();
@@ -301,7 +301,7 @@ int64_t ImmediateExpressionEvaluator::evalImmediate(const Token& token)
     }
     else
     {
-        value = evalConstant(token);
+        value = evalConstant(token, allowCurrentAndStart);
     }
 
     return value;
@@ -373,7 +373,7 @@ int64_t ImmediateExpressionEvaluator::evalNum(const Token& token)
     return value;
 }
 
-int64_t ImmediateExpressionEvaluator::evalConstant(const Token& token)
+int64_t ImmediateExpressionEvaluator::evalConstant(const Token& token, bool allowCurrentAndStart)
 {
     int64_t value = 0;
     string constant = token.getValue();
@@ -381,11 +381,21 @@ int64_t ImmediateExpressionEvaluator::evalConstant(const Token& token)
     // check if symbol is the current address
     if (constant == CURRENT_ADDRESS.getValue())
     {
+        if (!allowCurrentAndStart)
+        {
+            throwError("\"" + CURRENT_ADDRESS.getValue() + "\" cannot be used in this expression.", token);
+        }
+
         value = currentAddress;
     }
     // check if symbol is the start address
     else if (constant == START_ADDRESS.getValue())
     {
+        if (!allowCurrentAndStart)
+        {
+            throwError("\"" + START_ADDRESS.getValue() + "\" cannot be used in this expression.", token);
+        }
+
         value = startAddress;
     }
     else // look up value in symbol table
