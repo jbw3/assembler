@@ -63,12 +63,7 @@ public:
     /**
      * @brief Constructor
      */
-    Argument(EType type, int index);
-
-    /**
-     * @brief Constructor
-     */
-    Argument(EType type, bool isSigned = true, unsigned int shift = 0, int index = -1);
+    Argument(EType type, int index = -1, bool isSigned = true, unsigned int shift = 0, bool isRelativeAddress = false, std::int64_t constant = 0);
 
     /**
      * @brief Get the argument type (register or immediate)
@@ -93,10 +88,28 @@ public:
      */
     unsigned int getShift() const;
 
+    /**
+     * @brief Get wether or not this argument is a relative
+     * address (only meaningful for immediate arguments)
+     *
+     * @details If this value is true, the current address
+     * will be subtracted from the immediate value.
+     */
+    bool getIsRelativeAddress() const;
+
+    /**
+     * @brief Get the constant to be added to the
+     * immediate value (only meaningful for immediate
+     * arguments)
+     */
+    std::int64_t getConstant() const;
+
 private:
     EType type;
     bool isSigned;
     unsigned int shift;
+    bool isRelativeAddress;
+    std::int64_t constant;
 };
 
 class InstructionType

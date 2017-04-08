@@ -45,7 +45,7 @@ const std::initializer_list<Argument> RRArgs = {
 // for RIType instructions.
 const std::initializer_list<Argument> RIArgs = {
     { Argument::eRegister, 1 },
-    { Argument::eImmediate, true }
+    { Argument::eImmediate, -1, true }
 };
 
 ////////////////////////////////////////////////////////////

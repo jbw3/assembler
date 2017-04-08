@@ -30,6 +30,8 @@ private:
     InstructionSetRegister& operator =(const InstructionSetRegister&) = default;
 
     InstructionSetRegister& operator =(InstructionSetRegister&&) = default;
+
+    void addInstructionSet(const InstructionSet& iSet);
 };
 
 #endif // INSTRUCTION_SET_REGISTER_H_

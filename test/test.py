@@ -256,6 +256,19 @@ def main():
     tester.add(StringTest('Format Binary 1', 'W8', b'nop\nmov r0\nadd r4', outStr=b'\x00\x08\x44', args=['-f', 'bin']))
     tester.add(StringTest('Format Binary 2', 'W16', b'nop\nmov r12, r1\nnot r4, r7', outStr=b'\x00\x00\x01\xc1\x02\x47', args=['-f', 'bin']))
 
+    # start_address
+    tester.add(StringTest('Start Address', 'MIPS32', b'start_address = 4\naddi t0, zero, here', outStr=b'04000820\n'))
+    tester.add(StringTest('Multiple Start Addresses', 'MIPS32', b'start_address = 4\nstart_address = 4\naddi t0, zero, here',
+                          errStr=b'ERROR: line: 2, col: 1\nThe start address has already been defined.\n'))
+    tester.add(StringTest('Constant Before Start Address', 'MIPS32', b'x = 4\nstart_address = 4\naddi t0, zero, here',
+                          errStr=b'ERROR: line: 2, col: 1\nThe start address must be defined before other constants.\n'))
+    tester.add(StringTest('Word-Aligned Start Address', 'MIPS32', b'start_address = 3\naddi t0, zero, here',
+                          errStr=b'ERROR: line: 1, col: 1\nThe start address is not word aligned.\n'))
+    tester.add(StringTest('Start Address No here', 'MIPS32', b'start_address = here + 4',
+                          errStr=b'ERROR: line: 1, col: 17\n"here" cannot be used in this expression.\n'))
+    tester.add(StringTest('Start Address No start_address', 'MIPS32', b'start_address = start_address + 4',
+                          errStr=b'ERROR: line: 1, col: 17\n"start_address" cannot be used in this expression.\n'))
+
     tester.run()
 
 if __name__ == '__main__':

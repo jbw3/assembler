@@ -97,6 +97,9 @@ const Token CLOSE_PARENTHESIS(")");
 /// Current address
 const Token CURRENT_ADDRESS("here");
 
+/// Start address
+const Token START_ADDRESS("start_address");
+
 const std::unordered_set<Token> CONSTANT_OPERATORS = {
     ADDITION_OPERATOR,
     SUBTRACTION_OPERATOR,
@@ -114,7 +117,8 @@ const std::unordered_set<Token> CONSTANT_OPERATORS = {
 };
 
 const std::unordered_set<Token> RESERVED_IDENTIFIERS = {
-    CURRENT_ADDRESS
+    CURRENT_ADDRESS,
+    START_ADDRESS
 };
 
 #endif // TOKEN_H_
