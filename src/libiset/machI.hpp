@@ -24,13 +24,13 @@ namespace machI {
     const std::initializer_list<Argument> regImm21Args =
     {
         { Argument::eRegister, 1 },
-        { Argument::eImmediate, true },     // signed
+        { Argument::eImmediate, /*index*/ 2, /*signed*/ true },
     };
 
     const std::initializer_list<Argument> regImm16Args =
     {
         { Argument::eRegister, 1 },
-        { Argument::eImmediate, /*signed*/ true, /*shift*/ 0, /*index*/ 3 },
+        { Argument::eImmediate, /*index*/ 3, /*signed*/ true },
     };
 
     const InstructionSet ISET("machI", 32, Endianness::Big,
