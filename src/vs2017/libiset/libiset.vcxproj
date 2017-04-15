@@ -115,6 +115,7 @@
     <ClInclude Include="..\..\libiset\InstructionSet.h" />
     <ClInclude Include="..\..\libiset\InstructionSetRegister.h" />
     <ClInclude Include="..\..\libiset\machI.hpp" />
+    <ClInclude Include="..\..\libiset\Mips32.hpp" />
     <ClInclude Include="..\..\libiset\Token.h" />
     <ClInclude Include="..\..\libiset\utils.h" />
     <ClInclude Include="..\..\libiset\W16.hpp" />
