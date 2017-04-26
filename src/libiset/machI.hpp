@@ -9,7 +9,10 @@ namespace machI {
 
     const InstructionType regImm21Type { 6, 5, 21 };
     const InstructionType regsImm16Type { 6, 5, 5, 16 };
-    const InstructionType imm26Type{ 6, 26 };
+    const InstructionType imm26Type { 6, 26 };
+    const InstructionType imm8Type { 6, 5, 5, 8, 8 };
+
+    const std::initializer_list<Argument> noArgs = {};
 
     const std::initializer_list<Argument> regArgs =
     {
@@ -46,6 +49,11 @@ namespace machI {
         { Argument::eImmediate, /*index*/ 1, /*isSigned*/ true, /*rightShift*/ 2, /*isRelativeAddress*/ true }
     };
 
+    const std::initializer_list<Argument> imm8Args = 
+    {
+        { Argument::eImmediate, /*index*/ 4, /*isSigned*/ false, }
+    };
+
     const InstructionSet ISET("machI", 32, Endianness::Big,
         {
             { "r", 0, 31, 0b00000 }
@@ -60,6 +68,8 @@ namespace machI {
             { "jmpf", regImm21Type,     {0x0A}, regArgs },          // jump to address in rd
             { "jmp", imm26Type,         {0x0B}, imm26Args },        // jump to relative address (pc+imm26<<2)
             { "ldb", regsImm16Type,     {0x0C}, regRegImm16Args },  // load byte from (rs+imm16) into rd.LSB
+            { "call", imm26Type,        {0x0E}, imm26Args },        // call function at relative address (pc+imm26<<2)
+            { "ret", imm26Type,         {0x0F}, noArgs },           // return from function call
             { "in", regImm21Type,       {0x10}, regImm21Args },     // input a word from I/O port imm21 into rd
             { "out", regImm21Type,      {0x11}, regImm21Args },     // output a word from rd into I/O port imm21
             { "jne", imm26Type,         {0x12}, imm26Args },        // jump to relative address (pc+imm26<<2) if ZF != 1
@@ -69,6 +79,8 @@ namespace machI {
             { "stb", regsImm16Type,     {0x1B}, regRegImm16Args },  // store byte from rd.LSB into (rs+imm16)
             { "push", regImm21Type,     {0x1C}, regArgs },          // push rd
             { "pop", regImm21Type,      {0x1E}, regArgs },          // pop rd
+            { "inten", imm8Type,        {0x1F}, imm8Args },         // enable interrupts using imm8 mask (1 - ON)
+            { "intdis", imm8Type,       {0x20}, imm8Args },         // enable interrupts using imm8 mask (1 - ON)
         }
     );
 }
