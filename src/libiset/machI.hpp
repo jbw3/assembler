@@ -81,6 +81,8 @@ namespace machI {
             { "pop", regImm21Type,      {0x1E}, regArgs },          // pop rd
             { "inten", imm8Type,        {0x1F}, imm8Args },         // enable interrupts using imm8 mask (1 - ON)
             { "intdis", imm8Type,       {0x20}, imm8Args },         // enable interrupts using imm8 mask (1 - ON)
+            { "rol", regImm21Type,      {0x21}, regImm21Args },     // rotate rd left imm21 times
+            { "and", regsImm16Type,     {0x22}, regRegArgs },       // rd < rd & rs
         }
     );
 }
