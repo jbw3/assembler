@@ -2,3 +2,11 @@ language: cpp
 os: linux
 compiler: clang
 script: make
+
+addons:
+apt:
+# sources:
+# - llvm-toolchain-precise-3.7
+# - ubuntu-toolchain-r-test
+packages:
+- clang-3.6
