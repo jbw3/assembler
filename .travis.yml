@@ -1,10 +1,4 @@
 language: cpp
-sudo: required
 os: linux
 compiler: clang
-
-# before_install:
-# - sudo apt-get update
-# - sudo apt-get install -y clang-3.6
-
 script: make
