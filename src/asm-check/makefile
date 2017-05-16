@@ -6,7 +6,7 @@ LIBDIR = ../../lib
 BINDIR = ../../bin
 
 CXX = clang++
-CXXFLAGS = $(INCLUDES) -std=c++1z -Wall -Wextra
+CXXFLAGS = $(INCLUDES) -std=c++14 -Wall -Wextra
 
 LDLIBS = -L$(LIBDIR) -liset
 LDFLAGS = $(LDLIBS)

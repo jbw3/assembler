@@ -5,7 +5,7 @@ OBJDIR = ../../obj/$(NAME)
 LIBDIR = ../../lib
 
 CXX = clang++
-CXXFLAGS = $(INCLUDES) -std=c++1z -Wall -Wextra
+CXXFLAGS = $(INCLUDES) -std=c++14 -Wall -Wextra
 
 LD = ar
 LDLIBS =
