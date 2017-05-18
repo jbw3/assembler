@@ -1,20 +1,23 @@
 NAME = asm-check
 
 INCLUDES = -I../libiset
+DEPDIR = .dep
 OBJDIR = ../../obj/$(NAME)
 LIBDIR = ../../lib
 BINDIR = ../../bin
 
+DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$<.Td
+
 CXX = clang++
-CXXFLAGS = $(INCLUDES) -std=c++1z -Wall -Wextra
+CXXFLAGS = $(INCLUDES) -std=c++1z -Wall -Wextra $(DEPFLAGS)
 
 LDLIBS = -L$(LIBDIR) -liset
 LDFLAGS = $(LDLIBS)
 
+POSTCOMPILE = @mv -f $(DEPDIR)/$<.Td $(DEPDIR)/$<.d && touch $@
+
 release: CXXFLAGS += -O2
 debug: CXXFLAGS += -O0 -g
-
-DEPS = Checker.h
 
 SRC = main.cpp \
       Checker.cpp
@@ -38,16 +41,27 @@ libs_d:
 
 .PHONY: init
 init:
-	mkdir -p $(OBJDIR)
-	mkdir -p $(BINDIR)
+	@mkdir -p $(DEPDIR)
+	@mkdir -p $(OBJDIR)
+	@mkdir -p $(BINDIR)
 
 $(TARGET): $(OBJ)
 	$(CXX) $(OBJ) -o $(TARGET) $(LDFLAGS)
 
-$(OBJDIR)/%.o: %.cpp $(DEPS)
+$(OBJDIR)/%.o: %.cpp $(DEPDIR)/%.cpp.d
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(POSTCOMPILE)
+
+# rule for dependency files (this is here to keep make happy)
+$(DEPDIR)/%.d: ;
+
+# prevent make from deleting dependency files
+.PRECIOUS: $(patsubst %,$(DEPDIR)/%.d,$(SRC))
 
 .PHONY: clean
 clean:
 	cd ../libiset; make clean
-	rm -f $(OBJDIR)/*.o $(TARGET)
+	rm -f $(OBJDIR)/*.o $(TARGET) $(DEPDIR)/*.d
+
+# include dependency makefiles
+include $(wildcard $(patsubst %,$(DEPDIR)/%.d,$(SRC)))

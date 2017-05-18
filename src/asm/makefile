@@ -1,36 +1,26 @@
 NAME = asm
 
 INCLUDES = -I../libiset
+DEPDIR = .dep
 OBJDIR = ../../obj/$(NAME)
 LIBDIR = ../../lib
 BINDIR = ../../bin
 TESTDIR = ../../test
 
+DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$<.Td
+
 CXX = clang++
-CXXFLAGS = $(INCLUDES) -std=c++1z -Wall -Wextra
+CXXFLAGS = $(INCLUDES) -std=c++1z -Wall -Wextra $(DEPFLAGS)
 
 LDLIBS = -L$(LIBDIR) -liset
 LDFLAGS = $(LDLIBS)
+
+POSTCOMPILE = @mv -f $(DEPDIR)/$<.Td $(DEPDIR)/$<.d && touch $@
 
 release: CXXFLAGS += -O2
 debug: CXXFLAGS += -O0 -g
 cov: CXXFLAGS += --coverage
 cov: LDFLAGS += --coverage
-
-DEPS = Arguments.h \
-       Assembler.h \
-       BinaryOutputFormatter.h \
-       CodeGenerator.h \
-       Error.h \
-       ImmediateExpressionEvaluator.h \
-       IOutputFormatter.h \
-       LexicalAnalyzer.h \
-       Logger.h \
-       Preprocessor.h \
-       SymbolMap.h \
-       SyntaxAnalyzer.h \
-       SyntaxTree.h \
-       TextOutputFormatter.h
 
 SRC = Arguments.cpp \
       Assembler.cpp \
@@ -68,8 +58,9 @@ cov: debug test
 
 .PHONY: init
 init:
-	mkdir -p $(OBJDIR)
-	mkdir -p $(BINDIR)
+	@mkdir -p $(DEPDIR)
+	@mkdir -p $(OBJDIR)
+	@mkdir -p $(BINDIR)
 
 .PHONY: test
 test:
@@ -78,10 +69,20 @@ test:
 $(TARGET): $(OBJ)
 	$(CXX) $(OBJ) -o $(TARGET) $(LDFLAGS)
 
-$(OBJDIR)/%.o: %.cpp $(DEPS)
+$(OBJDIR)/%.o: %.cpp $(DEPDIR)/%.cpp.d
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(POSTCOMPILE)
+
+# rule for dependency files (this is here to keep make happy)
+$(DEPDIR)/%.d: ;
+
+# prevent make from deleting dependency files
+.PRECIOUS: $(patsubst %,$(DEPDIR)/%.d,$(SRC))
 
 .PHONY: clean
 clean:
 	cd ../libiset; make clean
-	rm -f $(OBJDIR)/*.o $(OBJDIR)/*.gcno $(OBJDIR)/*.gcda $(TARGET) *.gcov
+	rm -f $(OBJDIR)/*.o $(OBJDIR)/*.gcno $(OBJDIR)/*.gcda $(TARGET) *.gcov $(DEPDIR)/*.d
+
+# include dependency makefiles
+include $(wildcard $(patsubst %,$(DEPDIR)/%.d,$(SRC)))
