@@ -7,7 +7,7 @@ LIBDIR = ../../lib
 BINDIR = ../../bin
 TESTDIR = ../../test
 
-DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
+DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$<.Td
 
 CXX = clang++
 CXXFLAGS = $(INCLUDES) -std=c++1z -Wall -Wextra $(DEPFLAGS)
@@ -15,7 +15,7 @@ CXXFLAGS = $(INCLUDES) -std=c++1z -Wall -Wextra $(DEPFLAGS)
 LDLIBS = -L$(LIBDIR) -liset
 LDFLAGS = $(LDLIBS)
 
-POSTCOMPILE = @mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d && touch $@
+POSTCOMPILE = @mv -f $(DEPDIR)/$<.Td $(DEPDIR)/$<.d && touch $@
 
 release: CXXFLAGS += -O2
 debug: CXXFLAGS += -O0 -g
@@ -58,9 +58,9 @@ cov: debug test
 
 .PHONY: init
 init:
-	mkdir -p $(OBJDIR)
-	mkdir -p $(DEPDIR)
-	mkdir -p $(BINDIR)
+	@mkdir -p $(OBJDIR)
+	@mkdir -p $(DEPDIR)
+	@mkdir -p $(BINDIR)
 
 .PHONY: test
 test:
@@ -69,16 +69,16 @@ test:
 $(TARGET): $(OBJ)
 	$(CXX) $(OBJ) -o $(TARGET) $(LDFLAGS)
 
-$(OBJDIR)/%.o: %.cpp $(DEPDIR)/%.d
+$(OBJDIR)/%.o: %.cpp $(DEPDIR)/%.cpp.d
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 	$(POSTCOMPILE)
 
 $(DEPDIR)/%.d: ;
-.PRECIOUS: $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRC)))
+.PRECIOUS: $(patsubst %,$(DEPDIR)/%.d,$(SRC))
 
 .PHONY: clean
 clean:
 	cd ../libiset; make clean
 	rm -f $(OBJDIR)/*.o $(OBJDIR)/*.gcno $(OBJDIR)/*.gcda $(TARGET) *.gcov $(DEPDIR)/*.d
 
-include $(wildcard $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRC))))
+include $(wildcard $(patsubst %,$(DEPDIR)/%.d,$(SRC)))
