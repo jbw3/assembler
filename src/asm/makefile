@@ -58,8 +58,8 @@ cov: debug test
 
 .PHONY: init
 init:
-	@mkdir -p $(OBJDIR)
 	@mkdir -p $(DEPDIR)
+	@mkdir -p $(OBJDIR)
 	@mkdir -p $(BINDIR)
 
 .PHONY: test
@@ -73,7 +73,10 @@ $(OBJDIR)/%.o: %.cpp $(DEPDIR)/%.cpp.d
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 	$(POSTCOMPILE)
 
+# rule for dependency files (this is here to keep make happy)
 $(DEPDIR)/%.d: ;
+
+# prevent make from deleting dependency files
 .PRECIOUS: $(patsubst %,$(DEPDIR)/%.d,$(SRC))
 
 .PHONY: clean
@@ -81,4 +84,5 @@ clean:
 	cd ../libiset; make clean
 	rm -f $(OBJDIR)/*.o $(OBJDIR)/*.gcno $(OBJDIR)/*.gcda $(TARGET) *.gcov $(DEPDIR)/*.d
 
+# include dependency makefiles
 include $(wildcard $(patsubst %,$(DEPDIR)/%.d,$(SRC)))
