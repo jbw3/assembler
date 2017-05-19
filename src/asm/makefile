@@ -1,7 +1,7 @@
 NAME = asm
 
 INCLUDES = -I../libiset
-DEPDIR = .d
+DEPDIR = .dep
 OBJDIR = ../../obj/$(NAME)
 LIBDIR = ../../lib
 BINDIR = ../../bin
