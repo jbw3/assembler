@@ -1,5 +1,6 @@
 # Assembler
 
+[![CircleCI](https://circleci.com/gh/jbw3/assembler.svg?style=shield)](https://circleci.com/gh/jbw3/assembler)
 
 ## Quick Start
 
