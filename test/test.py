@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import filecmp, os, re, subprocess
+import filecmp, os, re, subprocess, sys
 
 TEST_DIR = os.path.dirname(__file__)
 BIN_DIR = os.path.abspath(os.path.join(TEST_DIR, '..', 'bin'))
@@ -161,6 +161,8 @@ class Tester:
         numTests = len(self.tests)
         print('{} of {} test{} passed.'.format(numPassed, numTests, '' if numTests == 1 else 's'))
 
+        return numPassed == numTests
+
 def main():
     tester = Tester()
 
@@ -269,7 +271,10 @@ def main():
     tester.add(StringTest('Start Address No start_address', 'MIPS32', b'start_address = start_address + 4',
                           errStr=b'ERROR: line: 1, col: 17\n"start_address" cannot be used in this expression.\n'))
 
-    tester.run()
+    allPassed = tester.run()
+
+    rc = 0 if allPassed else 1
+    sys.exit(rc)
 
 if __name__ == '__main__':
     main()

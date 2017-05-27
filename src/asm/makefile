@@ -9,7 +9,7 @@ TESTDIR = ../../test
 
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$<.Td
 
-CXX = clang++
+CXX = g++
 CXXFLAGS = $(INCLUDES) -std=c++1z -Wall -Wextra $(DEPFLAGS)
 
 LDLIBS = -L$(LIBDIR) -liset

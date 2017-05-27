@@ -1,0 +1,14 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/assembler
+
+    docker:
+      - image: jbw3/cci-assembler:0.3.0
+
+    steps:
+      - checkout
+
+      - run: make
+
+      - run: ./test/test.py
